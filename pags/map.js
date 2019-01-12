@@ -60,8 +60,8 @@ export default class MapScreen extends React.Component {
           initialRegion={this.state.region}>
             <Marker
               coordinate={this.state.region}
-              title={"Oli"}
-              description={"Crayoli"}
+              title={"Puto"}
+              description={"iOS"}
             />
         </MapView>
         <ActionButton buttonColor="rgba(0,200,200,1)" >
