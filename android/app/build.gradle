@@ -137,6 +137,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-maps')
     compile project(':react-native-vector-icons')
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.android.support:design:27.1.0'
