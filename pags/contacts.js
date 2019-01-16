@@ -1,12 +1,15 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { View, Text, FlatList,ScrollView } from "react-native";
+import GroupList from "./groupList";
+import ContactList from "./contactsList"
 
 export default class ContactScreen extends React.Component {
   render() {
     return (
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <Text>Home Screen</Text>
-      </View>
+      <ScrollView style={{ flex: 1}} showsVerticalScrollIndicator = {false}>
+        <GroupList />
+        <ContactList />
+      </ScrollView>
     );
   }
 }
