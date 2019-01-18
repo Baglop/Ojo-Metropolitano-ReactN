@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text } from "react-native";
 
+
 export default class PoiliceScreen extends React.Component {
   render() {
     return (

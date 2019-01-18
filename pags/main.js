@@ -21,6 +21,9 @@ const TabNavigator = createBottomTabNavigator({
 
 const AppContainer = createAppContainer(TabNavigator);
 export default class MainScreen extends React.Component {
+  static navigationOptions = {
+    header: null
+}
   render() {
     return (
       <AppContainer/>
