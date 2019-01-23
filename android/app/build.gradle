@@ -93,8 +93,16 @@ def enableSeparateBuildPerCPUArchitecture = false
  */
 def enableProguardInReleaseBuilds = false
 android {
+    //compileSdkVersion 19
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
+
+
+    packagingOptions {
+        exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+    }
 
     defaultConfig {
         applicationId "com.ojometropolitano"
@@ -137,7 +145,7 @@ android {
 }
 
 dependencies {
-    compile project(':react-native-vector-icons')
+    implementation project(':react-native-vector-icons')
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.android.support:design:27.1.0'
     implementation project(':react-native-gesture-handler')
@@ -150,7 +158,8 @@ dependencies {
     }
     implementation 'com.google.android.gms:play-services-base:10.0.1'
     implementation 'com.google.android.gms:play-services-maps:10.0.1'
-    
+    implementation 'com.couchbase.lite:couchbase-lite-android:2.1.0'
+
 }
 
 // Run this once to be able to run the application with BUCK

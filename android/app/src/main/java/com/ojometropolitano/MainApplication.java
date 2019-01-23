@@ -26,10 +26,11 @@ public class MainApplication extends Application implements ReactApplication {
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
-          new MainReactPackage(),
-            new VectorIconsPackage(),
-            new MapsPackage(),
-            new RNGestureHandlerPackage()
+              new MainReactPackage(),
+              new VectorIconsPackage(),
+              new MapsPackage(),
+              new RNGestureHandlerPackage(),
+              new couchbase_lite_package()
       );
     }
 
