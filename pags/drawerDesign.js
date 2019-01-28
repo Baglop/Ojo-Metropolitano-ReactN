@@ -1,9 +1,19 @@
 import React from "react";
-import { View, Text,StyleSheet,StatusBar, Image, TouchableOpacity, Button } from "react-native";
+import { View, Text,StyleSheet, Platform, Image, TouchableOpacity, Button, NativeModules } from "react-native";
 import Icon from 'react-native-vector-icons/AntDesign';
+let couchbase_lite = NativeModules.couchbase_lite;
 
 export default class drawerDesign extends React.Component {
   
+  loguotPress = () =>{
+    if(Platform.OS == 'android'){
+      couchbase_lite.deleteUserdataDoc(err =>{
+        console.log(err);
+      }, succ => {
+        console.log(succ);
+      });
+    }
+  }
 
   render() {
     return (
@@ -19,7 +29,7 @@ export default class drawerDesign extends React.Component {
                 <Icon name="deleteuser" style={styles.buttonIcon} />
                 <Text style={{fontWeight:'bold',fontSize:18}}>Eliminar cuenta</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={this.loguotPress}>
                 <Icon name="logout" style={styles.buttonIcon} />
                 <Text style={{fontWeight:'bold',fontSize:18}}>Cerrar sesión</Text>
             </TouchableOpacity>

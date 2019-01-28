@@ -7,20 +7,22 @@
  */
 
 import React from 'react';
-import {Platform, StyleSheet, Text, View, TextInput, Image, Button} from 'react-native';
+import {Platform, StyleSheet, Platform, View, TextInput, Image, Button, NativeModules} from 'react-native';
+let couchbase_lite = NativeModules.couchbase_lite;
 
-
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
-  android:
-    'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
 const width = '80%';
 export default class LoginScreen extends React.Component {
+  
   static navigationOptions = {
     header: null
-}
+  } 
+
+  loginPress = () =>{
+    if(Platform.OS == 'android')
+      couchbase_lite.setUserdataDoc();
+    this.props.navigation.replace('Main');
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -55,7 +57,7 @@ export default class LoginScreen extends React.Component {
           <Button
             title="Test"
             color="#51738e"
-            onPress={() => this.props.navigation.replace('Main')}
+            onPress={this.loginPress}
           />
         </View>
       </View>
