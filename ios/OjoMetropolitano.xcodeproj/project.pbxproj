@@ -46,8 +46,8 @@
 		4A3DBEB57A3A4F0CA2906C4F /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5BAB75B57DFD458CABEEA541 /* Ionicons.ttf */; };
 		4EF465D04AB24FD99AB37E21 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F12F0EA27F184719A7A18F8C /* FontAwesome.ttf */; };
 		4FA2EFEB54EF1E866A303152 /* libPods-OjoMetropolitano.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 008DF3070D7D087765069794 /* libPods-OjoMetropolitano.a */; };
-		5293A2A121F81D430098F819 /* couchbase_lite.m in Sources */ = {isa = PBXBuildFile; fileRef = 5293A2A021F81D430098F819 /* couchbase_lite.m */; };
-		5293A2CB21F81F640098F819 /* couchbase_lite_native.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5293A2CA21F81F640098F819 /* couchbase_lite_native.swift */; };
+		525BEF4521FE61AA0093CAD6 /* couchbase_lite_package.m in Sources */ = {isa = PBXBuildFile; fileRef = 525BEF4421FE61AA0093CAD6 /* couchbase_lite_package.m */; };
+		525BEF4721FE62080093CAD6 /* couchbase_lite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525BEF4621FE62080093CAD6 /* couchbase_lite.swift */; };
 		5293A2CD21F826F60098F819 /* CouchbaseLiteSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5293A2CC21F826F50098F819 /* CouchbaseLiteSwift.framework */; };
 		5293A2CE21F8270A0098F819 /* CouchbaseLiteSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5293A2CC21F826F50098F819 /* CouchbaseLiteSwift.framework */; };
 		5293A2CF21F8270A0098F819 /* CouchbaseLiteSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5293A2CC21F826F50098F819 /* CouchbaseLiteSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -428,8 +428,8 @@
 		451BA2006BEA41E5BF1E9DB1 /* AirMaps.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = AirMaps.xcodeproj; path = "../node_modules/react-native-maps/lib/ios/AirMaps.xcodeproj"; sourceTree = "<group>"; };
 		469C6C84CF91495BB7DB6D67 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		4BFDBAAF681A4553BDC27D00 /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
-		5293A2A021F81D430098F819 /* couchbase_lite.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = couchbase_lite.m; path = OjoMetropolitano/couchbase_lite.m; sourceTree = "<group>"; };
-		5293A2CA21F81F640098F819 /* couchbase_lite_native.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = couchbase_lite_native.swift; path = OjoMetropolitano/couchbase_lite_native.swift; sourceTree = "<group>"; };
+		525BEF4421FE61AA0093CAD6 /* couchbase_lite_package.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = couchbase_lite_package.m; path = OjoMetropolitano/couchbase_lite_package.m; sourceTree = "<group>"; };
+		525BEF4621FE62080093CAD6 /* couchbase_lite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = couchbase_lite.swift; path = OjoMetropolitano/couchbase_lite.swift; sourceTree = "<group>"; };
 		5293A2CC21F826F50098F819 /* CouchbaseLiteSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CouchbaseLiteSwift.framework; sourceTree = "<group>"; };
 		52C6B2C021EC2CBB00F5A1DE /* AIRDummyView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIRDummyView.h; sourceTree = "<group>"; };
 		52C6B2C121EC2CBB00F5A1DE /* AIRDummyView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIRDummyView.m; sourceTree = "<group>"; };
@@ -642,8 +642,8 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
-				5293A2A021F81D430098F819 /* couchbase_lite.m */,
-				5293A2CA21F81F640098F819 /* couchbase_lite_native.swift */,
+				525BEF4421FE61AA0093CAD6 /* couchbase_lite_package.m */,
+				525BEF4621FE62080093CAD6 /* couchbase_lite.swift */,
 			);
 			name = OjoMetropolitano;
 			sourceTree = "<group>";
@@ -1527,7 +1527,6 @@
 				52C6B2F021EC2CBC00F5A1DE /* AIRGoogleMapCalloutManager.m in Sources */,
 				52C6B2EA21EC2CBC00F5A1DE /* AIRDummyView.m in Sources */,
 				52C6B2F321EC2CBC00F5A1DE /* AIRGoogleMapManager.m in Sources */,
-				5293A2CB21F81F640098F819 /* couchbase_lite_native.swift in Sources */,
 				52C6B2F921EC2CBC00F5A1DE /* AIRGoogleMapPolygonManager.m in Sources */,
 				52C6B2EC21EC2CBC00F5A1DE /* AIRGMSPolygon.m in Sources */,
 				52C6B2ED21EC2CBC00F5A1DE /* AIRGMSPolyline.m in Sources */,
@@ -1538,10 +1537,10 @@
 				52C6B2F821EC2CBC00F5A1DE /* AIRGoogleMapPolygon.m in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
 				52C6B2F421EC2CBC00F5A1DE /* AIRGoogleMapMarker.m in Sources */,
-				5293A2A121F81D430098F819 /* couchbase_lite.m in Sources */,
 				52C6B2FE21EC2CBC00F5A1DE /* RCTConvert+GMSMapViewType.m in Sources */,
 				52C6B2F521EC2CBC00F5A1DE /* AIRGoogleMapMarkerManager.m in Sources */,
 				52C6B2F621EC2CBC00F5A1DE /* AIRGoogleMapOverlay.m in Sources */,
+				525BEF4521FE61AA0093CAD6 /* couchbase_lite_package.m in Sources */,
 				52C6B2F121EC2CBC00F5A1DE /* AIRGoogleMapCircle.m in Sources */,
 				52C6B2FB21EC2CBC00F5A1DE /* AIRGoogleMapPolylineManager.m in Sources */,
 				52C6B2F721EC2CBC00F5A1DE /* AIRGoogleMapOverlayManager.m in Sources */,
@@ -1549,6 +1548,7 @@
 				52C6B2EE21EC2CBC00F5A1DE /* AIRGoogleMap.m in Sources */,
 				52C6B2EB21EC2CBC00F5A1DE /* AIRGMSMarker.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				525BEF4721FE62080093CAD6 /* couchbase_lite.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

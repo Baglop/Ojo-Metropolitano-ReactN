@@ -22,7 +22,7 @@ const contacts = [
     },
     {
         key: "5",
-        name: "EPN"
+        name: "EPN-MIente"
     },
     {
         key: "6",
