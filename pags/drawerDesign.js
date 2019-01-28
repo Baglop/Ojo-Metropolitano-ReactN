@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text,StyleSheet, Platform, Image, TouchableOpacity, Button, NativeModules } from "react-native";
+import { View, Text, StyleSheet, Platform, Image, TouchableOpacity, Button, NativeModules } from "react-native";
 import Icon from 'react-native-vector-icons/AntDesign';
 let couchbase_lite = NativeModules.couchbase_lite;
 

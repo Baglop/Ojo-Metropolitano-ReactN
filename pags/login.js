@@ -7,7 +7,7 @@
  */
 
 import React from 'react';
-import {Platform, StyleSheet, Platform, View, TextInput, Image, Button, NativeModules} from 'react-native';
+import {Platform, StyleSheet , View, TextInput, Image, Button, NativeModules} from 'react-native';
 let couchbase_lite = NativeModules.couchbase_lite;
 
 const width = '80%';

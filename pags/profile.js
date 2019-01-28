@@ -1,19 +1,10 @@
 import React from "react";
-import { View, Text,StyleSheet,StatusBar, Image, TouchableOpacity, Button } from "react-native";
+import { View, Text,StyleSheet,Platform, Image, TouchableOpacity, Button } from "react-native";
 import { createDrawerNavigator,createAppContainer} from "react-navigation";
 import Bg from '../images/citybackground.png';
 import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header-scroll-view';
 import Icon from 'react-native-vector-icons/Ionicons';
 import drawerDesign from './drawerDesign'
-
-class SideBar extends React.Component{
-  render()
-  {
-    return(
-      <Text>Ola</Text>
-    );
-  }
-}
 
 class ProfileScreenConent extends React.Component {
   
