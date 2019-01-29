@@ -56,7 +56,7 @@ export default class OjoMetropolitano extends React.Component {
     if(Platform.OS == 'android'){
       couch_base.userDataDocExist(err => {
         this.setState({logged: err});
-        console.log("Pepes");
+        console.log(this.state.logged);
       }, succ => {
         this.setState({logged: succ});
         console.log(this.state.logged);

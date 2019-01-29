@@ -9,18 +9,46 @@
 import React from 'react';
 import {Platform, StyleSheet , View, TextInput, Image, Button, NativeModules} from 'react-native';
 let couchbase_lite = NativeModules.couchbase_lite;
-
+const URL = 'http://siliconbear.dynu.net:3030/API/inicio/IniciarSesion';
 const width = '80%';
 export default class LoginScreen extends React.Component {
-  
+  constructor(props){
+    super(props);
+    this.state ={
+      nombreUsuario: '',
+      contrasena: '',
+      ubicacionUsuario: '0.0,-0.0'
+    };
+  }
+
+
   static navigationOptions = {
     header: null
   } 
 
   loginPress = () =>{
-    if(Platform.OS == 'android')
-      couchbase_lite.setUserdataDoc();
-    this.props.navigation.replace('Main');
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        this.setState({
+          ubicacionUsuario: position.coords.latitude + ',' + position.coords.longitude
+        });
+      },
+      (error) => console.log(error)
+    );
+    fetch(URL,{
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(this.state),
+    }).then(res => res.json())
+    .then(response => {
+      console.log(JSON.stringify(response));
+      if(Platform.OS == 'android')
+        couchbase_lite.setUserdataDoc(response.tokenSiliconBear, this.state.nombreUsuario);
+      this.props.navigation.replace('Main');
+    })
+    .catch(err => console.error(err));
   }
 
   render() {
@@ -39,6 +67,7 @@ export default class LoginScreen extends React.Component {
             placeholder="Usuario"
             placeholderTextColor="rgba(255,255,255,.4)"
             underlineColorAndroid="transparent"
+            onChangeText={(text) => this.setState({nombreUsuario:text})}
           />
         </View>
         <View style={styles.SectionStyle}>
@@ -51,6 +80,7 @@ export default class LoginScreen extends React.Component {
             placeholder="Contraseña"
             placeholderTextColor="rgba(255,255,255,.4)"
             underlineColorAndroid="transparent"
+            onChangeText={(text) => this.setState({contrasena:text})}
             />
         </View>
         <View style={styles.loginButton}>

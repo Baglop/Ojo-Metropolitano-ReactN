@@ -16,7 +16,8 @@ import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.Expression;
 import com.couchbase.lite.Result;
 import com.couchbase.lite.Meta;
-
+import org.json.JSONObject;
+import org.json.JSONException;
 import java.util.List;
 /**
  * Created by inzod on 22/01/2019.
@@ -24,7 +25,7 @@ import java.util.List;
 
 public class couchbase_lite extends ReactContextBaseJavaModule {
      private Database database;
-    private String DOC_TYPE = "userData";
+    private String USER_DOC = "userData";
 
     couchbase_lite(ReactApplicationContext reactContext){
         super(reactContext);
@@ -46,7 +47,7 @@ public class couchbase_lite extends ReactContextBaseJavaModule {
         .from(DataSource.database(database))
         .where(
             Expression.property("type")
-            .equalTo(Expression.string(DOC_TYPE))
+            .equalTo(Expression.string(USER_DOC))
         );
 
         try {
@@ -65,14 +66,14 @@ public class couchbase_lite extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    private void setUserdataDoc(){
+    private void setUserdataDoc(String userDataResponse, String userName){
         try {
             MutableDocument mutableDocument = new MutableDocument()
-                .setString("type", DOC_TYPE)
-                .setString("userName", "Test")
-                .setString("password","123");
+                .setString("type", USER_DOC)
+                .setString("userName", userName)
+                .setString("tokenSiliconBear",userDataResponse);
             database.save(mutableDocument);
-        } catch (CouchbaseLiteException e) {
+        } catch (CouchbaseLiteException e ) {
             e.printStackTrace();
         }
     }
@@ -86,7 +87,7 @@ public class couchbase_lite extends ReactContextBaseJavaModule {
             .from(DataSource.database(database))
             .where(
                 Expression.property("type")
-                .equalTo(Expression.string(DOC_TYPE))
+                .equalTo(Expression.string(USER_DOC))
             );
 
         try {
@@ -99,7 +100,7 @@ public class couchbase_lite extends ReactContextBaseJavaModule {
                 Result result = list.get(0);
                 String documentId = result.getString("id");
                 database.delete(database.getDocument(documentId));
-                succ.invoke("Documentos eliminados");
+                succ.invoke("Documento eliminado");
             }
         } catch (CouchbaseLiteException e) {
             e.printStackTrace();
