@@ -7,7 +7,7 @@
  */
 
 import React from 'react';
-import {Platform, StyleSheet , View, TextInput, Image, Button, NativeModules} from 'react-native';
+import {Platform, StyleSheet , View, TextInput, Image, Button, NativeModules, Alert} from 'react-native';
 let couchbase_lite = NativeModules.couchbase_lite;
 const URL = 'http://siliconbear.dynu.net:3030/API/inicio/IniciarSesion';
 const width = '80%';
@@ -25,6 +25,17 @@ export default class LoginScreen extends React.Component {
   static navigationOptions = {
     header: null
   } 
+
+  showAlert(){
+    Alert.alert(
+      'No se puede iniciar sesión',
+      'El usuario o contraseña ingresada son incorrectos',
+      [,
+        {text: 'OK', onPress: () => console.log('OK Pressed')},
+      ],
+      {cancelable: false},
+    );
+  }
 
   loginPress = () =>{
     navigator.geolocation.getCurrentPosition(
@@ -44,9 +55,13 @@ export default class LoginScreen extends React.Component {
     }).then(res => res.json())
     .then(response => {
       console.log(JSON.stringify(response));
-      if(Platform.OS == 'android')
-        couchbase_lite.setUserdataDoc(response.tokenSiliconBear, this.state.nombreUsuario);
-      this.props.navigation.replace('Main');
+      if(response.codigoRespuesta == 200){
+        if(Platform.OS == 'android')
+          couchbase_lite.setUserdataDoc(response.tokenSiliconBear, this.state.nombreUsuario);
+        this.props.navigation.replace('Main');
+      } else{
+        this.showAlert();
+      }
     })
     .catch(err => console.error(err));
   }
