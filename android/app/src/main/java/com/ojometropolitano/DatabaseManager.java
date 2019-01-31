@@ -13,6 +13,7 @@ public class DatabaseManager {
 
     private static Database database;
     private static DatabaseManager instance = null;
+
     //Crea o abre base de datos
     private DatabaseManager(Context context) {
         DatabaseConfiguration configuration = new DatabaseConfiguration(context);

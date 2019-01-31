@@ -9,6 +9,7 @@
 import React from 'react';
 import {Platform, StyleSheet , View, TextInput, Image, Button, NativeModules, Alert} from 'react-native';
 let couchbase_lite = NativeModules.couchbase_lite;
+let couchbase_lite_native = NativeModules.couchbase_lite_native;
 const URL = 'http://siliconbear.dynu.net:3030/API/inicio/IniciarSesion';
 const width = '80%';
 export default class LoginScreen extends React.Component {
@@ -56,9 +57,14 @@ export default class LoginScreen extends React.Component {
     .then(response => {
       console.log(JSON.stringify(response));
       if(response.codigoRespuesta == 200){
-        if(Platform.OS == 'android')
+        if(Platform.OS == 'android'){
           couchbase_lite.setUserdataDoc(response.tokenSiliconBear, this.state.nombreUsuario);
         this.props.navigation.replace('Main');
+        }
+        if(Platform.OS == "ios"){
+          couchbase_lite_native.setUserdataDocTXT(response.tokenSiliconBear, this.state.nombreUsuario);
+        this.props.navigation.replace('Main');
+        }
       } else{
         this.showAlert();
       }
