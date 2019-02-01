@@ -12,6 +12,7 @@ import {NativeModules, Platform} from 'react-native';
 import { createStackNavigator, createAppContainer } from "react-navigation";
 
 let couch_base = NativeModules.couchbase_lite;
+let couchbase_lite_native = NativeModules.couchbase_lite_native;
 var initialRoute = "Main";
 
 const AppNavigatorM = createStackNavigator(
@@ -55,6 +56,15 @@ export default class OjoMetropolitano extends React.Component {
   componentWillMount() { 
     if(Platform.OS == 'android'){
       couch_base.userDataDocExist(err => {
+        this.setState({logged: err});
+        console.log(this.state.logged);
+      }, succ => {
+        this.setState({logged: succ});
+        console.log(this.state.logged);
+      });
+    }
+    if(Platform.OS == 'ios'){
+      couchbase_lite_native.userDataDocExistTXT(err => {
         this.setState({logged: err});
         console.log(this.state.logged);
       }, succ => {

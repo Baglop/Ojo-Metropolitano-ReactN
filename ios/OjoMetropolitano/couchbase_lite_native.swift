@@ -16,15 +16,14 @@ import CouchbaseLiteSwift
 class couchbase_lite_native : NSObject
 {
   let database = DatabaseManager.sharedInstance().database
-  let USER_DOC = "UserData"
+  let USER_DOC = "userData"
   
-  @objc func userDataDocExist(_ errorCallback: @escaping () -> Void, _ successCallback: @escaping () -> Void) {
+  @objc func userDataDocExistTXT(_ errorCallback: @escaping () -> Void, _ successCallback: @escaping () -> Void) {
     let query = QueryBuilder
-    .select(SelectResult.expression(Meta.id))
-    .from(DataSource.database(database))
-    .where(Expression.property("type")
-    .equalTo(Expression.string(USER_DOC)));
-    
+      .select(SelectResult.expression(Meta.id))
+      .from(DataSource.database(database))
+      .where(Expression.property("type")
+      .equalTo(Expression.string(USER_DOC)));
     do{
       let resulSet = try query.execute()
       let array = resulSet.allResults()
@@ -48,6 +47,7 @@ class couchbase_lite_native : NSObject
       .setString("userName", forKey: userName)
       .setString("tokenSiliconBear", forKey: userDataResponse)
       try database.saveDocument(mutableDocument);
+      print("Se guardo el documentos en couchbase")
     } catch {
       fatalError(error.localizedDescription)
     }

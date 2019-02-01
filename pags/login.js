@@ -7,7 +7,7 @@
  */
 
 import React from 'react';
-import {Platform, StyleSheet , View, TextInput, Image, Button, NativeModules, Alert} from 'react-native';
+import {Platform, StyleSheet , View, TextInput, Image, Button, NativeModules, Alert, KeyboardAvoidingView} from 'react-native';
 let couchbase_lite = NativeModules.couchbase_lite;
 let couchbase_lite_native = NativeModules.couchbase_lite_native;
 const URL = 'http://siliconbear.dynu.net:3030/API/inicio/IniciarSesion';
@@ -63,6 +63,7 @@ export default class LoginScreen extends React.Component {
         }
         if(Platform.OS == "ios"){
           couchbase_lite_native.setUserdataDocTXT(response.tokenSiliconBear, this.state.nombreUsuario);
+          
         this.props.navigation.replace('Main');
         }
       } else{
@@ -74,7 +75,7 @@ export default class LoginScreen extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <KeyboardAvoidingView behavior = "padding" style={styles.container}>
         <View style={{alignItems: 'center'}}>
           <Image source={require('../images/ojometropolitano.png')} style={styles.logoStyle} />
         
@@ -85,9 +86,11 @@ export default class LoginScreen extends React.Component {
           </View>
           <TextInput
             style={{flex:1}}
-            placeholder="Usuario"
+            placeholder=" Usuario"
             placeholderTextColor="rgba(255,255,255,.4)"
             underlineColorAndroid="transparent"
+            returnKeyType = "next"
+            onSubmitEditing = {() => this.contrasena.focus()}
             onChangeText={(text) => this.setState({nombreUsuario:text})}
           />
         </View>
@@ -98,9 +101,11 @@ export default class LoginScreen extends React.Component {
           <TextInput
             secureTextEntry={true} 
             style={{flex:1}}
-            placeholder="Contraseña"
+            placeholder=" Contraseña"
             placeholderTextColor="rgba(255,255,255,.4)"
             underlineColorAndroid="transparent"
+            returnKeyType = "go"
+            ref={(input) => this.contrasena = input}
             onChangeText={(text) => this.setState({contrasena:text})}
             />
         </View>
@@ -111,7 +116,7 @@ export default class LoginScreen extends React.Component {
             onPress={this.loginPress}
           />
         </View>
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 }

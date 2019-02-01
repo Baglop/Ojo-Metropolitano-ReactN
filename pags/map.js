@@ -6,6 +6,31 @@ import ActionButton from 'react-native-action-button';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 export default class MapScreen extends React.Component {
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <MapView style={styles.map}
+          provider={PROVIDER_GOOGLE}
+          initialRegion={this.state.region}>
+            <Marker
+              coordinate={this.state.region}
+              title={"Puto"}
+              description={"iOS"}
+            />
+        </MapView>
+        <ActionButton buttonColor="rgba(0,200,200,1)" >
+          <ActionButton.Item buttonColor='#9b59b6' size={45} title={this.state.Titulo} onPress={this.change_title}>
+            <Icon name="md-create" style={styles.actionButtonIcon} />
+          </ActionButton.Item>
+          <ActionButton.Item buttonColor='#9b59b6' size={45} title="Mis reportes" onPress={() => console.log("notes tapped!")}>
+            <Icon name="md-create" style={styles.actionButtonIcon} />
+          </ActionButton.Item>
+        </ActionButton>
+      </View>
+    );
+  }
+
   constructor() {
     super()
     this.state = {
@@ -50,30 +75,6 @@ export default class MapScreen extends React.Component {
 
   componentWillUnmount() {
     navigator.geolocation.clearWatch(this.watchId);
-  }
-
-  render() {
-    return (
-      <View style={styles.container}>
-        <MapView style={styles.map}
-          provider={PROVIDER_GOOGLE}
-          initialRegion={this.state.region}>
-            <Marker
-              coordinate={this.state.region}
-              title={"Puto"}
-              description={"iOS"}
-            />
-        </MapView>
-        <ActionButton buttonColor="rgba(0,200,200,1)" >
-          <ActionButton.Item buttonColor='#9b59b6' size={45} title={this.state.Titulo} onPress={this.change_title}>
-            <Icon name="md-create" style={styles.actionButtonIcon} />
-          </ActionButton.Item>
-          <ActionButton.Item buttonColor='#9b59b6' size={45} title="Mis reportes" onPress={() => console.log("notes tapped!")}>
-            <Icon name="md-create" style={styles.actionButtonIcon} />
-          </ActionButton.Item>
-        </ActionButton>
-      </View>
-    );
   }
 }
 
