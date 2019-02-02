@@ -2,12 +2,20 @@ import React from "react";
 import { View, Text, StyleSheet, Platform, Image, TouchableOpacity, Button, NativeModules } from "react-native";
 import Icon from 'react-native-vector-icons/AntDesign';
 let couchbase_lite = NativeModules.couchbase_lite;
+let couchbase_lite_native = NativeModules.couchbase_lite_native;
 
 export default class drawerDesign extends React.Component {
   
   loguotPress = () =>{
     if(Platform.OS == 'android'){
       couchbase_lite.deleteUserdataDoc(err =>{
+        console.log(err);
+      }, succ => {
+        console.log(succ);
+      });
+    }
+    if(Platform.OS == 'ios'){
+      couchbase_lite_native.deleteUserdataDoc(err =>{
         console.log(err);
       }, succ => {
         console.log(succ);

@@ -2,7 +2,6 @@ import React from "react";
 import { View, Text, FlatList,ScrollView } from "react-native";
 import GroupList from "./groupList";
 import ContactList from "./contactsList"
-import Icon from 'react-native-vector-icons/Ionicons';
 
 export default class ContactScreen extends React.Component {
   render() {
