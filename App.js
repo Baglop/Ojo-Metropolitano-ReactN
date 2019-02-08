@@ -8,6 +8,9 @@
 import React from 'react';
 import LoginScreen from './pags/login';
 import MainScreen from './pags/main';
+import RegisterScreen from './pags/register';
+import Register2Screen from './pags/register2'
+
 import {NativeModules, Platform} from 'react-native';
 import { createStackNavigator, createAppContainer } from "react-navigation";
 
@@ -23,6 +26,12 @@ const AppNavigatorM = createStackNavigator(
     Main: {
         screen: MainScreen
     },
+    Register: {
+      screen: RegisterScreen
+    },
+    Register2: {
+      screen: Register2Screen
+    },
   },
   {
       initialRouteName: "Main",
@@ -37,11 +46,18 @@ const AppNavigatorL = createStackNavigator(
     Main: {
         screen: MainScreen
     },
+    Register:{
+      screen: RegisterScreen
+    },
+    Register2: {
+      screen: Register2Screen
+    },
   },
   {
       initialRouteName: "Login",
   }
 );
+
 const Logged = createAppContainer(AppNavigatorM);
 const Unlogged = createAppContainer(AppNavigatorL);
 export default class OjoMetropolitano extends React.Component {

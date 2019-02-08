@@ -4,6 +4,11 @@ import MapView,{PROVIDER_GOOGLE} from 'react-native-maps';
 import {Marker} from 'react-native-maps';
 import ActionButton from 'react-native-action-button';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { Request_API } from '../networking/server';
+
+const actualizarReportesGlobales = ':3030/API/inicio/ActualizarReportesGlobales'
+
+
 
 export default class MapScreen extends React.Component {
 
@@ -33,6 +38,7 @@ export default class MapScreen extends React.Component {
 
   constructor() {
     super()
+    this.petitionReports()
     this.state = {
       Titulo: "Reportar",
       region:{
@@ -75,6 +81,21 @@ export default class MapScreen extends React.Component {
 
   componentWillUnmount() {
     navigator.geolocation.clearWatch(this.watchId);
+  }
+
+  petitionReports(){
+    const reportes = {
+      nombreUsuario: 'Delta',
+      tokenSiliconBear: 'b9c194c8-d9d1-423f-8190-b7f29287fae4',
+      ubicacionUsuario: '50.258598,19.020420',
+    };
+    Request_API(reportes, actualizarReportesGlobales)
+    .then(response => {
+      console.log(JSON.stringify(response));
+      if(response.codigoRespuesta === 200){
+        console.warn('Si es codigo 200 alv')
+      }
+    })
   }
 }
 

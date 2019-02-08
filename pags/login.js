@@ -12,25 +12,26 @@ let couchbase_lite = NativeModules.couchbase_lite;
 let couchbase_lite_native = NativeModules.couchbase_lite_native;
 const URL = 'http://siliconbear.dynu.net:3030/API/inicio/IniciarSesion';
 const width = '80%';
-export default class LoginScreen extends React.Component {
+
+export default class LoginScreen extends React.Component 
+{
   constructor(props){
     super(props);
     this.state ={
-      nombreUsuario: '',
-      contrasena: '',
+      nombreUsuario:    '',
+      contrasena:       '',
       ubicacionUsuario: '0.0,-0.0'
     };
   }
-
 
   static navigationOptions = {
     header: null
   } 
 
-  showAlert(){
+  showAlert(title, message){
     Alert.alert(
-      'No se puede iniciar sesión',
-      'El usuario o contraseña ingresada son incorrectos',
+      title,
+      message,
       [,
         {text: 'OK', onPress: () => console.log('OK Pressed')},
       ],
@@ -59,26 +60,29 @@ export default class LoginScreen extends React.Component {
       if(response.codigoRespuesta == 200){
         if(Platform.OS == 'android'){
           couchbase_lite.setUserdataDoc(response.tokenSiliconBear, this.state.nombreUsuario);
-        this.props.navigation.replace('Main');
+          this.props.navigation.replace('Main', {nombreUsuario: response.nombreUsuario, tokenSiliconBear: response.tokenSiliconBear});
         }
         if(Platform.OS == "ios"){
           couchbase_lite_native.setUserdataDocTXT(response.tokenSiliconBear, this.state.nombreUsuario);
-          
-        this.props.navigation.replace('Main');
+          this.props.navigation.replace('Main', {nombreUsuario: response.nombreUsuario, tokenSiliconBear: response.tokenSiliconBear});
         }
       } else{
-        this.showAlert();
+        this.showAlert('No se puede iniciar sesión','El usuario o contraseña ingresada son incorrectos');
       }
     })
     .catch(err => console.error(err));
   }
 
+  registerPress = () =>{
+    this.props.navigation.replace('Register');
+  }
+
   render() {
+    var { navigate } = this.props.navigation;
     return (
       <KeyboardAvoidingView behavior = "padding" style={styles.container}>
         <View style={{alignItems: 'center'}}>
           <Image source={require('../images/ojometropolitano.png')} style={styles.logoStyle} />
-        
         </View>
         <View style={styles.SectionStyle}>
           <View style={styles.imageBackground}>
@@ -116,6 +120,13 @@ export default class LoginScreen extends React.Component {
             onPress={this.loginPress}
           />
         </View>
+        <View style={styles.registerButton}>
+          <Button
+            title = "Registrarte"
+            color = "#51738e"
+            onPress = {() => navigate("Register", {})}
+            />
+        </View>
       </KeyboardAvoidingView>
     );
   }
@@ -125,49 +136,54 @@ const styles = StyleSheet.create({
  
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent:  'center',
     backgroundColor: '#3e4d59',
   },
   
   SectionStyle: {
-    flexDirection: 'row',
+    flexDirection:  'row',
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems:     'center',
     backgroundColor: 'rgba(255,255,255,0)',
-    borderWidth: .5,
-    borderColor: 'rgba(255,255,255,.4)',
-    height: 40,
+    borderWidth:  .5,
+    borderColor:  'rgba(255,255,255,.4)',
+    height:       40,
     borderRadius: 5 ,
-    margin: 10,
-    marginTop: 10
+    margin:       10,
+    marginTop:    10
   },
 
   loginButton: {
-    margin:10,
+    margin:    10,
+    marginTop: 10,
+  },
+
+  registerButton: {
+    margin:    10,
     marginTop: 10,
   },
 
   logoStyle: {
     margin: 5,
     height: 200,
-    width: 200,
-    resizeMode : 'stretch',
+    width:  200,
+    resizeMode: 'stretch',
   },
 
   imageBackground: {
     height: 40,
-    width: 40,
+    width:  40,
     backgroundColor: 'rgba(255,255,255,.4)',
     borderBottomLeftRadius: 5,
-    borderTopLeftRadius: 5
+    borderTopLeftRadius:    5
   },
 
   ImageStyle: {
       padding: 15,
-      margin: 5,
-      height: 25,
-      width: 25,
-      resizeMode : 'stretch',
+      margin:  5,
+      height:  25,
+      width:   25,
+      resizeMode: 'stretch',
       alignItems: 'center'
   },
 });
