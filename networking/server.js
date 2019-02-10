@@ -1,5 +1,3 @@
-import React, { component } from 'react'
-import { AppRegistry, SectionList, StyleSheet, Text, View, Alert, Platform } from 'react-native'
 const URL = 'http://siliconbear.dynu.net'
 const actualizarReportesGlobales = ':3030/API/inicio/ActualizarReportesGlobales'
 
