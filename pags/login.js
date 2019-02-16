@@ -6,23 +6,58 @@
  * @flow
  */
 
+import logo from '../images/ojometropolitano.png';
 import React from 'react';
-import {Platform, StyleSheet , View, TextInput, Image, Button, NativeModules, Alert, KeyboardAvoidingView} from 'react-native';
+import {Platform, StyleSheet, 
+        View,     TextInput, 
+        Image,    Button, 
+        NativeModules, Alert, 
+        KeyboardAvoidingView, 
+        Animated,Dimensions, 
+        Keyboard, StatusBar} from 'react-native';
 let couchbase_lite = NativeModules.couchbase_lite;
 let couchbase_lite_native = NativeModules.couchbase_lite_native;
 const URL = 'http://siliconbear.dynu.net:3030/API/inicio/IniciarSesion';
 const width = '80%';
 
+const window = Dimensions.get('window');
+const IMAGE_HEIGHT = window.width / 1.2;
+const IMAGE_HEIGHT_SMALL = window.height / 4;
+
 export default class LoginScreen extends React.Component 
 {
   constructor(props){
     super(props);
+    this.imageHeight = new Animated.Value(IMAGE_HEIGHT);
     this.state ={
       nombreUsuario:    '',
       contrasena:       '',
       ubicacionUsuario: '0.0,-0.0'
     };
   }
+  componentWillMount () {
+    this.keyboardWillShowSub = Keyboard.addListener('keyboardWillShow', this.keyboardWillShow);
+    this.keyboardWillHideSub = Keyboard.addListener('keyboardWillHide', this.keyboardWillHide);
+  }
+
+  componentWillUnmount() {
+    this.keyboardWillShowSub.remove();
+    this.keyboardWillHideSub.remove();
+  }
+
+  keyboardWillShow = (event) => {
+    Animated.timing(this.imageHeight, {
+      duration: event.duration,
+      toValue: IMAGE_HEIGHT_SMALL,
+    }).start();
+  };
+
+  keyboardWillHide = (event) => {
+    Animated.timing(this.imageHeight, {
+      duration: event.duration,
+      toValue: IMAGE_HEIGHT,
+    }).start();
+  };
 
   static navigationOptions = {
     header: null
@@ -80,9 +115,11 @@ export default class LoginScreen extends React.Component
   render() {
     var { navigate } = this.props.navigation;
     return (
+      
       <KeyboardAvoidingView behavior = "padding" style={styles.container}>
         <View style={{alignItems: 'center'}}>
-          <Image source={require('../images/ojometropolitano.png')} style={styles.logoStyle} />
+        <StatusBar hidden />
+          <Animated.Image source={logo} style={[styles.logo, { height: this.imageHeight }]} />
         </View>
         <View style={styles.SectionStyle}>
           <View style={styles.imageBackground}>
@@ -93,7 +130,7 @@ export default class LoginScreen extends React.Component
             placeholder=" Usuario"
             placeholderTextColor="rgba(255,255,255,.4)"
             underlineColorAndroid="transparent"
-            returnKeyType = "next"
+            returnKeyType = { "next" }
             onSubmitEditing = {() => this.contrasena.focus()}
             onChangeText={(text) => this.setState({nombreUsuario:text})}
           />
@@ -163,11 +200,12 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
 
-  logoStyle: {
-    margin: 5,
-    height: 200,
-    width:  200,
-    resizeMode: 'stretch',
+  logo: {
+    height: IMAGE_HEIGHT,
+    resizeMode:   'contain',
+    marginBottom: 0,
+    padding:      0,
+    marginTop:    20
   },
 
   imageBackground: {

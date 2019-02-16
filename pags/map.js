@@ -5,6 +5,7 @@ import {Marker} from 'react-native-maps';
 import ActionButton from 'react-native-action-button';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { Request_API } from '../networking/server';
+import { Platform } from 'react-native';
 const couchbase_liteAndroid = NativeModules.couchbase_lite;
 
 const actualizarReportesGlobales = ':3030/API/inicio/ActualizarReportesGlobales'
@@ -73,6 +74,7 @@ export default class MapScreen extends React.Component {
     this.setState({Titulo: "Reportar"})
   }
 
+  // User location Track 
   startLocTrack() {
     this.watchId = navigator.geolocation.watchPosition(
       (position) => {
@@ -96,26 +98,42 @@ export default class MapScreen extends React.Component {
   }
 
   petitionReports(){
-    couchbase_liteAndroid.getUserdataDoc(err => {
-      console.warn("chale me humillo")
-    },succ => {
-      this.setState({userInfo: succ[0]})
-      const userPetition = {
-        nombreUsuario: succ[0].userName,
-        tokenSiliconBear: succ[0].tokenSiliconBear,
-        ubicacionUsuario: this.state.region.latitude + ',' + this.state.region.longitude,
+    if (Platform.OS == 'android'){
+      couchbase_liteAndroid.getUserdataDoc(err => {
+        console.warn("chale me humillo")
+      },succ => {
+        this.setState({userInfo: succ[0]})
+        const userPetition = {
+          nombreUsuario: succ[0].userName,
+          tokenSiliconBear: succ[0].tokenSiliconBear,
+          ubicacionUsuario: this.state.region.latitude + ',' + this.state.region.longitude,
+        };
+        Request_API(userPetition, actualizarReportesGlobales)
+        .then(response => {
+          console.warn(JSON.stringify(response));
+          console.warn(this.state.userInfo.tokenSiliconBear);
+          if(response.codigoRespuesta === 200){
+            couchbase_liteAndroid.setReportDataDoc(JSON.stringify(response));
+            this.setState({reports:response.reportes});
+            console.warn(this.state.reports.id);
+          }
+        })
+      });
+    } 
+    if (Platform.OS == 'ios'){
+      const reportes = {
+        nombreUsuario: 'Delta',
+        tokenSiliconBear: 'b9c194c8-d9d1-423f-8190-b7f29287fae4',
+        ubicacionUsuario: '50.258598,19.020420',
       };
-      Request_API(userPetition, actualizarReportesGlobales)
+      Request_API(reportes, actualizarReportesGlobales)
       .then(response => {
-        console.warn(JSON.stringify(response));
-        console.warn(this.state.userInfo.tokenSiliconBear);
+        console.log(JSON.stringify(response));
         if(response.codigoRespuesta === 200){
-          couchbase_liteAndroid.setReportDataDoc(JSON.stringify(response));
           this.setState({reports:response.reportes});
-          console.warn(this.state.reports.id);
         }
-      })
-    });
+      });
+    };
   }
 }
 

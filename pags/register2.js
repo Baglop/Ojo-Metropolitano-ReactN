@@ -1,40 +1,30 @@
 import React, { Component } from 'react';
-import { BackHandler } from 'react-native';
-import { View, TextInput, Image, Animated, Keyboard, KeyboardAvoidingView, Dimensions, StyleSheet, Button} from 'react-native';
+import { View, TextInput, Image, Animated, Keyboard, KeyboardAvoidingView, Dimensions, StyleSheet,Button, Platform} from 'react-native';
 import logo from '../images/ojometropolitano.png';
-import {  } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import { Request_API } from '../networking/server';
 const window = Dimensions.get('window');
-const IMAGE_HEIGHT = window.width / 2;
-const IMAGE_HEIGHT_SMALL = window.width /7;
+const IMAGE_HEIGHT = window.width / 1.5;
+const IMAGE_HEIGHT_SMALL = window.height / 5;
 
 export default class RegisterScreen extends React.Component {
 
-    
-
-  componentDidMount() {
-    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
-  }
-  
-  handleBackButton() {
-    return true;
-  }
-
-  componentWillUnmount() {
-    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
-    this.keyboardWillShowSub.remove();
-    this.keyboardWillHideSub.remove();
-    
-  }
-
   static navigationOptions = {
-        header: null
-      } 
+    header: null
+  } 
 
   constructor(props) {
     super(props);
-
     this.imageHeight = new Animated.Value(IMAGE_HEIGHT);
+    this.state = {
+      correo: '',
+      nombres: '',
+      apellidoPaterno: '',
+      apellidoMaterno: '',
+      tokenFirebase: '',
+      imagenPerfil: '',
+      ubicacionUsuario: '0.0,-0.0'
+    };
+    this.getLocationUser();
   }
 
   componentWillMount () {
@@ -42,7 +32,10 @@ export default class RegisterScreen extends React.Component {
     this.keyboardWillHideSub = Keyboard.addListener('keyboardWillHide', this.keyboardWillHide);
   }
 
-  
+  componentWillUnmount() {
+    this.keyboardWillShowSub.remove();
+    this.keyboardWillHideSub.remove();
+  }
 
   keyboardWillShow = (event) => {
     Animated.timing(this.imageHeight, {
@@ -58,82 +51,116 @@ export default class RegisterScreen extends React.Component {
     }).start();
   };
 
+  getLocationUser(){
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        this.setState({
+          ubicacionUsuario: position.coords.latitude + ',' + position.coords.longitude
+        });
+      },
+      (error) => console.log(error)
+    );
+  }
+
   render() {
+    var { params } = this.props.navigation.state;
     return (
-    <ScrollView>
-        <View style={styles.container}>
-          <Animated.Image source={logo} style={[styles.logo, { height: this.imageHeight }]} />
-          <TextInput
-            placeholder="Email"
-            returnKeyType = "next"
-            onSubmitEditing = {() => this.user.focus()}
-            style={styles.input}
+      <KeyboardAvoidingView
+        style    = { styles.container }
+        behavior = "padding"
+        >
+          <Animated.Image 
+            source = { logo } 
+            style  = { [styles.logo, { height: this.imageHeight }] }
           />
           <TextInput
-            placeholder="Username"
-            returnKeyType = "next"
-            ref={(input) => this.user = input}
-            onSubmitEditing = {() => this.pass.focus()}
-            style={styles.input}
+            placeholder          = " Email"
+            returnKeyType        = "next"
+            keyboardType         = "email-address"
+            placeholderTextColor = "rgba(255,255,255,.4)"
+            style           = { styles.input }
+            onSubmitEditing = { () => this.email.focus() }
+            onChangeText    = { (text) => this.setState({correo:text}) }
           />
           <TextInput
-            placeholder="Password"
-            returnKeyType = "next"
-            ref={(input) => this.pass = input}
-            onSubmitEditing = {() => this.confirm_pass.focus()}
-            secureTextEntry={true} 
-            style={{flex:1}}
-            style={styles.input}
+            placeholder          = " Nombre(s)"
+            returnKeyType        = "next"
+            placeholderTextColor = "rgba(255,255,255,.4)"
+            style = { styles.input }
+            ref   = { (input) => this.email = input }
+            onSubmitEditing = { () => this.names.focus() } 
+            onChangeText    = { (text) => this.setState({nombres:text}) }           
           />
           <TextInput
-            placeholder="Confirm Password"
-            ref={(input) => this.confirm_pass = input}
-            secureTextEntry={true} 
-            style={{flex:1}}
-            returnKeyType = "go"
-            style={styles.input}
+            placeholder          = " Apellido paterno"
+            returnKeyType        = "next"
+            placeholderTextColor = "rgba(255,255,255,.4)"
+            style = { styles.input }
+            ref   = { (input) => this.names = input }
+            onSubmitEditing = { () => this.laste_name.focus() }
+            onChangeText    = { (text) => this.setState({apellidoPaterno:text}) }
+          />
+          <TextInput
+            placeholder          = " Apellido materno"
+            returnKeyType        = "done"
+            placeholderTextColor = "rgba(255,255,255,.4)"
+            style = { styles.input }
+            ref   = { (input) => this.laste_name = input }     
+            onChangeText    = { (text) => this.setState({apellidoMaterno:text}) }       
           />
           <View style={styles.loginButton}>
             <Button
-                title="Test"
-                color="#51738e"
-                onPress = {() => this.props.navigation.replace('Login')}
+              title = "Registrar"
+              color = "#FFFF"
+              
+              //onPress = {() => this.props.navigation.replace('Login')}
+              //onPress = {this.joinSB}
+              onPress = {() => {const bodyJoin = {
+                nombreUsuario: params.nombreUsuario,
+                contrasena:    params.contrasena,
+                celular:       params.celular,
+                correo:        this.state.correo,
+                nombres:       this.state.nombres,
+                apellidoPaterno:this.state.apellidoPaterno,
+                apellidoMaterno:this.state.apellidoMaterno,
+                tokenFirebase: '',
+                imagenPerfil: '',
+                ubicacionUsuario: this.state.ubicacionUsuario
+              }
+            console.warn(bodyJoin); }}
             />
           </View>
-        </View>
-    </ScrollView>
+      </KeyboardAvoidingView>
     );
   }
 };
 
 const styles = StyleSheet.create({
     container: {
-      backgroundColor: '#3e4d59',
       flex: 1,
-      alignItems:     'center',
-      justifyContent: 'center',
-      height: window.height
+      backgroundColor: '#3e4d59',      
+      alignItems:      'center',
+      justifyContent:  'center',
     },
-
     input: {
-        flexDirection:  'row',
-        justifyContent: 'center',
-        alignItems:     'center',
-        backgroundColor: 'rgba(255,255,255,0)',
+        flexDirection:   'row',
+        justifyContent:  'center',
+        alignItems:      'center',
+        backgroundColor: 'rgba(255,255,255,0)',        
+        borderColor:     'rgba(255,255,255,.4)',
         borderWidth:  .5,
-        borderColor:  'rgba(255,255,255,.4)',
-        height:       50,
+        height:       40,
         borderRadius: 5 ,
         margin:       10,
-        marginTop:    10,
+        marginTop:    1,
         width: window.width - 30
       },
     logo: {
-      height: IMAGE_HEIGHT,
+      height:       IMAGE_HEIGHT,
       resizeMode:   'contain',
-      marginBottom: 20,
-      padding:      10,
-      marginTop:    20
+      marginBottom: 0,
+      padding:      20,
+      marginTop:    -10
     },
     loginButton: {
         margin:    10,

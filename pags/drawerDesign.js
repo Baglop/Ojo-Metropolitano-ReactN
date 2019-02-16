@@ -8,14 +8,14 @@ export default class drawerDesign extends React.Component {
   
   loguotPress = () =>{
     if(Platform.OS == 'android'){
-      couchbase_lite.deleteUserdataDoc(err =>{
+      couchbase_lite.deleteUserdataDoc(err => {
         console.log(err);
       }, succ => {
         console.log(succ);
       });
     }
     if(Platform.OS == 'ios'){
-      couchbase_lite_native.deleteUserdataDoc(err =>{
+      couchbase_lite_native.deleteUserDataDocTXT(err => {
         console.log(err);
       }, succ => {
         console.log(succ);

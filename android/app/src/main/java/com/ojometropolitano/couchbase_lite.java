@@ -181,6 +181,7 @@ public class couchbase_lite extends ReactContextBaseJavaModule {
         MutableDocument mutableDocument = new MutableDocument()
             .setString("type", REPORTS_DOC)
             .setString("id", JHONSON.getString("id"))
+            .setString("tipo", JHONSON.getString("tipo"))
             .setDouble("latitude",JHONSON.getDouble("latitud"))
             .setDouble("longitude", JHONSON.getDouble("longitud"))
             .setString("fechaIncidente", JHONSON.getString("fechaIncidente"));
