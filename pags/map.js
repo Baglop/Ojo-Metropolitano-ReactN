@@ -1,20 +1,24 @@
 import React from "react";
-import { View, Text, StyleSheet, NativeModules, Modal } from "react-native";
+import { ScrollView, View, Text, TextInput, StyleSheet, NativeModules, Modal, TouchableOpacity, Picker } from "react-native";
 import MapView,{PROVIDER_GOOGLE} from 'react-native-maps';
 import {Marker} from 'react-native-maps';
 import ActionButton from 'react-native-action-button';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { Request_API } from '../networking/server';
 import { Platform } from 'react-native';
+import DatePicker from 'react-native-datepicker';
+import moment from 'moment';
+
 const couchbase_liteAndroid = NativeModules.couchbase_lite;
 
 const actualizarReportesGlobales = ':3030/API/inicio/ActualizarReportesGlobales'
-
+const realizarReporte= ':3030/API/inicio/LevantarReporte';
 
 
 export default class MapScreen extends React.Component {
 
   render() {
+    if(this.state.region.latitude > 0)
     return (
       <View style={styles.container}>
         <MapView style={styles.map}
@@ -29,15 +33,107 @@ export default class MapScreen extends React.Component {
             ))}
         </MapView>
         <ActionButton buttonColor="rgba(0,200,200,1)" >
-          <ActionButton.Item buttonColor='#9b59b6' size={45} title={this.state.Titulo} onPress={this.change_title}>
+          <ActionButton.Item buttonColor='#9b59b6' size={45} title={this.state.Titulo} onPress={() => this.openModal(true)}>
             <Icon name="md-create" style={styles.actionButtonIcon} />
           </ActionButton.Item>
           <ActionButton.Item buttonColor='#9b59b6' size={45} title="Mis reportes" onPress={() => console.log("notes tapped!")}>
             <Icon name="md-create" style={styles.actionButtonIcon} />
           </ActionButton.Item>
         </ActionButton>
+
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={this.state.modalVisible}
+          onRequestClose={() => {
+            this.openModal(!this.state.modalVisible);
+          }}
+        >
+          <View style={styles.containerModal}>
+            <MapView style={styles.modalMap}
+              provider={PROVIDER_GOOGLE}
+              initialRegion={this.state.region}>
+                <Marker draggable
+                  coordinate={this.state.markerCoord}
+                  title={"Reportar"}
+                  description={"Reporta un incidente"}
+                  onDragEnd={(e) => this.setState({markerCoord: e.nativeEvent.coordinate})}
+                />
+            </MapView>
+            <ScrollView style={{width:'100%'}} >
+              <Text style={{marginTop:10, marginBottom:5}} >Tipo de delito</Text>
+              <Picker
+                selectedValue={this.state.idReporte}
+                style={{height: 50, width: 200}}
+                onValueChange={(itemValue, itemIndex) =>
+                  this.setState({idReporte: itemValue})
+                }>
+                <Picker.Item label="Secuestro" value="1" />
+                <Picker.Item label="Asalto" value="2" />
+              </Picker>
+              <Text >Descripción</Text>
+              <TextInput
+                style={{flex:1,height:50,
+                  borderWidth: 2,
+                  borderColor: 'lightgrey',
+                  margin: 10,
+                  width:"65%"
+                }}
+                onChangeText = {(text) => {this.setState({reportDescription:text})}}
+                placeholderTextColor="rgba(255,255,255,.4)"
+                underlineColorAndroid="transparent"
+                returnKeyType = "next"
+                multiline={true}
+              />
+              <Text style={{marginBottom:10}} >Añadir evidencia</Text>
+              <Text style={{marginBottom:10}} >Fecha del incidente </Text>
+              <DatePicker
+                style={{width: 200, marginBottom:10}}
+                date={this.state.date}
+                mode="datetime"
+                placeholder="select date"
+                format="YYYY-MM-DD-HH:mm:ss"
+                minDate="2015-01-01"
+                maxDate={this.state.date}
+                confirmBtnText="Aceptar"
+                cancelBtnText="Cancelar"
+                customStyles={{
+                  dateIcon: {
+                    position: 'absolute',
+                    left: 0,
+                    top: 4,
+                    marginLeft: 0
+                  },
+                  dateInput: {
+                    marginLeft: 36
+                  }
+                  // ... You can check the source to find the other keys.
+                }}
+                onDateChange={(date) => {this.setState({date: date})}}
+              />
+              <View style={{flexDirection:"row",width:'100%',justifyContent:"center"}} >
+                <TouchableOpacity
+                  //style={{height:15,width:15}}
+                  onPress={() => {
+                    this.makeReportRequest();
+                  }}>
+                  <Icon name="md-checkmark-circle" style={styles.modalButtonIcon}/>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  //style={{height:15,width:15}}
+                  onPress={() => {
+                    this.openModal(!this.state.modalVisible);
+                  }}>
+                  <Icon name="md-close-circle" style={styles.modalButtonIcon}/>
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
+          </View>
+        </Modal>
       </View>
     );
+    else
+     return null;
   }
 
   constructor() {
@@ -45,10 +141,15 @@ export default class MapScreen extends React.Component {
     this.state = {
       Titulo: "Reportar",
       region:{
-        latitude: 20.653814,
-        longitude: -103.258566,
+        latitude: 0,
+        longitude: 0,
         latitudeDelta: 0.0400,
         longitudeDelta: 0.0200,
+      },
+      idReporte: 1,
+      markerCoord:{
+        latitude: 0,
+        longitude: 0,
       },
       reports:[],
       userInfo:{
@@ -57,21 +158,35 @@ export default class MapScreen extends React.Component {
         tokenSiliconBear:"",
       },
       error: null,
+      date:"2019-02-13-13:00:00",
+      error: null,
+      reportDescription:"",
+      modalVisible:false,
     }
-    this.startLocTrack();
   }
 
-
+  componentWillMount(){
+    this.startLocTrack();
+  }
 
   getRegion(region){
     this.setState({region})
   }
 
-  change_title = () =>{
-    if(this.state.Titulo == "Reportar")
-      this.setState({Titulo: "No"})
-    else
-    this.setState({Titulo: "Reportar"})
+  openModal(visible){
+    if(visible){
+      var currentDate = moment()
+        .utcOffset('-06:00')
+        .format('YYYY-MM-DD-hh:mm:ss');
+      this.setState({
+        markerCoord:{
+          latitude: this.state.region.latitude,
+          longitude: this.state.region.longitude,
+        },
+        date:currentDate
+      });
+    }
+    this.setState({modalVisible:visible})
   }
 
   // User location Track 
@@ -135,6 +250,27 @@ export default class MapScreen extends React.Component {
       });
     };
   }
+
+  makeReportRequest(){
+    const requestJHONSON = {
+      nombreUsuario: this.state.userInfo.userName,
+      tipoReporte: this.state.idReporte,
+      evidencia:null,
+      descripcion: this.state.reportDescription,
+      latitud: this.state.markerCoord.latitude,
+      longitud: this.state.markerCoord.longitude,
+      fechaIncidente: this.state.date,
+      tokenSiliconBear: this.state.userInfo.tokenSiliconBear,
+      ubicacionUsuario: this.state.region.latitude + ',' + this.state.region.longitude
+    }
+    console.warn(JSON.stringify(requestJHONSON));
+    Request_API(requestJHONSON, realizarReporte)
+      .then(response => {
+        console.warn(JSON.stringify(response));
+        console.warn(this.state.userInfo.tokenSiliconBear);
+      })
+  }
+
 }
 
 const styles = StyleSheet.create({
@@ -145,6 +281,17 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
+  containerModal: {
+    height: "100%",
+    width: "100%",
+    marginStart: 10,
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+  },
+  modalMap:{
+    height: "45%",
+    width: "100%",
+  },
   map: {
     ...StyleSheet.absoluteFillObject,
   },
@@ -152,5 +299,12 @@ const styles = StyleSheet.create({
     fontSize: 15,
     height: 15,
     color: 'white',
+  },
+  modalButtonIcon: {
+    fontSize: 40,
+    height: 40,
+    marginTop:10,
+    marginEnd:10,
+    color: 'black',
   },
  });

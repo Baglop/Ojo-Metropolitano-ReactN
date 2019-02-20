@@ -91,12 +91,12 @@ export default class OjoMetropolitano extends React.Component {
   }
 
   render() {
-    if(this.state.logged)
-      return <Logged />
+    if(this.state.logged != null)
+      if(this.state.logged)
+        return <Logged />
+      else 
+        return <Unlogged/>
     else 
-    {
-      console.log(this.state.logged)
-      return <Unlogged/>
-    }
+      return null;
   }
 }
