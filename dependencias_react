@@ -1,3 +1,3 @@
 Lista de dependencias instaladas a partir del 20/02/2019
 
-'react-native-datepicker'
+npm install react-native-datepicker --save
