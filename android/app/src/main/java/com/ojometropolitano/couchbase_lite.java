@@ -31,6 +31,7 @@ public class couchbase_lite extends ReactContextBaseJavaModule {
      private Database database;
     private String USER_DOC = "userData";
     private String REPORTS_DOC = "reportData";
+    private String USER_REPORTS_DOC= "userReports";
 
     couchbase_lite(ReactApplicationContext reactContext){
         super(reactContext);
@@ -143,7 +144,13 @@ public class couchbase_lite extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    private void setReportDataDoc(String reportDataResponse){
+    private void setReportDataDoc(String reportDataResponse, int docType){
+        String DOC_NAME = "";
+        if(docType == 1)
+            DOC_NAME = REPORTS_DOC;
+        else if(docType == 2)
+            DOC_NAME = USER_REPORTS_DOC;
+
         Query query = QueryBuilder
         .select(
             SelectResult.expression(Meta.id)
@@ -151,25 +158,29 @@ public class couchbase_lite extends ReactContextBaseJavaModule {
         .from(DataSource.database(database))
         .where(
             Expression.property("type")
-            .equalTo(Expression.string(REPORTS_DOC))
+            .equalTo(Expression.string(DOC_NAME))
         );
         try {
             ResultSet resultSet = query.execute();
             List<Result> list = resultSet.allResults();
             JSONObject JHONSON = new JSONObject(reportDataResponse);
             JSONArray JHONSONArr = JHONSON.getJSONArray("reportes");
-            if(!list.isEmpty())
-            {
-                for(Result result : resultSet)
-                {
+            if(!list.isEmpty()){
+                for(Result result : resultSet){
                     String documentId = result.getString("id");
                     database.delete(database.getDocument(documentId));
                 }
-
-                for(int i = 0; i < JHONSONArr.length(); i++){
-                    JSONObject JHONSONObject = JHONSONArr.getJSONObject(i);
-                    createReportDoc(JHONSONObject);
-                }
+                
+                if(docType == 1)
+                    for(int i = 0; i < JHONSONArr.length(); i++){
+                        JSONObject JHONSONObject = JHONSONArr.getJSONObject(i);
+                        createReportDoc(JHONSONObject);
+                    }
+                else if(docType == 2)
+                    for(int i = 0; i < JHONSONArr.length(); i++){
+                        JSONObject JHONSONObject = JHONSONArr.getJSONObject(i);
+                        createUserReportDoc(JHONSONObject);
+                    }
             }
         } catch (CouchbaseLiteException | JSONException e ) {
             e.printStackTrace();
@@ -185,6 +196,26 @@ public class couchbase_lite extends ReactContextBaseJavaModule {
             .setDouble("latitude",JHONSON.getDouble("latitud"))
             .setDouble("longitude", JHONSON.getDouble("longitud"))
             .setString("fechaIncidente", JHONSON.getString("fechaIncidente"));
+        database.save(mutableDocument);
+        } catch(CouchbaseLiteException | JSONException e){
+            e.printStackTrace();
+        }
+    }
+
+    void createUserReportDoc(JSONObject JHONSON){
+        try{
+        MutableDocument mutableDocument = new MutableDocument()
+            .setString("type", USER_REPORTS_DOC)
+            .setString("_id", JHONSON.getString("id"))
+            .setString("autorReporte", JHONSON.getString("autorReporte"))
+            .setString("tipo", JHONSON.getString("autorReporte"))
+            .setString("descripcion", JHONSON.getString("descripcion"))
+            .setString("evidencia", JHONSON.getString("evidencia"))
+            .setDouble("latitude",JHONSON.getDouble("latitud"))
+            .setDouble("longitude", JHONSON.getDouble("longitud"))
+            .setString("fechaIncidente", JHONSON.getString("fechaIncidente"))
+            .setString("fechaReporte",JHONSON.getString("fechaIncidente"))
+            .setString("ubicacionUsuario", JHONSON.getString("ubicacionUsuario"));
         database.save(mutableDocument);
         } catch(CouchbaseLiteException | JSONException e){
             e.printStackTrace();
