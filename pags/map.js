@@ -10,6 +10,7 @@ import DatePicker from 'react-native-datepicker';
 import moment from 'moment';
 
 const couchbase_liteAndroid = NativeModules.couchbase_lite;
+const couchbase_lite_native = NativeModules.couchbase_lite_native;
 
 const actualizarReportesGlobales = ':3030/API/inicio/ActualizarReportesGlobales'
 const realizarReporte= ':3030/API/inicio/LevantarReporte';
@@ -314,18 +315,25 @@ export default class MapScreen extends React.Component {
       });
     } 
     if (Platform.OS == 'ios'){
-      const reportes = {
-        nombreUsuario: 'Delta',
-        tokenSiliconBear: 'b9c194c8-d9d1-423f-8190-b7f29287fae4',
-        ubicacionUsuario: '50.258598,19.020420',
-      };
-      Request_API(reportes, actualizarReportesGlobales)
-      .then(response => {
-        console.log(JSON.stringify(response));
-        if(response.codigoRespuesta === 200){
-          this.setState({reports:response.reportes});
-        }
-      });
+      couchbase_lite_native.getUserdataDocTXT(err => {
+        console.warn("chale me humillo")
+      }, succ => {
+          this.setState({userInfo: succ[0]})
+          const userPetition = {
+            nombreUsuario: succ[0].userName,
+            tokenSiliconBear: succ[0].tokenSiliconBear,
+            ubicacionUsuario: this.state.region.latitude + ',' + this.state.region.longitude,
+          };
+          Request_API(userPetition, actualizarReportesGlobales)
+          .then(response => {
+            console.log(JSON.stringify(response));
+            if(response.codigoRespuesta === 200){
+              /*couchbase_lite_native.setReportDataDocTXT(JSON.stringify(response));*/
+              this.setState({reports:response.reportes});
+              console.warn("Exito en todo alv")
+            }
+          });
+      })
     };
   }
 

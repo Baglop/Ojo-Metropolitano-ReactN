@@ -96,7 +96,7 @@ export default class OjoMetropolitano extends React.Component {
         return <Logged />
       else 
         return <Unlogged/>
-    else 
-      return null;
+    else
+      return <Unlogged/>;
   }
 }

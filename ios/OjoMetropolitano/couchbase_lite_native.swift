@@ -8,23 +8,38 @@
 
 import Foundation
 import Foundation
-
 import CouchbaseLiteSwift
 
+struct ReportsGlobal: Decodable {
+  let codigoRespuesta: Int
+  let mensaje:         String
+  let reportes:        [Reportes]
+}
+
+struct Reportes : Decodable {
+  let id:             String
+  let tipo:           String
+  let latitud:       String
+  let longitud:      String
+  let fechaIncidente: String
+}
 
 @objc (couchbase_lite_native)
 class couchbase_lite_native : NSObject
 {
-  let database = DatabaseManager.sharedInstance().database
-  let USER_DOC = "userData"
+  let database         = DatabaseManager.sharedInstance().database
+  let USER_DOC         = "userData"
+  let REPORTS_DOC      = "reportData"
+  let USER_REPORTS_DOC = "userReports"
   
-  @objc func userDataDocExistTXT(_ errorCallback: @escaping (Bool) -> Void, _ successCallback: @escaping (String) -> Void) {
-    
+  @objc func userDataDocExistTXT(_ errorCallback: @escaping (Bool) -> Void, _ successCallback: @escaping (String) -> Void)
+  {
     let query = QueryBuilder
       .select(SelectResult.expression(Meta.id))
       .from(DataSource.database(self.database))
       .where(Expression.property("type")
-        .equalTo(Expression.string(USER_DOC)));
+      .equalTo(Expression.string(USER_DOC)));
+    
     do {
       let resulSet = try query.execute()
       let array = resulSet.allResults()
@@ -48,6 +63,35 @@ class couchbase_lite_native : NSObject
     }
   }
   
+  @objc func getUserdataDocTXT(_ errorCallback: @escaping (Bool) -> Void, _ successCallback: @escaping ([[[AnyHashable : Any ]]]) -> Void)
+  {
+      let query = QueryBuilder
+      .select(
+        SelectResult.expression(Meta.id),
+        SelectResult.expression(Expression.property("userName")),
+        SelectResult.expression(Expression.property("tokenSiliconBear"))
+      )
+      .from(DataSource.database(self.database))
+      .where(Expression.property("type")
+      .equalTo(Expression.string(USER_DOC)));
+    
+    do{
+      let resulSet = try query.execute()
+      var array: [[AnyHashable : Any]] = []
+      for result in resulSet {
+        let map = result.toDictionary()
+        print("10______***************************************************")
+        print(result.toDictionary())
+        print("11______***************************************************")
+        array.append(map)
+      }
+      successCallback([array])
+    } catch {
+      print(error)
+      errorCallback(false)
+    }
+  }
+  
   @objc func setUserdataDocTXT(_ userDataResponse : String, _ userName : String)
   {
     do {
@@ -65,12 +109,14 @@ class couchbase_lite_native : NSObject
     }
   }
   
-  @objc func deleteUserDataDocTXT(_ errorCallback: @escaping (String) -> Void, _ successCallback: @escaping (String) -> Void) {
+  @objc func deleteUserDataDocTXT(_ errorCallback: @escaping (String) -> Void, _ successCallback: @escaping (String) -> Void)
+  {
     let query = QueryBuilder
       .select(SelectResult.expression(Meta.id))
       .from(DataSource.database(self.database))
       .where(Expression.property("type")
-        .equalTo(Expression.string(USER_DOC)));
+      .equalTo(Expression.string(USER_DOC)));
+    
     do {
       let resulSet = try query.execute()
       let array = resulSet.allResults()
@@ -95,30 +141,38 @@ class couchbase_lite_native : NSObject
     }
   }
   
-  func findOrCreateBookmarkDocument() -> MutableDocument {
+  @objc func setReportDataDocTXT(_ reportDataResponse : String, _ docType : Int)
+  {
+    var DOC_NAME = ""
+    if(docType == 1) {
+      DOC_NAME = REPORTS_DOC
+    }
+    else if (docType == 2) {
+      DOC_NAME = USER_REPORTS_DOC
+    }
+    let data = reportDataResponse.data(using: .utf8)
     let query = QueryBuilder
-      .select(
-        SelectResult.expression(Meta.id))
-      .from(DataSource.database(database))
-      .where(
-        Expression.property("type")
-          .equalTo(Expression.string(USER_DOC)))
-    
-    do {
-      let resultSet = try query.execute()
-      let array = resultSet.allResults()
-      if (array.count == 0) {
-        let mutableDocument = MutableDocument()
-          .setString(USER_DOC, forKey: "type")
-        try database.saveDocument(mutableDocument)
-        return mutableDocument
-      } else {
-        let documentId = array[0].string(forKey: "id")!
-        let document = database.document(withID: documentId)!
-        return document.toMutable()
+      .select(SelectResult.expression(Meta.id))
+      .from(DataSource.database(self.database))
+      .where(Expression.property("type")
+      .equalTo(Expression.string(REPORTS_DOC)));
+    do{
+      let resulSet = try query.execute()
+      let array = resulSet.allResults()
+      let reportsGlobal = try JSONDecoder().decode(ReportsGlobal.self, from: data!)
+      print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+      print(reportsGlobal.reportes)
+      print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+      if (array.count == 0){
+        for resultados in resulSet{
+          let documentID = resultados.string(forKey: "id")!
+          let document = database.document(withID: documentID)!
+          try database.purgeDocument(document)
+        }
       }
     } catch {
-      fatalError(error.localizedDescription);
+      print(error)
     }
   }
+
 }

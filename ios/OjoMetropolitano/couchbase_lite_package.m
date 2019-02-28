@@ -17,6 +17,10 @@ RCT_EXTERN_METHOD(setUserdataDocTXT :(NSString *)userDataResponse :(NSString *)u
 
 RCT_EXTERN_METHOD(deleteUserDataDocTXT :(RCTResponseSenderBlock)errorCallback :(RCTResponseSenderBlock)successCallback)
 
+RCT_EXTERN_METHOD(getUserdataDocTXT :(RCTResponseSenderBlock)errorCallback :(RCTResponseSenderBlock)successCallback)
+
+RCT_EXTERN_METHOD(setReportDataDocTXT :(NSString *)reportDataResponse :(NSInteger *)docType)
+
 + (BOOL)requiresMainQueueSetup
 {
   return YES;
