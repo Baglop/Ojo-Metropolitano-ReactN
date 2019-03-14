@@ -353,6 +353,7 @@ export default class MapScreen extends React.Component {
           console.warn(JSON.stringify(response));
           if(response.codigoRespuesta === 200){
             couchbase_liteAndroid.setReportDataDoc(JSON.stringify(response),2);
+            console.log("Se supone que ya quedaron en base de datos")
             this.setState({userReports:response.reportes});
             console.warn(this.state.reports.id);
           }
@@ -404,7 +405,7 @@ export default class MapScreen extends React.Component {
     console.warn(JSON.stringify(requestJHONSON));
     Request_API(requestJHONSON, infoReporte)
       .then(response => {
-        console.warn(JSON.stringify(response));
+        //console.warn(JSON.stringify(response));
         this.setState({actualReportInfo: response.reporte})
         console.warn(this.state.actualReportInfo);
         this.openModalReportInfo(true);

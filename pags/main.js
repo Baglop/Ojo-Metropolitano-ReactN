@@ -5,9 +5,7 @@ import PoliceScreen from "./police"
 import ContactScreen from "./contacts"
 import ProfileScreen from "./profile"
 import { createBottomTabNavigator, createAppContainer } from "react-navigation";
-import AntDesign from 'react-native-vector-icons/AntDesign';
-
-//const URL = 'http://siliconbear.dynu.net:3030/API/inicio/ActualizarReportesGlobales';
+import AntDesign from 'react-native-vector-icons/AntDesign'
 
 
 const TabNavigator = createBottomTabNavigator({
@@ -35,11 +33,9 @@ const TabNavigator = createBottomTabNavigator({
         }else if (routeName === 'Policia'){
           AntName='Safety';
         }
-
-        // You can return any component that you like here!
         return <AntComponent name={AntName} size={25} color={tintColor} />;
       },
-    }),
+    })
   }
 );
 

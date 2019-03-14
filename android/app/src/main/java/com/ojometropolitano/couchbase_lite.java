@@ -1,5 +1,7 @@
 package com.ojometropolitano;
 
+import android.util.Log;
+
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
@@ -101,6 +103,43 @@ public class couchbase_lite extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    private void getUserReportsDoc(Callback error, Callback success){
+        Query query = QueryBuilder
+        .select(
+            SelectResult.expression(Meta.id),
+            SelectResult.property("_id"),
+            SelectResult.property("autorReporte"),
+            SelectResult.property("tipoReporte"),
+            SelectResult.property("descripcion"),
+            SelectResult.property("evidencia"),
+            SelectResult.property("fechaIncidente"),
+            SelectResult.property("latitud"),
+            SelectResult.property("longitud"),
+            SelectResult.property("fechaReporte"),
+            SelectResult.property("ubicacionUsuario")
+        )
+        .from(DataSource.database(database))
+        .where(
+            Expression.property("type")
+            .equalTo(Expression.string(USER_REPORTS_DOC))
+        );
+
+        try {
+            ResultSet resultSet = query.execute();
+            WritableArray writableArray = Arguments.createArray();
+            assert resultSet != null;
+            for (Result result : resultSet) {
+                WritableMap writableMap = Arguments.makeNativeMap(result.toMap());
+                writableArray.pushMap(writableMap);
+            }
+            success.invoke(writableArray);
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+            error.invoke();
+        }
+    }
+
+    @ReactMethod
     private void setUserdataDoc(String userDataResponse, String userName){
         try {
             MutableDocument mutableDocument = new MutableDocument()
@@ -124,6 +163,36 @@ public class couchbase_lite extends ReactContextBaseJavaModule {
                 Expression.property("type")
                 .equalTo(Expression.string(USER_DOC))
             );
+
+        try {
+            ResultSet resultSet = query.execute();
+            List<Result> list = resultSet.allResults();
+
+            if (list.isEmpty()) {
+                err.invoke("No hay documentos");
+            } else {
+                Result result = list.get(0);
+                String documentId = result.getString("id");
+                database.delete(database.getDocument(documentId));
+                succ.invoke("Documento eliminado");
+            }
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+            err.invoke("Error");
+        }
+    }
+
+    @ReactMethod
+    private void deleteUserReportsDoc(Callback err, Callback succ) {
+        Query query = QueryBuilder
+                .select(
+                        SelectResult.expression(Meta.id)
+                )
+                .from(DataSource.database(database))
+                .where(
+                        Expression.property("type")
+                                .equalTo(Expression.string(USER_REPORTS_DOC))
+                );
 
         try {
             ResultSet resultSet = query.execute();
@@ -171,16 +240,20 @@ public class couchbase_lite extends ReactContextBaseJavaModule {
                     database.delete(database.getDocument(documentId));
                 }
                 
-                if(docType == 1)
-                    for(int i = 0; i < JHONSONArr.length(); i++){
+                if(docType == 1) {
+                    for (int i = 0; i < JHONSONArr.length(); i++) {
                         JSONObject JHONSONObject = JHONSONArr.getJSONObject(i);
                         createReportDoc(JHONSONObject);
                     }
-                else if(docType == 2)
-                    for(int i = 0; i < JHONSONArr.length(); i++){
+                    Log.d("AVISO","Si entro y debio guardar en base de datos alv 248");
+                }
+                else if(docType == 2){
+                    for (int i = 0; i < JHONSONArr.length(); i++) {
                         JSONObject JHONSONObject = JHONSONArr.getJSONObject(i);
                         createUserReportDoc(JHONSONObject);
                     }
+                    Log.d("AVISO","Si entro y debio guardar en base de datos alv 255");
+                }
             }
         } catch (CouchbaseLiteException | JSONException e ) {
             e.printStackTrace();
@@ -206,15 +279,15 @@ public class couchbase_lite extends ReactContextBaseJavaModule {
         try{
         MutableDocument mutableDocument = new MutableDocument()
             .setString("type", USER_REPORTS_DOC)
-            .setString("_id", JHONSON.getString("id"))
+            .setString("_id", JHONSON.getString("_id"))
             .setString("autorReporte", JHONSON.getString("autorReporte"))
-            .setString("tipo", JHONSON.getString("autorReporte"))
+            .setString("tipoReporte", JHONSON.getString("tipoReporte"))
             .setString("descripcion", JHONSON.getString("descripcion"))
             .setString("evidencia", JHONSON.getString("evidencia"))
-            .setDouble("latitude",JHONSON.getDouble("latitud"))
-            .setDouble("longitude", JHONSON.getDouble("longitud"))
             .setString("fechaIncidente", JHONSON.getString("fechaIncidente"))
-            .setString("fechaReporte",JHONSON.getString("fechaIncidente"))
+            .setDouble("latitud",JHONSON.getDouble("latitud"))
+            .setDouble("longitud", JHONSON.getDouble("longitud"))
+            .setString("fechaReporte",JHONSON.getString("fechaReporte"))
             .setString("ubicacionUsuario", JHONSON.getString("ubicacionUsuario"));
         database.save(mutableDocument);
         } catch(CouchbaseLiteException | JSONException e){

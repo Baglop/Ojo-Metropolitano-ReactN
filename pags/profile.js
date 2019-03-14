@@ -1,25 +1,84 @@
 import React from "react";
-import { View, Text,StyleSheet,Platform, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text,StyleSheet,Platform, TouchableOpacity, ScrollView, NativeModules} from "react-native";
 import { createDrawerNavigator,createAppContainer} from "react-navigation";
 import Bg from '../images/citybackground.png';
 import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header-scroll-view';
 import Icon from 'react-native-vector-icons/Ionicons';
 import drawerDesign from './drawerDesign'
-
-
 import { Card } from 'react-native-elements'
 import { Button, Image } from 'react-native-elements';
+import Modal from "react-native-modal";
+import _ from 'lodash';
+import { Request_API } from '../networking/server';
+const reportesUsuario = ':3030/API/inicio/ActualizarMisReportes';
+
+const couchbase_liteAndroid = NativeModules.couchbase_lite;
 
 class ProfileScreenConent extends React.Component {
-  
+
   static navigationOptions = {
     header: null
   }
 
   constructor(props) {
     super(props);
-    this.state = { openBar: false };
+    this.state = { 
+      openBar: false,
+      userInfo: [],
+      visibleModal: null,
+      region:{
+        latitude: 0,
+        longitude: 0
+      }
+    }
   }
+
+  startLocTrack(){
+      if (Platform.OS == 'android'){
+        couchbase_liteAndroid.getUserdataDoc(err => {
+          console.warn("chale me humillo")
+        },succ => {
+          this.setState({userInfo: succ[0]})
+          const userPetition = {
+            nombreUsuario: succ[0].userName,
+            tokenSiliconBear: succ[0].tokenSiliconBear,
+            ubicacionUsuario: this.state.region.latitude + ',' + this.state.region.longitude,
+          };
+          Request_API(userPetition, reportesUsuario)
+          .then(response => {
+            console.warn(JSON.stringify(response));
+            if(response.codigoRespuesta === 200){
+              couchbase_liteAndroid.setReportDataDoc(JSON.stringify(response),2);
+              this.setState({userReports:response.reportes});
+              console.warn(this.state.reports.id);
+            }
+          })
+        });
+      }
+  }
+
+  componentDidMount(){
+    this.startLocTrack()
+  }
+
+  renderButton = (text, onPress) => (
+    <TouchableOpacity onPress={onPress}>
+      <View style={styles.buttonModal}>
+        <Text>{text}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+
+  renderModalContent = () => (
+    <View style={styles.modalContent}>
+      <View style = {{height: 300}}>
+        <ScrollView style={{height: 500, }}>
+          <Text style={{margin:5}}> { this.state.userInfo[0]} </Text>
+        </ScrollView>
+      </View>
+      {this.renderButton("Close", () => this.setState({ visibleModal: null }))}
+    </View>
+  );
 
   _renderProfile(){
     return(
@@ -35,8 +94,6 @@ class ProfileScreenConent extends React.Component {
     )
   }
 
-  
-
   renderLeftSidebar() {
     return(
       <View>
@@ -44,35 +101,17 @@ class ProfileScreenConent extends React.Component {
       </View>
     )
   }
-
   openSideBar = () => this.setState({ openBar: true })
 
-  
-
   render() {
-
     var payments = [];
-
-    for(let i = 0; i < 3; i++){
+    for(let i = 0; i <1; i++){
       payments.push(
-        //<View style = {{height: 200, width: window.width}}>                
-        <View style = {{height: 150, width: 250}}>
-      <Card key = {i}
-        title='HELLO WORLD'
-        image={require('../images/maps.png')}>
-        <Text style={{marginBottom: 10}}>
-        The idea with React Native Elements is more about component structure than actual design.
-        </Text>
-        <Button
-        backgroundColor = '#03A9F4'
-        buttonStyle={{borderRadius: 5, marginLeft: 0, marginRight: 0, marginBottom: 0}}
-        title='Detalles'/>
-      </Card>
-      </View>
-      //</View> 
+          this.renderButton("Sliding from the sides", () =>
+          this.setState({ visibleModal: 2 }),
+        )
       )
-      }
-
+    }
     return (
       <View style={{ flex: 1 }}>
         <HeaderImageScrollView
@@ -89,20 +128,17 @@ class ProfileScreenConent extends React.Component {
         >
           <View style={{ height: 1000 }}>
             <TriggeringView onHide={() => console.log('text hidden')} >
-              <Text>Perfil</Text>
-                  <View style = {{height: 600}}>
-                    
-                  </View>
-                    <View style = {{height: 350, width: window.width, marginStart: 0}}>
-                      <Text>
-                        Mis Reportes
-                      </Text>
-                      <ScrollView horizontal = {true} showsHorizontalScrollIndicator = { false }>
-                        { payments }
-                      </ScrollView> 
-                    </View>                       
-                            
-
+              <Text>Perfil</Text> 
+              <ScrollView horizontal = {true} showsHorizontalScrollIndicator = { false }>
+                {payments}                
+              </ScrollView>
+                <Modal
+                  isVisible={this.state.visibleModal === 2}
+                  animationIn="slideInRight"
+                  animationOut="slideOutLeft"
+                  onBackdropPress={() => this.setState({ visibleModal: null })}>
+                  {this.renderModalContent()}
+                </Modal>
             </TriggeringView>
           </View>
         </HeaderImageScrollView>
@@ -125,11 +161,28 @@ const styles = StyleSheet.create({
     position:'absolute',
     justifyContent: 'center',
   },
+  buttonModal: {
+    backgroundColor: "lightblue",
+    padding: 12,
+    margin: 16,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 15,
+    borderColor: "rgba(0, 0, 0, 0.1)",
+  },
   buttonIcon: {
     fontSize: 30,
     height: 30,
     color:'black',
-  }
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: 22,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+    borderColor: "rgba(0, 0, 0, 0.1)",
+  },
  });
 
  const MyDrawerNavigator = createDrawerNavigator({
@@ -151,4 +204,3 @@ export default class ProfileScreen extends React.Component {
     );
   }
 }
-

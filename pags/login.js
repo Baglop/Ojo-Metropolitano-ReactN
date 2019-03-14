@@ -114,8 +114,7 @@ export default class LoginScreen extends React.Component
 
   render() {
     var { navigate } = this.props.navigation;
-    return (
-      
+    return (      
       <KeyboardAvoidingView behavior = "padding" style={styles.container}>
         <View style={{alignItems: 'center'}}>
         <StatusBar hidden />

@@ -12,7 +12,7 @@ const URL = 'http://siliconbear.dynu.net'
             body: JSON.stringify(params)
         });
         let responseJson = await response.json();
-        console.log(JSON.stringify(responseJson));
+        //console.log(JSON.stringify(responseJson));
         return responseJson;
     } catch (error) {
         console.error(`No se pudo por este problema : ${error}`);

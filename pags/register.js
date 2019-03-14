@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { View, TextInput, Image, Animated, Keyboard, KeyboardAvoidingView, Dimensions, StyleSheet,Button} from 'react-native';
+import { TextField } from 'react-native-material-textfield';
 import logo from '../images/ojometropolitano.png';
 const window = Dimensions.get('window');
 const IMAGE_HEIGHT = window.width / 1.5;
@@ -17,7 +18,7 @@ export default class RegisterScreen extends React.Component {
     this.state = {
       nombreUsuario: '',
       contrasena:    '',
-      celular:       ''
+      celular:       '',
     }
   }
 

@@ -13,6 +13,12 @@ export default class drawerDesign extends React.Component {
       }, succ => {
         console.log(succ);
       });
+
+      couchbase_lite.deleteUserReportsDoc(err => {
+        console.log(err);
+      }, succ => {
+        console.log(succ);
+      });
     }
     if(Platform.OS == 'ios'){
       couchbase_lite_native.deleteUserDataDocTXT(err => {
