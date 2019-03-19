@@ -330,7 +330,6 @@ export default class MapScreen extends React.Component {
             if(response.codigoRespuesta === 200){
               /*couchbase_lite_native.setReportDataDocTXT(JSON.stringify(response));*/
               this.setState({reports:response.reportes});
-              console.warn("Exito en todo alv")
             }
           });
       })
