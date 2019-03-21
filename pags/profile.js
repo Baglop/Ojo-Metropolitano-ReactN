@@ -12,9 +12,10 @@ import { Button, Image } from 'react-native-elements';
 import Modal from "react-native-modal";
 import _ from 'lodash';
 import { Request_API } from '../networking/server';
+const window = Dimensions.get('window');
 const reportesUsuario = ':3030/API/inicio/ActualizarMisReportes';
 const deleteReporteUsuario = ':3030/API/inicio/EliminarReporte';
-const image = 'https://static1.ideal.es/www/multimedia/201808/06/media/cortadas/ROBAR-MOTOS-k0eE-U605631437599GD-624x385@Ideal.jpg'
+const image = 'http://okcundinamarca.com/wp-content/uploads/2017/08/robo-a-mano-armada.jpg'
 const profile = 'https://images.goodsmile.info/cgm/images/product/20170721/6596/46630/large/fc0a3e0931f953140831e0be59d36123.jpg'
 
 let couchbase_lite_native = NativeModules.couchbase_lite_native;
@@ -155,26 +156,26 @@ class ProfileScreenConent extends React.Component {
     return(
     <View style={styles.modalContent}>
       <View style = {{height: 370}}>
-        <ScrollView width = {260}>
+        <ScrollView width = {window.width - 60}>
           <Text style={{margin:5}}> ID del Reporte:</Text>
           <Text style={{margin:5}}> {this.state.reporte._id} </Text>
           <Text style={{margin:5}}> {this.state.reporte.autorReporte} </Text>
           <Text style={{margin:5}}> {this.state.reporte.tipoReporte} </Text>
-          <TextInput style={{margin:5}} multiline = {true}> {this.state.reporte.descripcion} </TextInput>
-          <Image style={styles.itemPic} source={{uri: image}}/>
-          <Text style={{margin:5}}> {this.state.reporte.evidencia} </Text>
           <Text style={{margin:5}}> {this.state.reporte.fechaIncidente} </Text>
           <Text style={{margin:5}}> {this.state.reporte.fechaReporte} </Text>
+          <TextInput multiline = {true}> {this.state.reporte.descripcion} </TextInput>
+          <Image style={styles.itemPic} source={{uri: image}}/>
+          <Text style={{margin:5}}> {this.state.reporte.evidencia} </Text>
           <View height={250}>
             <MapView style={styles.modalMap}
               provider={PROVIDER_GOOGLE}
               initialRegion={{
-                latitude: this.state.reporte.latitud,
-                longitude: this.state.reporte.longitud,
-                latitudeDelta: 0.0400,
-                longitudeDelta: 0.0200}}>
+                latitude: this.state.reporte.latitud && parseFloat(this.state.reporte.latitud),
+                longitude: this.state.reporte.longitud && parseFloat(this.state.reporte.longitud),
+                latitudeDelta: 0.0100,
+                longitudeDelta: 0.0025}}>
                 <Marker
-                  coordinate={{latitude: this.state.reporte.latitud, longitude: this.state.reporte.longitud}}
+                  coordinate={{latitude: this.state.reporte.latitud && parseFloat(this.state.reporte.latitud), longitude: this.state.reporte.longitud && parseFloat(this.state.reporte.longitud)}}
                 />
             </MapView>
           </View>
@@ -311,7 +312,7 @@ const styles = StyleSheet.create({
   },
   itemPic: {
     height: 300,
-    width: 300,
+    width: window.width - 60,
     backgroundColor: '#c5c5c5',
     justifyContent: "center",
   },
