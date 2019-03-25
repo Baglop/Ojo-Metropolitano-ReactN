@@ -163,6 +163,13 @@ export default class LoginScreen extends React.Component
             onPress = {() => navigate("Register", {})}
             />
         </View>
+        <View style={styles.registerButton}>
+          <Button
+            title = "Camera"
+            color = "#51738e"
+            onPress = {() => navigate("Camera", {})}
+            />
+        </View>
       </KeyboardAvoidingView>
     );
   }
