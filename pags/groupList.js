@@ -21,10 +21,6 @@ const groups = [
     {
         key: "5",
         name: "Test"
-    },
-    {
-        key: "6",
-        name: "Test"
     }
 ]
 

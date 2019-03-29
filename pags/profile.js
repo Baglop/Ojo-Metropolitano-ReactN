@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text,StyleSheet,Platform, TouchableOpacity, ScrollView, NativeModules, Alert, TextInput, Dimensions} from "react-native";
+import { View, Text,StyleSheet,Platform, TouchableOpacity, ScrollView, NativeModules, Alert, TextInput, Dimensions, KeyboardAvoidingView} from "react-native";
 import { createDrawerNavigator,createAppContainer} from "react-navigation";
 import MapView,{PROVIDER_GOOGLE} from 'react-native-maps';
 import {Marker} from 'react-native-maps';
@@ -37,6 +37,12 @@ class ProfileScreenConent extends React.Component {
       visibleModal: null,
       reporte: [],
       ubicacionUsuario: '0.0,-0.0',
+      region:{
+        latitude: 0,
+        longitude: 0,
+        latitudeDelta: 0.0100,
+        longitudeDelta: 0.0025,
+      },
     };
     this.getLocationUser();
   }
@@ -152,32 +158,46 @@ class ProfileScreenConent extends React.Component {
   }
 
   renderModalContent(){
-    
     return(
+    <KeyboardAvoidingView behavior="padding">
     <View style={styles.modalContent}>
-      <View style = {{height: 370}}>
+      <View style = {{height: 300}}>
         <ScrollView width = {window.width - 60}>
-          <Text style={{margin:5}}> ID del Reporte:</Text>
+        <View>
+          <Text style={styles.titles}> ID del Reporte:</Text>
           <Text style={{margin:5}}> {this.state.reporte._id} </Text>
+          <Text style={styles.titles}> Autor:</Text>
           <Text style={{margin:5}}> {this.state.reporte.autorReporte} </Text>
+          <Text style={styles.titles}> Tipo:</Text>
           <Text style={{margin:5}}> {this.state.reporte.tipoReporte} </Text>
+          <Text style={styles.titles}> Fecha y hora del Incidente:</Text>
           <Text style={{margin:5}}> {this.state.reporte.fechaIncidente} </Text>
+          <Text style={styles.titles}> Fecha y hora del Reporte:</Text>
           <Text style={{margin:5}}> {this.state.reporte.fechaReporte} </Text>
-          <TextInput multiline = {true}> {this.state.reporte.descripcion} </TextInput>
+          <Text style={styles.titles}> Descripción:</Text>
+          <TextInput style={{margin:5}} multiline = {true}> {this.state.reporte.descripcion} </TextInput>
+          <Text style={styles.titles}> Evidencia:</Text>
           <Image style={styles.itemPic} source={{uri: image}}/>
           <Text style={{margin:5}}> {this.state.reporte.evidencia} </Text>
+          <Text style={styles.titles}> Ubicación del reporte:</Text>
           <View height={250}>
             <MapView style={styles.modalMap}
+            zoomEnabled = {false}
+            pitchEnabled	= {false}
+            rotateEnabled = {false}
+            scrollEnabled = {false}
               provider={PROVIDER_GOOGLE}
               initialRegion={{
-                latitude: this.state.reporte.latitud && parseFloat(this.state.reporte.latitud),
-                longitude: this.state.reporte.longitud && parseFloat(this.state.reporte.longitud),
+                latitude: parseFloat(this.state.reporte.latitud) && parseFloat(this.state.reporte.latitud),
+                longitude: parseFloat(this.state.reporte.longitud) && parseFloat(this.state.reporte.longitud),
                 latitudeDelta: 0.0100,
                 longitudeDelta: 0.0025}}>
                 <Marker
-                  coordinate={{latitude: this.state.reporte.latitud && parseFloat(this.state.reporte.latitud), longitude: this.state.reporte.longitud && parseFloat(this.state.reporte.longitud)}}
+                  coordinate={{latitude: parseFloat(this.state.reporte.latitud) && parseFloat(this.state.reporte.latitud), 
+                               longitude: parseFloat(this.state.reporte.longitud) && parseFloat(this.state.reporte.longitud)}}
                 />
             </MapView>
+          </View>
           </View>
         </ScrollView>
       </View>
@@ -196,6 +216,7 @@ class ProfileScreenConent extends React.Component {
         </TouchableOpacity>
       </View>
     </View>
+   </KeyboardAvoidingView>
     )
   };
 
@@ -204,7 +225,7 @@ class ProfileScreenConent extends React.Component {
     <View>
       <View style={{alignItems:'center',justifyContent:'center',height:'100%'}} >
         <TouchableOpacity style={{overflow:'hidden',borderRadius:200,borderWidth:2}}>
-          <Image style={styles.logoStyle} source={{uri: profile}}/>
+          <Image style={styles.logoStyle} source={require('../images/oW1dGDI.jpg')}/>
         </TouchableOpacity>
         <Text style={{color:'white',fontWeight:'bold'}}>2B</Text>
       </View>
@@ -268,10 +289,15 @@ class ProfileScreenConent extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  titles: {
+    //fontFamily: 'lucida',
+    margin: 5,
+    fontWeight: 'bold'
+  },
   logoStyle: {
     height: 100,
     width: 100,
-    borderRadius: 200,
+    borderRadius: 50,
     resizeMode : 'stretch',
   },
   button: {
@@ -311,12 +337,14 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   itemPic: {
+    margin: 5,
     height: 300,
     width: window.width - 60,
     backgroundColor: '#c5c5c5',
     justifyContent: "center",
   },
   modalMap:{
+    margin: 5,
     height: "100%",
     width: "100%",
   },

@@ -29,11 +29,11 @@ const contacts = [
         name: "Francis"
     },
     {
-        key: "6",
+        key: "7",
         name: "Delta"
     },
     {
-        key: "7",
+        key: "8",
         name: "Luisito Comunica"
     }
 ]
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
       margin: 5,
       height: 50,
       width: 50,
-      borderRadius: 100,
+      borderRadius: 25,
       resizeMode : 'stretch',
     },
    });

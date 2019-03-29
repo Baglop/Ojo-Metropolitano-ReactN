@@ -1,3 +1,4 @@
+import {Alert} from 'react-native'
 const URL = 'http://siliconbear.dynu.net'
 
  async function Request_API(params, comp){
@@ -15,7 +16,15 @@ const URL = 'http://siliconbear.dynu.net'
         //console.log(JSON.stringify(responseJson));
         return responseJson;
     } catch (error) {
-        console.error(`No se pudo por este problema : ${error}`);
+    Alert.alert(
+        'Undefined',
+        'Error desconocido, por favor intenta de nuevo.',
+        [,
+            {text: 'OK'},
+        ],
+            {cancelable: false},
+        );
+        //console.error(`No se pudo por este problema : ${error}`);
     }
 }
 

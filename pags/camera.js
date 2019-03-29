@@ -11,6 +11,7 @@ import {
   View,
 } from 'react-native';
 import ImagePicker from 'react-native-image-picker';
+import ImageResizer from 'react-native-image-resizer';
 
 export default class Camera extends React.Component {
   state = {
@@ -46,9 +47,25 @@ export default class Camera extends React.Component {
         console.log('User tapped custom button: ', response.customButton);
       } else {
         let source = { uri: response.uri };
-
+        console.log(source)
         // You can also display the image using data:
-        // let source = { uri: 'data:image/jpeg;base64,' + response.data };
+        let source64 = { uri: 'data:image/jpeg;base64,' + response.data };
+        console.log(source64)
+
+
+        ImageResizer.createResizedImage(source64.uri, 8, 6, 'JPEG', 80).then((uri) => {
+          // response.uri is the URI of the new image that can now be displayed, uploaded...
+          // response.path is the path of the new image
+          // response.name is the name of the new image with the extension
+          // response.size is the size of the new image
+          console.log(response);
+          // let resizer = { uri: 'data:image/jpeg;base64,' + response };
+          // console.log(resizer);
+        }).catch((err) => {
+          // Oops, something went wrong. Check that the filename is correct and
+          // inspect err to get more details.
+          console.log(err)
+        });
 
         this.setState({
           avatarSource: source,

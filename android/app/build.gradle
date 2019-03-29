@@ -145,6 +145,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-image-resizer')
     compile project(':react-native-image-picker')
     implementation project(':react-native-vector-icons')
     implementation 'com.android.support:multidex:1.0.3'

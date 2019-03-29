@@ -206,8 +206,9 @@ export default class MapScreen extends React.Component {
 
   _renderGlobalReports(){
     return(
-      this.state.reports.map(marker => (
+      this.state.reports.map((marker, key) => (
         <Marker
+          key = {key}
           coordinate={{latitude:Number(marker.latitud), longitude:Number(marker.longitud)}}
           title={marker.id}
           description={marker.fechaIncidente}
