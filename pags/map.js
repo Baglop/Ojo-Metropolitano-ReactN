@@ -241,7 +241,11 @@ export default class MapScreen extends React.Component {
   }
 
   componentWillMount(){
-    this.startLocTrack();
+    this.startLocTrack().then(() => 
+      this.reportsRequest(),
+      this.userReportsRequest()
+    );
+    
   }
 
   getRegion(region){
@@ -269,8 +273,8 @@ export default class MapScreen extends React.Component {
   }
 
   // User location Track 
-  startLocTrack() {
-    this.watchId = navigator.geolocation.watchPosition(
+  async startLocTrack() {
+    this.watchId = await navigator.geolocation.watchPosition(
       (position) => {
         this.setState({
           region:{
@@ -280,8 +284,6 @@ export default class MapScreen extends React.Component {
             longitudeDelta: 0.0200,
           }
         });
-        this.reportsRequest();
-        this.userReportsRequest();
       },
       (error) => this.setState({ error: error.message }),
       { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000, distanceFilter: 10 },
