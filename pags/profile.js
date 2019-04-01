@@ -12,11 +12,12 @@ import { Button, Image } from 'react-native-elements';
 import Modal from "react-native-modal";
 import _ from 'lodash';
 import { Request_API } from '../networking/server';
+import ImagePicker from 'react-native-image-picker';
 const window = Dimensions.get('window');
 const reportesUsuario = ':3030/API/inicio/ActualizarMisReportes';
 const deleteReporteUsuario = ':3030/API/inicio/EliminarReporte';
-const image = 'http://okcundinamarca.com/wp-content/uploads/2017/08/robo-a-mano-armada.jpg'
-const profile = 'https://images.goodsmile.info/cgm/images/product/20170721/6596/46630/large/fc0a3e0931f953140831e0be59d36123.jpg'
+const updateReporte = ':3030/API/inicio/ModificarReporte'
+const imageUri = 'http://okcundinamarca.com/wp-content/uploads/2017/08/robo-a-mano-armada.jpg'
 
 let couchbase_lite_native = NativeModules.couchbase_lite_native;
 const couchbase_liteAndroid = NativeModules.couchbase_lite;
@@ -27,7 +28,7 @@ class ProfileScreenConent extends React.Component {
   static navigationOptions = {
     header: null
   }
-
+  
   constructor(props) {
     super(props);
     this.state = { 
@@ -43,8 +44,12 @@ class ProfileScreenConent extends React.Component {
         latitudeDelta: 0.0100,
         longitudeDelta: 0.0025,
       },
+      nuevoValor: '',
+      atributo: '',
+      image: null
     };
     this.getLocationUser();
+    this.selectPhotoTapped = this.selectPhotoTapped.bind(this);
   }
 
   startLocTrack(){
@@ -84,6 +89,7 @@ class ProfileScreenConent extends React.Component {
             if(response.codigoRespuesta === 200){
               //couchbase_liteAndroid.setReportDataDoc(JSON.stringify(response),2);
               this.setState({userReports: response.reportes});
+              console.log(response.reportes)
             }
           })
       });
@@ -133,7 +139,7 @@ class ProfileScreenConent extends React.Component {
       message,
       [,
         {text: 'OK', onPress: () => this.deleteReport(_id)},
-        {text: 'Cancelar', onPress: () => this.setState({ visibleModal: null })},
+        {text: 'Cancelar'/*, onPress: () => this.setState({ visibleModal: null })*/},
       ],
     );
   }
@@ -157,6 +163,115 @@ class ProfileScreenConent extends React.Component {
     );
   }
 
+  getReportType(id){
+    switch(id){
+      case '1':
+        return 'Robo';
+      case '2':
+        return 'Asalto';
+      case '3':
+        return 'Acoso';
+      case '4':
+        return 'Vandalismo';
+      case '5':
+        return 'Pandillerismo';
+      case '6':
+        return 'Violación';
+      case '7':
+        return 'Secuestro o tentativa';
+      case '8':
+        return 'Asesinato';
+    }
+  }
+
+  updateReports(id){
+    if(Platform.OS === 'android'){
+      const bodyPetition = {
+        idReporte: id,
+        nombreUsuario: this.state.userInfo.userName,
+        atributoModificado: this.state.atributo,
+        valorNuevo: this.state.nuevoValor,
+        tokenSiliconBear: this.state.userInfo.tokenSiliconBear,
+        ubicacionUsuario: this.state.ubicacionUsuario,
+      }
+      console.log(bodyPetition)
+      // Request_API(bodyPetition, deleteReporteUsuario)
+      //   .then(response => {
+      //   if(response.codigoRespuesta === 200){
+      //     console.warn('Se elimino con exito')
+      //     let result = _.pull(this.state.userReports, `${id}`);
+      //     console.warn(result)
+      //   }
+      // }); 
+    }
+    if(Platform.OS === 'ios'){
+      const bodyPetition = {
+        idReporte: id,
+        nombreUsuario: this.state.userInfo.userName,
+        atributoModificado: this.state.atributo,
+        valorNuevo: this.state.nuevoValor,
+        tokenSiliconBear: this.state.userInfo.tokenSiliconBear,
+        ubicacionUsuario: this.state.ubicacionUsuario,
+      }
+      console.log(bodyPetition)
+      Request_API(bodyPetition, updateReporte)
+        .then(response => {
+        if(response.codigoRespuesta === 200){
+          Alert.alert(
+            'Correcto',
+            response.mensaje,
+            [,
+              {text: 'OK', onPress: () => this.setState({ visibleModal: null })},
+            ],
+            {cancelable: false},
+          );
+        }
+        else{
+          Alert.alert(
+            'Error ' + response.codigoRespuesta,
+            response.mensaje,
+            [,
+              {text: 'OK'},
+            ],
+            {cancelable: false},
+          );
+        }
+      }); 
+    }
+  }
+
+  selectPhotoTapped() {
+    const options = {
+      quality: 0.95,
+      maxWidth: 1000,
+      maxHeight: 1000,
+      storageOptions: {
+        skipBackup: true,
+      },
+    };
+
+    ImagePicker.showImagePicker(options, (response) => {
+      console.log('Response = ', response);
+
+      if (response.didCancel) {
+        console.log('User cancelled photo picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+      } else {
+        let source = { uri: response.uri };
+        let source64 = response.data;
+        console.log(source64)
+        this.setState({
+          image: source,
+          atributo: 'evidencia',
+          nuevoValor: source64
+        });
+      }
+    });
+  }
+  
   renderModalContent(){
     return(
     <KeyboardAvoidingView behavior="padding">
@@ -164,21 +279,22 @@ class ProfileScreenConent extends React.Component {
       <View style = {{height: 300}}>
         <ScrollView width = {window.width - 60}>
         <View>
-          <Text style={styles.titles}> ID del Reporte:</Text>
-          <Text style={{margin:5}}> {this.state.reporte._id} </Text>
-          <Text style={styles.titles}> Autor:</Text>
-          <Text style={{margin:5}}> {this.state.reporte.autorReporte} </Text>
-          <Text style={styles.titles}> Tipo:</Text>
-          <Text style={{margin:5}}> {this.state.reporte.tipoReporte} </Text>
+          <Text style={styles.titles}> Categoría del reporte:</Text>
+          <Text style={{margin:5}}> { this.getReportType(this.state.reporte.tipoReporte)} </Text>
           <Text style={styles.titles}> Fecha y hora del Incidente:</Text>
           <Text style={{margin:5}}> {this.state.reporte.fechaIncidente} </Text>
           <Text style={styles.titles}> Fecha y hora del Reporte:</Text>
           <Text style={{margin:5}}> {this.state.reporte.fechaReporte} </Text>
           <Text style={styles.titles}> Descripción:</Text>
-          <TextInput style={{margin:5}} multiline = {true}> {this.state.reporte.descripcion} </TextInput>
+          <TextInput style={{margin:5}} multiline = {true} onChangeText={(text) => this.setState({nuevoValor: text, atributo: 'descripcion'})}> {this.state.reporte.descripcion} </TextInput>
           <Text style={styles.titles}> Evidencia:</Text>
-          <Image style={styles.itemPic} source={{uri: image}}/>
-          <Text style={{margin:5}}> {this.state.reporte.evidencia} </Text>
+          <TouchableOpacity onPress={this.selectPhotoTapped.bind(this)}>
+          {this.state.image === null ? (
+              <Image style={styles.itemPic} source={{uri: this.state.reporte.evidencia && this.state.reporte.evidencia}}/>
+            ) : (
+              <Image style={styles.itemPic} source={this.state.image && this.state.image} />
+            )}
+          </TouchableOpacity>
           <Text style={styles.titles}> Ubicación del reporte:</Text>
           <View height={250}>
             <MapView style={styles.modalMap}
@@ -211,7 +327,7 @@ class ProfileScreenConent extends React.Component {
           <Icon name="md-close-circle" style={styles.modalButtonIcon}/>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => this.setState({ visibleModal: null })}>
+          onPress={() => this.updateReports(this.state.reporte._id)/*this.setState({ visibleModal: null })*/}>
           <Icon name="md-arrow-dropup-circle" style={styles.modalButtonIcon}/>
         </TouchableOpacity>
       </View>
@@ -266,7 +382,7 @@ class ProfileScreenConent extends React.Component {
                     return(
                       <TouchableOpacity key = {key} onPress={() => this.setState({ visibleModal: 2, reporte: getData })}>
                       <View style={styles.buttonModal}>
-                        <Text>{getData._id}</Text>
+                        <Text>{this.getReportType(getData.tipoReporte)}</Text>
                       </View>
                     </TouchableOpacity>  
                     )                     
@@ -290,7 +406,6 @@ class ProfileScreenConent extends React.Component {
 
 const styles = StyleSheet.create({
   titles: {
-    //fontFamily: 'lucida',
     margin: 5,
     fontWeight: 'bold'
   },

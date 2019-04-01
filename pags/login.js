@@ -134,13 +134,6 @@ export default class LoginScreen extends React.Component
             onChangeText={(text) => this.setState({nombreUsuario:text})}
           />
         </View>
-        <View style={styles.registerButton}>
-          <Button
-            title = "Camera"
-            color = "#51738e"
-            onPress = {() => navigate("Camera", {})}
-            />
-        </View>
         <View style={styles.SectionStyle}>
           <View style={styles.imageBackground}>
             <Image source={require('../images/2x/round_lock_white_24dp.png')} style={styles.ImageStyle}/>
@@ -158,15 +151,15 @@ export default class LoginScreen extends React.Component
         </View>
         <View style={styles.loginButton}>
           <Button
-            title="Test"
-            color="#51738e"
+            title="Ingresar"
+            color="#FFFFFF"
             onPress={this.loginPress}
           />
         </View>
         <View style={styles.registerButton}>
           <Button
-            title = "Registrarte"
-            color = "#51738e"
+            title = "Aún no eres miembro? Registrarte aquí"
+            color = "#FFFFFF"
             onPress = {() => navigate("Register", {})}
             />
         </View>

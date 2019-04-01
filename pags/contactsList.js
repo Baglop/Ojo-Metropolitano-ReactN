@@ -39,6 +39,7 @@ const contacts = [
 ]
 
 export default class ContactsList extends React.Component {
+    
     _renderItems(item){
         return(
         <View style={{flex:1,flexDirection: 'row',justifyContent: 'flex-start',alignItems: 'center',height:70}}>

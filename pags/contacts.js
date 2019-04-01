@@ -4,6 +4,11 @@ import GroupList from "./groupList";
 import ContactList from "./contactsList"
 
 export default class ContactScreen extends React.Component {
+
+  static navigationOptions = {
+    header: null
+  } 
+
   render() {
     return (
       <ScrollView style={{ flex: 1}} showsVerticalScrollIndicator = {false}>
