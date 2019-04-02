@@ -184,8 +184,8 @@ export default class LoginScreen extends React.Component
         </View>
         <View style={styles.registerButton}>
           <Button
-            title = "Registrarse"
-            color = "#51738e"
+            title = "Aún no eres miembro? Registrarte aquí"
+            color = "#FFFFFF"
             onPress = {() => navigate("Register", {})}
             />
         </View>
