@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { View, TextInput, Image, Animated, Keyboard, KeyboardAvoidingView, Dimensions, StyleSheet,Button, Platform} from 'react-native';
+import { View, TextInput, Image, Animated, Keyboard, KeyboardAvoidingView, Dimensions, StyleSheet,Button, Platform, TouchableOpacity} from 'react-native';
 import logo from '../images/ojometropolitano.png';
+import ImagePicker from 'react-native-image-picker';
 import { Request_API } from '../networking/server';
 const window = Dimensions.get('window');
-const IMAGE_HEIGHT = window.width / 1.5;
-const IMAGE_HEIGHT_SMALL = window.height / 5;
+
+
 
 export default class RegisterScreen extends React.Component {
 
@@ -14,7 +15,6 @@ export default class RegisterScreen extends React.Component {
 
   constructor(props) {
     super(props);
-    this.imageHeight = new Animated.Value(IMAGE_HEIGHT);
     this.state = {
       correo: '',
       nombres: '',
@@ -22,34 +22,13 @@ export default class RegisterScreen extends React.Component {
       apellidoMaterno: '',
       tokenFirebase: '',
       imagenPerfil: '',
-      ubicacionUsuario: '0.0,-0.0'
+      ubicacionUsuario: '0.0,-0.0',
+      image: require('../images/No-profile.jpg')
     };
     this.getLocationUser();
+    this.selectPhotoTapped = this.selectPhotoTapped.bind(this);
   }
 
-  componentWillMount () {
-    this.keyboardWillShowSub = Keyboard.addListener('keyboardWillShow', this.keyboardWillShow);
-    this.keyboardWillHideSub = Keyboard.addListener('keyboardWillHide', this.keyboardWillHide);
-  }
-
-  componentWillUnmount() {
-    this.keyboardWillShowSub.remove();
-    this.keyboardWillHideSub.remove();
-  }
-
-  keyboardWillShow = (event) => {
-    Animated.timing(this.imageHeight, {
-      duration: event.duration,
-      toValue: IMAGE_HEIGHT_SMALL,
-    }).start();
-  };
-
-  keyboardWillHide = (event) => {
-    Animated.timing(this.imageHeight, {
-      duration: event.duration,
-      toValue: IMAGE_HEIGHT,
-    }).start();
-  };
 
   getLocationUser(){
     navigator.geolocation.getCurrentPosition(
@@ -62,17 +41,62 @@ export default class RegisterScreen extends React.Component {
     );
   }
 
+  selectPhotoTapped() {
+    const options = {
+      quality: 0.95,
+      maxWidth: 800,
+      maxHeight: 800,
+      storageOptions: {
+        skipBackup: true,
+      },
+    };
+
+    ImagePicker.showImagePicker(options, (response) => {
+      console.log('Response = ', response);
+
+      if (response.didCancel) {
+        console.log('User cancelled photo picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+      } else {
+        let source = { uri: response.uri };
+        let source64 = response.data;
+        console.log(source64)
+        this.setState({
+          image: source,
+          atributo: 'evidencia',
+          nuevoValor: source64
+        });
+      }
+    });
+  }
+
   render() {
     var { params } = this.props.navigation.state;
     return (
-      <KeyboardAvoidingView
-        style    = { styles.container }
-        behavior = "padding"
-        >
-          <Animated.Image 
-            source = { logo } 
-            style  = { [styles.logo, { height: this.imageHeight }] }
+      // <KeyboardAvoidingView
+      //   style    = { styles.container }
+      //   >
+      <KeyboardAvoidingView style = {styles.container} behavior="padding">
+      <View style = {styles.container}>
+          <TouchableOpacity onPress={this.selectPhotoTapped.bind(this)}>
+
+          {this.state.image === null ? (
+              <Animated.Image 
+              source = { this.state.image } 
+              style  = {styles.logo}
+            />
+            ) : (
+              <Animated.Image 
+            source = { this.state.image } 
+            style  = {styles.logo}
           />
+            )}
+          
+          </TouchableOpacity>
+          <View>
           <TextInput
             placeholder          = " Email"
             returnKeyType        = "next"
@@ -129,8 +153,10 @@ export default class RegisterScreen extends React.Component {
               }
             console.warn(bodyJoin); }}
             />
+            </View>
           </View>
-      </KeyboardAvoidingView>
+          </View>
+          </KeyboardAvoidingView>
     );
   }
 };
@@ -156,11 +182,11 @@ const styles = StyleSheet.create({
         width: window.width - 30
       },
     logo: {
-      height:       IMAGE_HEIGHT,
-      resizeMode:   'contain',
-      marginBottom: 0,
-      padding:      20,
-      marginTop:    -10
+      height:       170,
+      width: 170,
+      margin:       10,
+        marginTop:    1,
+      borderRadius: 170/2
     },
     loginButton: {
         margin:    10,

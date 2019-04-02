@@ -89,7 +89,6 @@ class ProfileScreenConent extends React.Component {
             if(response.codigoRespuesta === 200){
               //couchbase_liteAndroid.setReportDataDoc(JSON.stringify(response),2);
               this.setState({userReports: response.reportes});
-              console.log(response.reportes)
             }
           })
       });
