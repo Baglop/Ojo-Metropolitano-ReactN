@@ -8,6 +8,7 @@ import { Request_API } from '../networking/server';
 import { Platform } from 'react-native';
 import DatePicker from 'react-native-datepicker';
 import moment from 'moment';
+import { colors } from "../node_modules/react-native-elements";
 
 const couchbase_liteAndroid = NativeModules.couchbase_lite;
 const couchbase_lite_native = NativeModules.couchbase_lite_native;
@@ -201,7 +202,12 @@ export default class MapScreen extends React.Component {
       reportDescription:"",
       modalReport:false,
       modalInfoReport:false,
+      color:false,
     }
+  }
+
+  color(){
+    return "blue"
   }
 
   _renderGlobalReports(){
@@ -210,9 +216,10 @@ export default class MapScreen extends React.Component {
         <Marker
           key = {key}
           coordinate={{latitude:Number(marker.latitud), longitude:Number(marker.longitud)}}
-          title={marker.id}
+          title="Asalto"
           description={marker.fechaIncidente}
           onCalloutPress={() => this.makeReportInfoRequest(marker.id)}
+          pinColor = {(color) => this.color()}
         />
       ))
     );
@@ -223,7 +230,7 @@ export default class MapScreen extends React.Component {
     this.state.userReports.map(marker => (
       <Marker
         coordinate={{latitude:Number(marker.latitud), longitude:Number(marker.longitud)}}
-        title={marker.id}
+        title={"Asalto"}
         description={marker.fechaIncidente}
         onCalloutPress={() => this.makeReportInfoRequest(marker.id)}
       />

@@ -34,6 +34,7 @@ public class couchbase_lite extends ReactContextBaseJavaModule {
     private String USER_DOC = "userData";
     private String REPORTS_DOC = "reportData";
     private String USER_REPORTS_DOC= "userReports";
+    private String USER_INFO = "userInfo";
 
     couchbase_lite(ReactApplicationContext reactContext){
         super(reactContext);
@@ -103,6 +104,41 @@ public class couchbase_lite extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    private void getUserInfoDoc(Callback error, Callback success){
+        Query query = QueryBuilder
+        .select(
+            SelectResult.expression(Meta.id),
+            SelectResult.property("nombreUsuario"),
+            SelectResult.property("nombres"),
+            SelectResult.property("apellidoPaterno"),
+            SelectResult.property("apellidoMaterno"),
+            SelectResult.property("correo"),
+            SelectResult.property("celular"),
+            SelectResult.property("tokenFirebase"),
+            SelectResult.property("imagenPerfil")
+        )
+        .from(DataSource.database(database))
+        .where(
+            Expression.property("type")
+            .equalTo(Expression.string(USER_INFO))
+        );
+
+        try {
+            ResultSet resultSet = query.execute();
+            WritableArray writableArray = Arguments.createArray();
+            assert resultSet != null;
+            for (Result result : resultSet) {
+                WritableMap writableMap = Arguments.makeNativeMap(result.toMap());
+                writableArray.pushMap(writableMap);
+            }
+            success.invoke(writableArray);
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+            error.invoke();
+        }
+    }
+
+    @ReactMethod
     private void getUserReportsDoc(Callback error, Callback success){
         Query query = QueryBuilder
         .select(
@@ -153,6 +189,27 @@ public class couchbase_lite extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    private void setUserInfoDoc(String userInfoString){
+        try {
+            JSONObject response = new JSONObject(userInfoString);
+            JSONObject userInfoReponse = response.getJSONObject("usuario");
+            MutableDocument mutableDocument = new MutableDocument()
+                .setString("type", USER_INFO)
+                .setString("nombreUsuario", userInfoReponse.getString("nombreUsuario"))
+                .setString("nombres",userInfoReponse.getString("nombres"))
+                .setString("apellidoPaterno",userInfoReponse.getString("apellidoPaterno"))
+                .setString("apellidoMaterno",userInfoReponse.getString("apellidoMaterno"))
+                .setString("correo",userInfoReponse.getString("correo"))
+                .setString("celular",userInfoReponse.getString("celular"))
+                .setString("tokenFirebase",userInfoReponse.getString("tokenFirebase"))
+                .setString("imagenPerfil",userInfoReponse.getString("imagenPerfil"));
+            database.save(mutableDocument);
+        } catch (CouchbaseLiteException | JSONException e ) {
+            e.printStackTrace();
+        }
+    }
+
+    @ReactMethod
     private void deleteUserdataDoc(Callback err, Callback succ) {
         Query query = QueryBuilder
             .select(
@@ -162,6 +219,36 @@ public class couchbase_lite extends ReactContextBaseJavaModule {
             .where(
                 Expression.property("type")
                 .equalTo(Expression.string(USER_DOC))
+            );
+
+        try {
+            ResultSet resultSet = query.execute();
+            List<Result> list = resultSet.allResults();
+
+            if (list.isEmpty()) {
+                err.invoke("No hay documentos");
+            } else {
+                Result result = list.get(0);
+                String documentId = result.getString("id");
+                database.delete(database.getDocument(documentId));
+                succ.invoke("Documento eliminado");
+            }
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+            err.invoke("Error");
+        }
+    }
+
+    @ReactMethod
+    private void deleteUserInfoDoc(Callback err, Callback succ) {
+        Query query = QueryBuilder
+            .select(
+                SelectResult.expression(Meta.id)
+            )
+            .from(DataSource.database(database))
+            .where(
+                Expression.property("type")
+                .equalTo(Expression.string(USER_INFO))
             );
 
         try {

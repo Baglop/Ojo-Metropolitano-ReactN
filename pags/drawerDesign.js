@@ -14,6 +14,10 @@ export default class drawerDesign extends React.Component {
         console.log(succ);
       });
 
+      couchbase_lite.deleteUserInfoDoc(error => {
+        console.log(error);
+      }, success => {console.log(success);});
+
       couchbase_lite.deleteUserReportsDoc(err => {
         console.log(err);
       }, succ => {

@@ -32,7 +32,7 @@ class ProfileScreenConent extends React.Component {
     super(props);
     this.state = { 
       openBar: false,
-      userInfo: [],
+      userData: [],
       userReports:[],
       visibleModal: null,
       reporte: [],
@@ -43,8 +43,22 @@ class ProfileScreenConent extends React.Component {
         latitudeDelta: 0.0100,
         longitudeDelta: 0.0025,
       },
+      userInfo:[]
     };
     this.getLocationUser();
+    
+  }
+
+  getInfo(){
+    if(Platform.OS == 'android'){
+      couchbase_liteAndroid.getUserInfoDoc(err => {
+          console.warn(err)
+        }, succ => {
+          this.setState({userInfo: succ[0]})
+          console.warn(succ)
+        }
+     )
+    }
   }
 
   startLocTrack(){
@@ -52,7 +66,7 @@ class ProfileScreenConent extends React.Component {
         couchbase_liteAndroid.getUserdataDoc(err => {
           console.warn("chale me humillo")
         },succ => {
-          this.setState({userInfo: succ[0]})
+          this.setState({userData: succ[0]})
           const userPetition = {
             nombreUsuario: succ[0].userName,
             tokenSiliconBear: succ[0].tokenSiliconBear,
@@ -73,7 +87,7 @@ class ProfileScreenConent extends React.Component {
         couchbase_lite_native.getUserdataDocTXT(err => {
           console.warn("chale me humillo")
         },succ => {
-          this.setState({userInfo: succ[0]})
+          this.setState({userData: succ[0]})
           const userPetition = {
             nombreUsuario: succ[0].userName,
             tokenSiliconBear: succ[0].tokenSiliconBear,
@@ -94,8 +108,8 @@ class ProfileScreenConent extends React.Component {
     if(Platform.OS === 'android'){
       const bodyPetition = {
         idReporte: id,
-        nombreUsuario: this.state.userInfo.userName,
-        tokenSiliconBear: this.state.userInfo.tokenSiliconBear,
+        nombreUsuario: this.state.userData.userName,
+        tokenSiliconBear: this.state.userData.tokenSiliconBear,
         ubicacionUsuario: this.state.ubicacionUsuario,
       }
       Request_API(bodyPetition, deleteReporteUsuario)
@@ -110,8 +124,8 @@ class ProfileScreenConent extends React.Component {
     if(Platform.OS === 'ios'){
       const bodyPetition = {
         idReporte: id,
-        nombreUsuario: this.state.userInfo.userName,
-        tokenSiliconBear: this.state.userInfo.tokenSiliconBear,
+        nombreUsuario: this.state.userData.userName,
+        tokenSiliconBear: this.state.userData.tokenSiliconBear,
         ubicacionUsuario: this.state.ubicacionUsuario,
       }
       Request_API(bodyPetition, deleteReporteUsuario)
@@ -123,8 +137,9 @@ class ProfileScreenConent extends React.Component {
       }); 
     }
 }
-  componentDidMount(){
-    this.startLocTrack()
+  async componentWillMount(){
+    await this.getInfo();
+    this.startLocTrack();
   }
 
   showAlert(title, message, _id){
@@ -225,9 +240,9 @@ class ProfileScreenConent extends React.Component {
     <View>
       <View style={{alignItems:'center',justifyContent:'center',height:'100%'}} >
         <TouchableOpacity style={{overflow:'hidden',borderRadius:200,borderWidth:2}}>
-          <Image style={styles.logoStyle} source={require('../images/oW1dGDI.jpg')}/>
+          <Image style={styles.logoStyle} source={{uri: this.state.userInfo.imagenPerfil}}/>
         </TouchableOpacity>
-        <Text style={{color:'white',fontWeight:'bold'}}>2B</Text>
+        <Text style={{color:'white',fontWeight:'bold'}}>{this.state.userInfo.nombreUsuario}</Text>
       </View>
     </View>
     )
@@ -244,6 +259,7 @@ class ProfileScreenConent extends React.Component {
 
   render() {
     return (
+      
       <View style={{ flex: 1 }}>
         <HeaderImageScrollView
         maxHeight={300}

@@ -15,9 +15,11 @@ import {Platform, StyleSheet,
         KeyboardAvoidingView, 
         Animated,Dimensions, 
         Keyboard, StatusBar} from 'react-native';
+import { Request_API } from '../networking/server';
 let couchbase_lite = NativeModules.couchbase_lite;
 let couchbase_lite_native = NativeModules.couchbase_lite_native;
 const URL = 'http://siliconbear.dynu.net:3030/API/inicio/IniciarSesion';
+const URL2 = ':3030/API/miCuenta/ActualizarInformacionUsuario';
 const width = '80%';
 
 const window = Dimensions.get('window');
@@ -101,11 +103,28 @@ export default class LoginScreen extends React.Component
           couchbase_lite_native.setUserdataDocTXT(response.tokenSiliconBear, this.state.nombreUsuario);
           this.props.navigation.replace('Main', {nombreUsuario: response.nombreUsuario, tokenSiliconBear: response.tokenSiliconBear});
         }
+        this.userInfoRequest(response)
       } else{
         this.showAlert('No se puede iniciar sesión','El usuario o contraseña ingresada son incorrectos');
       }
     })
     .catch(err => console.error(err));
+  }
+
+  userInfoRequest(info){
+    const request = {
+      nombreUsuario: this.state.nombreUsuario,
+      tokenSiliconBear: info.tokenSiliconBear,
+      ubicacionUsuario: this.state.ubicacionUsuario
+    }
+    Request_API(request,URL2).then(response => {
+        console.warn(JSON.stringify(response));
+        
+        if(Platform.OS == 'android'){
+          couchbase_lite.setUserInfoDoc(JSON.stringify(response))
+        }
+      }
+    )
   }
 
   registerPress = () =>{
@@ -134,13 +153,13 @@ export default class LoginScreen extends React.Component
             onChangeText={(text) => this.setState({nombreUsuario:text})}
           />
         </View>
-        <View style={styles.registerButton}>
+        {/* <View style={styles.registerButton}>
           <Button
             title = "Camera"
             color = "#51738e"
             onPress = {() => navigate("Camera", {})}
             />
-        </View>
+        </View> */}
         <View style={styles.SectionStyle}>
           <View style={styles.imageBackground}>
             <Image source={require('../images/2x/round_lock_white_24dp.png')} style={styles.ImageStyle}/>
@@ -158,14 +177,14 @@ export default class LoginScreen extends React.Component
         </View>
         <View style={styles.loginButton}>
           <Button
-            title="Test"
+            title="Iniciar sesión"
             color="#51738e"
             onPress={this.loginPress}
           />
         </View>
         <View style={styles.registerButton}>
           <Button
-            title = "Registrarte"
+            title = "Registrarse"
             color = "#51738e"
             onPress = {() => navigate("Register", {})}
             />
