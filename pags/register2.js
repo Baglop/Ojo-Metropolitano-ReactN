@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import { View, TextInput, Image, Animated, Keyboard, KeyboardAvoidingView, Dimensions, StyleSheet,Button, Platform, TouchableOpacity} from 'react-native';
-import logo from '../images/ojometropolitano.png';
 import ImagePicker from 'react-native-image-picker';
 import { Request_API } from '../networking/server';
 const window = Dimensions.get('window');
-
+const registerUser = ':3030/API/inicio/RegistrarUsuario'
 
 
 export default class RegisterScreen extends React.Component {
@@ -23,7 +22,10 @@ export default class RegisterScreen extends React.Component {
       tokenFirebase: '',
       imagenPerfil: '',
       ubicacionUsuario: '0.0,-0.0',
-      image: require('../images/No-profile.jpg')
+      image: null,
+      logo: require('../images/No-profile.jpg'),
+      image64: null,
+      params: null
     };
     this.getLocationUser();
     this.selectPhotoTapped = this.selectPhotoTapped.bind(this);
@@ -43,9 +45,9 @@ export default class RegisterScreen extends React.Component {
 
   selectPhotoTapped() {
     const options = {
-      quality: 0.95,
-      maxWidth: 800,
-      maxHeight: 800,
+      quality: 0.90,
+      maxWidth: 750,
+      maxHeight: 750,
       storageOptions: {
         skipBackup: true,
       },
@@ -66,15 +68,63 @@ export default class RegisterScreen extends React.Component {
         console.log(source64)
         this.setState({
           image: source,
-          atributo: 'evidencia',
-          nuevoValor: source64
+          image64: source64
         });
       }
     });
   }
 
+  componentWillMount(){
+    this.setState({
+      params: this.props.navigation.state
+    })
+  }
+
+  joinSiliconBear(){
+
+    if(Platform.OS === 'ios'){
+    const bodyPetition = {
+      nombreUsuario: this.state.params.nombreUsuario,
+      contrasena:    this.state.params.contrasena,
+      celular:       this.state.params.celular,
+      correo:        this.state.correo,
+      nombres:       this.state.nombres,
+      apellidoPaterno:this.state.apellidoPaterno,
+      apellidoMaterno:this.state.apellidoMaterno,
+      tokenFirebase: '',
+      imagenPerfil:   this.state.image64,
+      ubicacionUsuario: this.state.ubicacionUsuario
+    }
+    console.log(bodyPetition);
+    Request_API(bodyPetition, registerUser)
+        .then(response => {
+        if(response.codigoRespuesta === 200){
+          Alert.alert(
+            'Correcto',
+            response.mensaje,
+            [,
+              {text: 'OK', onPress: () => this.setState({ visibleModal: null })},
+            ],
+            {cancelable: false},
+          );
+        }
+        else{
+          Alert.alert(
+            'Error ' + response.codigoRespuesta,
+            response.mensaje,
+            [,
+              {text: 'OK'},
+            ],
+            {cancelable: false},
+          );
+        }
+      });
+    }
+  }
+
   render() {
-    var { params } = this.props.navigation.state;
+    //var { params } = this.props.navigation.state;
+    console.log(this.state.params)
     return (
       // <KeyboardAvoidingView
       //   style    = { styles.container }
@@ -85,7 +135,7 @@ export default class RegisterScreen extends React.Component {
 
           {this.state.image === null ? (
               <Animated.Image 
-              source = { this.state.image } 
+              source = { this.state.logo } 
               style  = {styles.logo}
             />
             ) : (
@@ -136,22 +186,7 @@ export default class RegisterScreen extends React.Component {
             <Button
               title = "Registrar"
               color = "#FFFF"
-              
-              //onPress = {() => this.props.navigation.replace('Login')}
-              //onPress = {this.joinSB}
-              onPress = {() => {const bodyJoin = {
-                nombreUsuario: params.nombreUsuario,
-                contrasena:    params.contrasena,
-                celular:       params.celular,
-                correo:        this.state.correo,
-                nombres:       this.state.nombres,
-                apellidoPaterno:this.state.apellidoPaterno,
-                apellidoMaterno:this.state.apellidoMaterno,
-                tokenFirebase: '',
-                imagenPerfil: '',
-                ubicacionUsuario: this.state.ubicacionUsuario
-              }
-            console.warn(bodyJoin); }}
+              onPress = {() => this.joinSiliconBear()}
             />
             </View>
           </View>
