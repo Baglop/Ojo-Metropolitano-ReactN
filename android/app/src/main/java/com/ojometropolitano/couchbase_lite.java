@@ -8,6 +8,7 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.Callback;
 
 import com.couchbase.lite.Database;
+import com.couchbase.lite.Document;
 import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Query;
 import com.couchbase.lite.QueryBuilder;
@@ -205,6 +206,37 @@ public class couchbase_lite extends ReactContextBaseJavaModule {
                 .setString("imagenPerfil",userInfoReponse.getString("imagenPerfil"));
             database.save(mutableDocument);
         } catch (CouchbaseLiteException | JSONException e ) {
+            e.printStackTrace();
+        }
+    }
+
+    @ReactMethod
+    private void updateUSerInfoDdc(String property,String value){
+        Query query = QueryBuilder
+            .select(
+                SelectResult.expression(Meta.id)
+            )
+            .from(DataSource.database(database))
+            .where(
+                Expression.property("type")
+                .equalTo(Expression.string(USER_INFO))
+            );
+
+        try {
+            ResultSet resultSet = query.execute();
+            List<Result> list = resultSet.allResults();
+
+            if (list.isEmpty()) {
+                value = "";
+            } else {
+                Result result = list.get(0);
+                String documentId = result.getString("id");
+                Document document = database.getDocument(documentId);
+                MutableDocument mutableDocument = document.toMutable();
+                mutableDocument.setString(property,value);
+                database.save(mutableDocument);
+            }
+        } catch (CouchbaseLiteException e) {
             e.printStackTrace();
         }
     }
