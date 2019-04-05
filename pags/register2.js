@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { View, TextInput, Image, Animated, Keyboard, KeyboardAvoidingView, Dimensions, StyleSheet,Button, Platform, TouchableOpacity} from 'react-native';
+import { View, TextInput, Image, Animated, Keyboard, KeyboardAvoidingView, Dimensions, StyleSheet,Button, Platform, TouchableOpacity, Alert} from 'react-native';
 import ImagePicker from 'react-native-image-picker';
 import { Request_API } from '../networking/server';
 const window = Dimensions.get('window');
 const registerUser = ':3030/API/inicio/RegistrarUsuario'
-
+let params = '';
 
 export default class RegisterScreen extends React.Component {
 
@@ -25,7 +25,6 @@ export default class RegisterScreen extends React.Component {
       image: null,
       logo: require('../images/No-profile.jpg'),
       image64: null,
-      params: null
     };
     this.getLocationUser();
     this.selectPhotoTapped = this.selectPhotoTapped.bind(this);
@@ -74,19 +73,12 @@ export default class RegisterScreen extends React.Component {
     });
   }
 
-  componentWillMount(){
-    this.setState({
-      params: this.props.navigation.state
-    })
-  }
-
   joinSiliconBear(){
-
     if(Platform.OS === 'ios'){
     const bodyPetition = {
-      nombreUsuario: this.state.params.nombreUsuario,
-      contrasena:    this.state.params.contrasena,
-      celular:       this.state.params.celular,
+      nombreUsuario: params.params.nombreUsuario,
+      contrasena:    params.params.contrasena,
+      celular:       params.params.celular,
       correo:        this.state.correo,
       nombres:       this.state.nombres,
       apellidoPaterno:this.state.apellidoPaterno,
@@ -123,8 +115,8 @@ export default class RegisterScreen extends React.Component {
   }
 
   render() {
-    //var { params } = this.props.navigation.state;
-    console.log(this.state.params)
+    params = this.props.navigation.state;
+    console.log(params.params)
     return (
       // <KeyboardAvoidingView
       //   style    = { styles.container }

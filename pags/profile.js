@@ -13,6 +13,7 @@ import Modal from "react-native-modal";
 import _ from 'lodash';
 import { Request_API } from '../networking/server';
 import ImagePicker from 'react-native-image-picker';
+
 const window = Dimensions.get('window');
 const reportesUsuario = ':3030/API/inicio/ActualizarMisReportes';
 const deleteReporteUsuario = ':3030/API/inicio/EliminarReporte';
@@ -374,7 +375,6 @@ class ProfileScreenConent extends React.Component {
 
   render() {
     return (
-      
       <View style={{ flex: 1 }}>
         <HeaderImageScrollView
         maxHeight={300}

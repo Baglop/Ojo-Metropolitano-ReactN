@@ -12,9 +12,9 @@ import RegisterScreen from './pags/register';
 import Register2Screen from './pags/register2';
 import CameraScreen from './pags/camera'
 
-import {NativeModules, Platform} from 'react-native';
+import {NativeModules, Platform, StatusBar} from 'react-native';
 import { createStackNavigator, createAppContainer } from "react-navigation";
-
+console.disableYellowBox = true;
 let couch_base = NativeModules.couchbase_lite;
 let couchbase_lite_native = NativeModules.couchbase_lite_native;
 var initialRoute = "Main";
@@ -75,6 +75,10 @@ export default class OjoMetropolitano extends React.Component {
       logged:null,
     };
   }
+
+  componentDidMount() {
+    StatusBar.setHidden(true);
+ }
 
   componentWillMount() { 
     if(Platform.OS == 'android'){

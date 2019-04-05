@@ -206,8 +206,13 @@ export default class MapScreen extends React.Component {
     }
   }
 
-  color(){
-    return "blue"
+  generateRandomColor = () => {
+    var letters = '0123456789ABCDEF';
+    var color   = '#';
+    for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
   }
 
   _renderGlobalReports(){
@@ -219,7 +224,7 @@ export default class MapScreen extends React.Component {
           title="Asalto"
           description={marker.fechaIncidente}
           onCalloutPress={() => this.makeReportInfoRequest(marker.id)}
-          pinColor = {(color) => this.color()}
+          pinColor = {this.generateRandomColor()}
         />
       ))
     );

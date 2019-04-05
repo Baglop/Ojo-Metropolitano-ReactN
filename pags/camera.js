@@ -152,101 +152,231 @@
 //   },
 // });
 
-import React, { Component } from 'react';
-import { Animated, Dimensions, Keyboard, StyleSheet, TextInput, UIManager } from 'react-native';
 
-const { State: TextInputState } = TextInput;
 
-export default class App extends Component {
-  state = {
-    shift: new Animated.Value(0),
-  };
 
-  componentWillMount() {
-    this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow);
-    this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide);
+
+
+// import React, { Component } from 'react';
+// import { Animated, Dimensions, Keyboard, StyleSheet, TextInput, UIManager } from 'react-native';
+
+// const { State: TextInputState } = TextInput;
+
+// export default class App extends Component {
+//   state = {
+//     shift: new Animated.Value(0),
+//   };
+
+//   componentWillMount() {
+//     this.keyboardDidShowSub = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow);
+//     this.keyboardDidHideSub = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide);
+//   }
+
+//   componentWillUnmount() {
+//     this.keyboardDidShowSub.remove();
+//     this.keyboardDidHideSub.remove();
+//   }
+
+//   render() {
+//     const { shift } = this.state;
+//     return (
+//       <Animated.View style={[styles.container, { transform: [{translateY: shift}] }]}>
+//         <TextInput
+//           placeholder="A"
+//           style={styles.textInput}
+//         />
+//         <TextInput
+//           placeholder="B"
+//           style={styles.textInput}
+//         />
+//         <TextInput
+//           placeholder="C"
+//           style={styles.textInput}
+//         />
+//         <TextInput
+//           placeholder="D"
+//           style={styles.textInput}
+//         />
+//         <TextInput
+//           placeholder="E"
+//           style={styles.textInput}
+//         />
+//       </Animated.View>
+//     );
+//   }
+
+//   handleKeyboardDidShow = (event) => {
+//     const { height: windowHeight } = Dimensions.get('window');
+//     const keyboardHeight = event.endCoordinates.height;
+//     const currentlyFocusedField = TextInputState.currentlyFocusedField();
+//     UIManager.measure(currentlyFocusedField, (originX, originY, width, height, pageX, pageY) => {
+//       const fieldHeight = height;
+//       const fieldTop = pageY;
+//       const gap = (windowHeight - keyboardHeight) - (fieldTop + fieldHeight);
+//       if (gap >= 0) {
+//         return;
+//       }
+//       Animated.timing(
+//         this.state.shift,
+//         {
+//           toValue: gap,
+//           duration: 300,
+//           useNativeDriver: true,
+//         }
+//       ).start();
+//     });
+//   }
+
+//   handleKeyboardDidHide = () => {
+//     Animated.timing(
+//       this.state.shift,
+//       {
+//         toValue: 0,
+//         duration: 150,
+//         useNativeDriver: true,
+//       }
+//     ).start();
+//   }
+// }
+
+// const styles = StyleSheet.create({
+//   container: {
+//     backgroundColor: 'gray',
+//     flex: 1,
+//     height: '100%',
+//     justifyContent: 'space-around',
+//     left: 0,
+//     position: 'absolute',
+//     top: 0,
+//     width: '100%'
+//   },
+//   textInput: {
+//     backgroundColor: 'white',
+//     height: 40,
+//   }
+// });
+
+
+
+
+import React from 'react';
+import {
+  StyleSheet,
+  View,
+  Text,
+  Dimensions,
+  TouchableOpacity,
+  Platform,
+} from 'react-native';
+
+import MapView, { ProviderPropType, Marker, AnimatedRegion } from 'react-native-maps';
+
+const screen = Dimensions.get('window');
+
+const ASPECT_RATIO = screen.width / screen.height;
+const LATITUDE = 37.78825;
+const LONGITUDE = -122.4324;
+const LATITUDE_DELTA = 0.0922;
+const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
+
+class AnimatedMarkers extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      coordinate: new AnimatedRegion({
+        latitude: LATITUDE,
+        longitude: LONGITUDE,
+      }),
+    };
   }
 
-  componentWillUnmount() {
-    this.keyboardDidShowSub.remove();
-    this.keyboardDidHideSub.remove();
+  animate() {
+    const { coordinate } = this.state;
+    const newCoordinate = {
+      latitude: LATITUDE + ((Math.random() - 0.5) * (LATITUDE_DELTA / 2)),
+      longitude: LONGITUDE + ((Math.random() - 0.5) * (LONGITUDE_DELTA / 2)),
+    };
+
+    if (Platform.OS === 'android') {
+      if (this.marker) {
+        this.marker._component.animateMarkerToCoordinate(newCoordinate, 500);
+      }
+    } else {
+      coordinate.timing(newCoordinate).start();
+    }
   }
 
   render() {
-    const { shift } = this.state;
     return (
-      <Animated.View style={[styles.container, { transform: [{translateY: shift}] }]}>
-        <TextInput
-          placeholder="A"
-          style={styles.textInput}
-        />
-        <TextInput
-          placeholder="B"
-          style={styles.textInput}
-        />
-        <TextInput
-          placeholder="C"
-          style={styles.textInput}
-        />
-        <TextInput
-          placeholder="D"
-          style={styles.textInput}
-        />
-        <TextInput
-          placeholder="E"
-          style={styles.textInput}
-        />
-      </Animated.View>
+      <View style={styles.container}>
+        <MapView
+          provider={this.props.provider}
+          style={styles.map}
+          initialRegion={{
+            latitude: LATITUDE,
+            longitude: LONGITUDE,
+            latitudeDelta: LATITUDE_DELTA,
+            longitudeDelta: LONGITUDE_DELTA,
+          }}
+        >
+          <Marker.Animated
+            ref={marker => { this.marker = marker; }}
+            coordinate={this.state.coordinate}
+          />
+        </MapView>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            onPress={() => this.animate()}
+            style={[styles.bubble, styles.button]}
+          >
+            <Text>Animate</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     );
-  }
-
-  handleKeyboardDidShow = (event) => {
-    const { height: windowHeight } = Dimensions.get('window');
-    const keyboardHeight = event.endCoordinates.height;
-    const currentlyFocusedField = TextInputState.currentlyFocusedField();
-    UIManager.measure(currentlyFocusedField, (originX, originY, width, height, pageX, pageY) => {
-      const fieldHeight = height;
-      const fieldTop = pageY;
-      const gap = (windowHeight - keyboardHeight) - (fieldTop + fieldHeight);
-      if (gap >= 0) {
-        return;
-      }
-      Animated.timing(
-        this.state.shift,
-        {
-          toValue: gap,
-          duration: 300,
-          useNativeDriver: true,
-        }
-      ).start();
-    });
-  }
-
-  handleKeyboardDidHide = () => {
-    Animated.timing(
-      this.state.shift,
-      {
-        toValue: 0,
-        duration: 150,
-        useNativeDriver: true,
-      }
-    ).start();
   }
 }
 
+AnimatedMarkers.propTypes = {
+  provider: ProviderPropType,
+};
+
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'gray',
-    flex: 1,
-    height: '100%',
-    justifyContent: 'space-around',
-    left: 0,
-    position: 'absolute',
-    top: 0,
-    width: '100%'
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
   },
-  textInput: {
-    backgroundColor: 'white',
-    height: 40,
-  }
+  map: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  bubble: {
+    flex: 1,
+    backgroundColor: 'rgba(255,255,255,0.7)',
+    paddingHorizontal: 18,
+    paddingVertical: 12,
+    borderRadius: 20,
+  },
+  latlng: {
+    width: 200,
+    alignItems: 'stretch',
+  },
+  button: {
+    width: 80,
+    paddingHorizontal: 12,
+    alignItems: 'center',
+    marginHorizontal: 10,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    marginVertical: 20,
+    backgroundColor: 'transparent',
+  },
 });
+
+export default AnimatedMarkers;
+
+
+
+
