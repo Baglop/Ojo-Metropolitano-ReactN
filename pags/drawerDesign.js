@@ -1,7 +1,7 @@
 import React from "react";
-import { View, Text, StyleSheet, Platform, TouchableOpacity, Alert, Modal, NativeModules, KeyboardAvoidingView } from "react-native";
+import { View, Text, StyleSheet, Platform, TouchableOpacity, Alert, Modal, NativeModules, KeyboardAvoidingView, StatusBar,ScrollView } from "react-native";
 import Icon from 'react-native-vector-icons/AntDesign';
-import { TextInput, ScrollView } from "react-native-gesture-handler";
+import { TextInput } from "react-native-gesture-handler";
 import { Button } from "../node_modules/react-native-elements";
 import { Request_API } from '../networking/server';
 let couchbase_lite = NativeModules.couchbase_lite;
@@ -97,9 +97,6 @@ export default class drawerDesign extends React.Component {
   setMailModalV(visible){
     this.setState({mailModalV: visible});
   }
-  setPhoneModalV(visible){
-    this.setState({phoneModalV: visible});
-  }
 
   async modRequest(property, value){
     const params = {
@@ -125,8 +122,10 @@ export default class drawerDesign extends React.Component {
         
         <TouchableOpacity
           onPress={() => {
-            if(modalID == 1)
+            if(modalID == 1){
             this.setModalVisible(!this.state.modalVisible)
+            StatusBar.setHidden(true);
+            }
             else if (modalID == 2)
             this.setNamesModalV(!this.state.namesModalV)
             else if (modalID ==3)
@@ -148,9 +147,11 @@ export default class drawerDesign extends React.Component {
         animationType="slide"
         transparent={false}
         visible={this.state.modalVisible}
-        onShow={() => this.getUserInfo()}
+        onShow={() => {this.getUserInfo();StatusBar.setHidden(false);}}
+        onDismiss={() => StatusBar.setHidden(true)}
         onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
+          this.setModalVisible(!this.state.modalVisible);
+          StatusBar.setHidden(true);
         }}>
         <View>
           {this._renderNavBar("Modificar Cuenta",1)}
@@ -166,18 +167,6 @@ export default class drawerDesign extends React.Component {
                 <Text>{this.state.userInfo.nombres && this.state.userInfo.nombres 
                   + " " + this.state.userInfo.apellidoPaterno
                   + " " + this.state.userInfo.apellidoMaterno}</Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-
-                this.setuserNameModalV(!this.state.userNameModalV);
-              }}
-              style={{width:'100%',borderBottomWidth:0.5}}
-              >
-              <View style={{marginStart: 15,marginBottom:15,marginTop:15}}>
-                <Text style={styles.boldText}>Nombre de Usuario</Text>
-                <Text>{this.state.userInfo.nombreUsuario && this.state.userInfo.nombreUsuario}</Text>
               </View>
             </TouchableOpacity>
             <TouchableOpacity
@@ -230,7 +219,7 @@ export default class drawerDesign extends React.Component {
       transparent={false}
       visible={this.state.namesModalV}
       onRequestClose={() => {
-        Alert.alert('Modal has been closed.');
+        this.setnamesModalV(!this.state.namesModalV)
       }}>
         <View>
           {this._renderNavBar("Cambiar nombre",2)}
@@ -269,7 +258,7 @@ export default class drawerDesign extends React.Component {
           </ScrollView>
         </View>
         <View style={{ flex: 1,justifyContent: 'flex-end',}}>
-          <KeyboardAvoidingView  style={{justifyContent: 'flex-end',alignItems:'flex-end', position: 'absolute',bottom:0,width:'100%',borderTopWidth:0.5}} >
+          <KeyboardAvoidingView  enabled behavior="position" style={{justifyContent: 'flex-end',alignItems:'flex-end', position: 'absolute',bottom:0,width:'100%',borderTopWidth:0.5}} >
             <View style={{width:80,justifyContent: 'flex-end',alignContent:'flex-end', margin:10}}>
             <Button  onPress={() => {if(this.state.newNames != "")this.modRequest("nombres",this.state.newNames).then(this.setState({newNames:"text"}));
              if(this.state.newPSurname != "")this.modRequest("apellidoPaterno",this.state.newPSurname).then(this.setState({newPSurname:"text"}));
@@ -288,7 +277,7 @@ export default class drawerDesign extends React.Component {
       transparent={false}
       visible={this.state.mailModalV}
       onRequestClose={() => {
-        Alert.alert('Modal has been closed.');
+        this.setMailModalV(!this.state.mailModalV)
       }}>
         <View>
           {this._renderNavBar(title,ID)}
