@@ -3,6 +3,9 @@ package com.ojometropolitano;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import io.invertase.firebase.RNFirebasePackage;
+import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
+import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 import fr.bamlab.rnimageresizer.ImageResizerPackage;
 import com.imagepicker.ImagePickerPackage;
 import com.airbnb.android.react.maps.MapsPackage;
@@ -28,13 +31,16 @@ public class MainApplication extends Application implements ReactApplication {
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
-              new MainReactPackage(),
+            new MainReactPackage(),
+            new RNFirebasePackage(),
             new ImageResizerPackage(),
             new ImagePickerPackage(),
-              new VectorIconsPackage(),
-              new MapsPackage(),
-              new RNGestureHandlerPackage(),
-              new couchbase_lite_package()
+            new VectorIconsPackage(),
+            new MapsPackage(),
+            new RNGestureHandlerPackage(),
+            new couchbase_lite_package(),
+            new RNFirebaseNotificationsPackage(),
+            new RNFirebaseMessagingPackage() 
       );
     }
 
