@@ -1,0 +1,99 @@
+{
+  "project_info": {
+    "project_number": "653003216155",
+    "firebase_url": "https://ojo-metropolitano-modular.firebaseio.com",
+    "project_id": "ojo-metropolitano-modular",
+    "storage_bucket": "ojo-metropolitano-modular.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:653003216155:android:ec01dc7e1d1098ca",
+        "android_client_info": {
+          "package_name": "com.ojometropolitano"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "653003216155-mhi0tnfi2h0d7diobvt8q0shig9h5q9m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ojometropolitano",
+            "certificate_hash": "739b3948a96fff24e4b8804969fef64640ad0ddf"
+          }
+        },
+        {
+          "client_id": "653003216155-b08pqkn9d5vch133mvugdbfpnru2blie.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZV3zqH6dI8M6pe2sNWQRFEqZkM9y3Kss"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "653003216155-b08pqkn9d5vch133mvugdbfpnru2blie.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "653003216155-d45k6re2ekftbggh46sc9t549korlsnb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "siliconbear.OjoMetropolitano"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:653003216155:android:ed62000d7a933cf4",
+        "android_client_info": {
+          "package_name": "mx.siliconbear.ojometropolitano20"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "653003216155-hj0pkc39s3aevfcg2noovnfbfirogv0p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "mx.siliconbear.ojometropolitano20",
+            "certificate_hash": "739b3948a96fff24e4b8804969fef64640ad0ddf"
+          }
+        },
+        {
+          "client_id": "653003216155-b08pqkn9d5vch133mvugdbfpnru2blie.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZV3zqH6dI8M6pe2sNWQRFEqZkM9y3Kss"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "653003216155-b08pqkn9d5vch133mvugdbfpnru2blie.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "653003216155-d45k6re2ekftbggh46sc9t549korlsnb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "siliconbear.OjoMetropolitano"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
