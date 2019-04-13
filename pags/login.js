@@ -76,7 +76,24 @@ export default class LoginScreen extends React.Component
     );
   }
 
-  loginPress = () =>{
+  userInfoRequest(info){
+    const request = {
+      nombreUsuario: this.state.nombreUsuario,
+      tokenSiliconBear: info.tokenSiliconBear,
+      ubicacionUsuario: this.state.ubicacionUsuario
+    }
+    Request_API(request,URL2).then(response => {
+       console.log(JSON.stringify(response));
+      
+        if(Platform.OS == 'android'){
+            couchbase_lite.setUserInfoDoc(JSON.stringify(response))
+        }
+        this.props.navigation.replace('Main', {nombreUsuario: info.nombreUsuario, tokenSiliconBear: info.tokenSiliconBear});
+      }
+    )    
+  }
+
+  loginPress(){
     navigator.geolocation.getCurrentPosition(
       (position) => {
         this.setState({
@@ -95,15 +112,14 @@ export default class LoginScreen extends React.Component
     .then(response => {
       console.log(JSON.stringify(response));
       if(response.codigoRespuesta == 200){
+        this.userInfoRequest(response);
         if(Platform.OS == 'android'){
           couchbase_lite.setUserdataDoc(response.tokenSiliconBear, this.state.nombreUsuario);
-          this.props.navigation.replace('Main', {nombreUsuario: response.nombreUsuario, tokenSiliconBear: response.tokenSiliconBear});
+          
         }
         if(Platform.OS == "ios"){
           couchbase_lite_native.setUserdataDocTXT(response.tokenSiliconBear, this.state.nombreUsuario);
-          this.props.navigation.replace('Main', {nombreUsuario: response.nombreUsuario, tokenSiliconBear: response.tokenSiliconBear});
         }
-        this.userInfoRequest(response)
       } else{
         this.showAlert('No se puede iniciar sesión','El usuario o contraseña ingresada son incorrectos');
       }
@@ -111,21 +127,7 @@ export default class LoginScreen extends React.Component
     .catch(err => console.error(err));
   }
 
-  userInfoRequest(info){
-    const request = {
-      nombreUsuario: this.state.nombreUsuario,
-      tokenSiliconBear: info.tokenSiliconBear,
-      ubicacionUsuario: this.state.ubicacionUsuario
-    }
-    Request_API(request,URL2).then(response => {
-        console.warn(JSON.stringify(response));
-        
-        if(Platform.OS == 'android'){
-          couchbase_lite.setUserInfoDoc(JSON.stringify(response))
-        }
-      }
-    )
-  }
+
 
   registerPress = () =>{
     this.props.navigation.replace('Register');
@@ -179,7 +181,7 @@ export default class LoginScreen extends React.Component
           <Button
             title="Iniciar sesión"
             color="#51738e"
-            onPress={this.loginPress}
+            onPress={() => this.loginPress()}
           />
         </View>
         <View style={styles.registerButton}>
