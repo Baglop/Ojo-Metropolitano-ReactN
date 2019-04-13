@@ -1,35 +1,52 @@
 import React from "react";
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const groups = [
     {
         key: "1",
-        name: "Familia"
+        nombreGrupo: "Familia"
     },
     {
         key: "2",
-        name: "Amigos"
+        nombreGrupo: "Amigos"
     },
     {
         key: "3",
-        name: "Trabajo"
+        nombreGrupo: "Trabajo"
     },
     {
         key: "4",
-        name: "Escuela"
+        nombreGrupo: "Escuela"
     },
     {
         key: "5",
-        name: "Test"
+        nombreGrupo: "Test"
     }
 ]
 
 export default class GroupList extends React.Component {
+   
+    constructor(props){
+        super(props);
+        this.state ={
+            groups:this.props.groups,
+        };
+      }
+         
     _renderItems(item){
         return(
         <TouchableOpacity style={styles.button}>
-            <Text>{item.name}</Text>
+            <Text>{item.nombreGrupo}</Text>
         </TouchableOpacity>
+        )
+    }
+
+    _renderAddButton(){
+        return(
+            <TouchableOpacity style={styles.button}>
+                <Icon name="md-add" style={styles.modalButtonIcon} />
+            </TouchableOpacity>
         )
     }
 
@@ -39,10 +56,10 @@ export default class GroupList extends React.Component {
         <View>
             <Text style={{fontWeight:"bold",marginStart:10,marginTop:5}}>Grupos:</Text>
             <FlatList
-              data={groups}
+              data={[{nombreGrupo:"add"},...groups]}
               horizontal = {true}
               showsHorizontalScrollIndicator = {false}
-              renderItem={({item}) => this._renderItems(item)}
+              renderItem={({item}) => item.nombreGrupo === "add" ?this._renderAddButton() : this._renderItems(item)}
             />
         </View>
       </View>
@@ -64,4 +81,9 @@ const styles = StyleSheet.create({
         backgroundColor:'#fff',
         borderRadius:100,
     },
+    modalButtonIcon: {
+        fontSize: 35,
+        height: 35,
+        color: 'grey',
+      },
    });

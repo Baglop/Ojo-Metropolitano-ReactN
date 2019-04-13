@@ -112,7 +112,7 @@ export default class MainScreen extends React.Component {
     console.log(params)
     Request_API(params,modURL).then(response =>{
        console.log(response);
-       if(Platform.OS == 'android'){
+       if(Platform.OS == 'android' && response.codigoRespuesta == 200){
          couchbase_lite.updateUSerInfoDdc("tokenFirebase",value)
        }
        this.getUserInfo();
