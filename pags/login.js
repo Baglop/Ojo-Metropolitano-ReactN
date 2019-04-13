@@ -99,8 +99,8 @@ export default class LoginScreen extends React.Component
           couchbase_lite.setUserdataDoc(response.tokenSiliconBear, this.state.nombreUsuario);
           this.props.navigation.replace('Main', {nombreUsuario: response.nombreUsuario, tokenSiliconBear: response.tokenSiliconBear});
         }
-        if(Platform.OS == "ios"){
-          couchbase_lite_native.setUserdataDocTXT(response.tokenSiliconBear, this.state.nombreUsuario);
+        if(Platform.OS === "ios"){
+          //couchbase_lite_native.setUserdataDocTXT(response.tokenSiliconBear, this.state.nombreUsuario);
           this.props.navigation.replace('Main', {nombreUsuario: response.nombreUsuario, tokenSiliconBear: response.tokenSiliconBear});
         }
         this.userInfoRequest(response)
