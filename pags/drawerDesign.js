@@ -234,7 +234,7 @@ export default class drawerDesign extends React.Component {
               <Text style={styles.boldText}>Nuevo nombre</Text>
               <TextInput
               style={{}}
-              returnKeyType = "go"
+              returnKeyType = "next"
               ref={(input) => this.nuevoNombre = input}
               nChangeText={(text) => this.setState({newNames:text})}
               autoFocus={true}
@@ -242,7 +242,7 @@ export default class drawerDesign extends React.Component {
               />
               <TextInput
               style={{}}
-              returnKeyType = "go"
+              returnKeyType = "next"
               ref={(input) => this.NuevoApellidoP = input}
               onChangeText={(text) => this.setState({newPSurname:text})}
               placeholder={this.state.userInfo.apellidoPaterno !== "" ? this.state.userInfo.apellidoPaterno : "Apellido Paterno"}

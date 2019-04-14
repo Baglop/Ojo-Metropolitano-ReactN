@@ -24,6 +24,7 @@
     "react-native-maps": "git://github.com/react-native-community/react-native-maps.git#master",
     "react-native-material-textfield": "^0.12.0",
     "react-native-modal": "^9.0.0",
+    "react-native-popup-menu": "^0.15.5",
     "react-native-vector-icons": "^6.1.0",
     "react-navigation": "^3.0.9"
   },
