@@ -71,6 +71,13 @@ export default class ContactsList extends React.Component {
         };
       }
 
+      componentWillReceiveProps(nextProps){
+        this.setState({contacts:nextProps.contacts,
+                        userData: nextProps.userData,})
+        
+        console.log(this.state.contacts)
+    }
+
       async deleteFriend(user){
         let promise = new Promise((resolve, reject) => {
           navigator.geolocation.getCurrentPosition(

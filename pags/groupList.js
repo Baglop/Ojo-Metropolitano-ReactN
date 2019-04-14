@@ -44,11 +44,11 @@ export default class GroupList extends React.Component {
         };
     }
 
-    componentWillReceiveProps(){
-        this.setState({groups:this.props.groups,
-                        userData: this.props.userData,})
+    componentWillReceiveProps(nextProps){
+        this.setState({groups:nextProps.groups,
+                        userData: nextProps.userData,})
         
-        console.log(this.props.groups)
+        console.log(this.state.groups)
     }
 
     async newGroupRequest(){
