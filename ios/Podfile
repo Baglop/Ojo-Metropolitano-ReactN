@@ -8,6 +8,7 @@ target 'OjoMetropolitano' do
   # Pods for OjoMetropolitano
 
 pod 'GoogleMaps'
+pod 'Firebase/Core'
 
   target 'OjoMetropolitano-tvOSTests' do
     inherit! :search_paths

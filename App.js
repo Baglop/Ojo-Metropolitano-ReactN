@@ -91,13 +91,13 @@ export default class OjoMetropolitano extends React.Component {
       });
     }
     if(Platform.OS == 'ios'){
-      couchbase_lite_native.userDataDocExistTXT(err => {
-        this.setState({logged: err});
-        console.log(this.state.logged);
-      }, succ => {
-        this.setState({logged: succ});
-        console.log(this.state.logged);
-      });
+      // couchbase_lite_native.userDataDocExistTXT(err => {
+      //   this.setState({logged: err});
+      //   console.log(this.state.logged);
+      // }, succ => {
+      //   this.setState({logged: succ});
+      //   console.log(this.state.logged);
+      // });
     }
   }
 
