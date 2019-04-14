@@ -8,9 +8,11 @@
   },
   "dependencies": {
     "lodash": "^4.17.11",
+    "pouchdb-react-native": "^6.4.1",
     "react": "16.6.3",
     "react-native": "0.59.3",
     "react-native-action-button": "^2.8.5",
+    "react-native-crypto": "^2.1.2",
     "react-native-datepicker": "^1.7.2",
     "react-native-elements": "^1.0.0",
     "react-native-firebase": "^5.3.1",
@@ -25,6 +27,7 @@
     "react-native-material-textfield": "^0.12.0",
     "react-native-modal": "^9.0.0",
     "react-native-popup-menu": "^0.15.5",
+    "react-native-randombytes": "^3.5.2",
     "react-native-vector-icons": "^6.1.0",
     "react-navigation": "^3.0.9"
   },
@@ -33,7 +36,8 @@
     "jest": "23.6.0",
     "metro-react-native-babel-preset": "0.51.0",
     "react-native-schemes-manager": "^1.0.5",
-    "react-test-renderer": "16.6.3"
+    "react-test-renderer": "16.6.3",
+    "rn-nodeify": "^10.0.1"
   },
   "jest": {
     "preset": "react-native"

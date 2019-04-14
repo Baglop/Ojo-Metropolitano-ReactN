@@ -10,14 +10,22 @@ import LoginScreen from './pags/login';
 import MainScreen from './pags/main';
 import RegisterScreen from './pags/register';
 import Register2Screen from './pags/register2';
-import CameraScreen from './pags/camera'
+import CameraScreen from './pags/camera';
 
 import {NativeModules, Platform, StatusBar} from 'react-native';
 import { createStackNavigator, createAppContainer } from "react-navigation";
+
+import PouchDB from 'pouchdb-react-native'; 
+const localDB = new PouchDB('OjoMetropolitano');
+
 console.disableYellowBox = true;
 let couch_base = NativeModules.couchbase_lite;
 let couchbase_lite_native = NativeModules.couchbase_lite_native;
 var initialRoute = "Main";
+
+
+// const localDB = new PouchDB('OjoMetropolitano')
+// console.log(localDB.adapter)
 
 const AppNavigatorM = createStackNavigator(
   {

@@ -19,6 +19,8 @@ pod 'Firebase/Core'
 
     pod 'react-native-image-resizer', :path => '../node_modules/react-native-image-resizer'
 
+    pod 'react-native-randombytes', :path => '../node_modules/react-native-randombytes'
+
   end
 
   target 'OjoMetropolitanoTests' do
