@@ -118,7 +118,7 @@ export default class LoginScreen extends React.Component
           
         }
         if(Platform.OS == "ios"){
-          couchbase_lite_native.setUserdataDocTXT(response.tokenSiliconBear, this.state.nombreUsuario);
+          //couchbase_lite_native.setUserdataDocTXT(response.tokenSiliconBear, this.state.nombreUsuario);
         }
       } else{
         this.showAlert('No se puede iniciar sesión','El usuario o contraseña ingresada son incorrectos');

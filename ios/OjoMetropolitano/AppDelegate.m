@@ -6,7 +6,7 @@
  */
 
 // AIzaSyBaTvhI_cyiqyWvI-jyTPFmAL6Ec6V0KYE
-
+#import <Firebase.h>
 #import "AppDelegate.h"
 
 #import <React/RCTBundleURLProvider.h>
@@ -36,6 +36,7 @@
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
+  [FIRApp configure];
   return YES;
 }
 
