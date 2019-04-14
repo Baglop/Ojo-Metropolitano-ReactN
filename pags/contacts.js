@@ -5,6 +5,7 @@ import ContactList from "./contactsList"
 import { TextInput } from "react-native-gesture-handler";
 import Icon from 'react-native-vector-icons/Ionicons';
 import { Request_API } from '../networking/server';
+import {MenuProvider} from 'react-native-popup-menu';
 
 let couchbase_lite_native = NativeModules.couchbase_lite_native;
 const couchbase_lite = NativeModules.couchbase_lite;
@@ -60,6 +61,7 @@ export default class ContactScreen extends React.Component {
       contacts:null,
       groups:null
     };
+    this.friendsListRequest = this.friendsListRequest.bind(this);
     this.getData();this.friendsListRequest();
   }
 
@@ -118,8 +120,8 @@ export default class ContactScreen extends React.Component {
 
     Request_API(params,friendListURL).then(response => {
       console.log(response)
-      this.setState({contacts:response.amigos, groups: response.grupos})
-      console.log(this.state.contacts)
+      this.setState({groups: response.grupos,contacts:response.amigos})
+      console.log(this.state.groups)
 
     })
   }
@@ -192,6 +194,7 @@ export default class ContactScreen extends React.Component {
 
   render() {
     return (
+      <MenuProvider>
       <View style={{flex:1}}>
         <View style={{flexDirection: 'row',justifyContent: 'flex-start',alignItems: 'center', borderBottomWidth:0.5}} >
           <Icon name="md-search" style={styles.searchIcon}/>
@@ -199,10 +202,12 @@ export default class ContactScreen extends React.Component {
         </View>
         {this.state.showSearch ? this._renderItemsSearch():null}
         <ScrollView style={{ flex: 1}} showsVerticalScrollIndicator = {false}>
-        {this.state.groups !== null ? <GroupList groups={this.state.groups&&this.state.groups} />: null}
-          {this.state.contacts !== null ? <ContactList contacts={this.state.contacts&&this.state.contacts} />: null}
+        {this.state.groups !== null ? <GroupList groups={this.state.groups&&this.state.groups} userData={this.state.userData&&this.state.userData} refrestList={this.friendsListRequest}/>: null}
+        {this.state.contacts !== null ? <ContactList contacts={this.state.contacts&&this.state.contacts} userData={this.state.userData&&this.state.userData} refrestList={this.friendsListRequest}/>: null}
         </ScrollView>
       </View>
+      
+      </MenuProvider>
     );
   }
 }

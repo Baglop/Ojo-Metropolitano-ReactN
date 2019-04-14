@@ -5,3 +5,6 @@ npm install --save react-native-modal
 npm i react-native-image-picker
 react-native link react-native-image-picker
 npm install --save react-native-image-resizer
+
+--30/04/2019--
+npm install react-native-popup-menu --save
