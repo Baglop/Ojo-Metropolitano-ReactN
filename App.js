@@ -14,6 +14,7 @@ import CameraScreen from './pags/camera';
 
 import {NativeModules, Platform, StatusBar} from 'react-native';
 import { createStackNavigator, createAppContainer } from "react-navigation";
+import firebase  from 'react-native-firebase';
 
 import PouchDB from 'pouchdb-react-native'; 
 const localDB = new PouchDB('OjoMetropolitano');
@@ -72,6 +73,23 @@ const AppNavigatorL = createStackNavigator(
       initialRouteName: "Login",
   }
 );
+
+firebase.messaging().hasPermission()
+  .then(enabled => {
+    if (enabled) {
+      // user has permissions
+    } else {
+      // user doesn't have permission
+    } 
+  });
+
+  firebase.messaging().requestPermission()
+  .then(() => {
+    // User has authorised  
+  })
+  .catch(error => {
+    // User has rejected permissions  
+  });
 
 const Logged = createAppContainer(AppNavigatorM);
 const Unlogged = createAppContainer(AppNavigatorL);

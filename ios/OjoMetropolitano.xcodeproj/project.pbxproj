@@ -13,8 +13,8 @@
 		00C302E91ABCBA2D00DB3ED1 /* libRCTNetwork.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302DC1ABCB9D200DB3ED1 /* libRCTNetwork.a */; };
 		00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302E41ABCB9EE00DB3ED1 /* libRCTVibration.a */; };
 		00E356F31AD99517003FC87E /* OjoMetropolitanoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* OjoMetropolitanoTests.m */; };
+		0489A3F822643FEF00D18A15 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0489A3F722643FEE00D18A15 /* GoogleService-Info.plist */; };
 		04C744FD2262FD1300AEC1B1 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04C744FC2262FD1200AEC1B1 /* JavaScriptCore.framework */; };
-		04D1E7A42262F04D0053EE0C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 04D1E7A32262F04C0053EE0C /* GoogleService-Info.plist */; };
 		11D1A2F320CAFA9E000508D9 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 78C398B91ACF4ADC00677621 /* libRCTLinking.a */; };
 		139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139105C11AF99BAD00B5F7CC /* libRCTSettings.a */; };
@@ -391,8 +391,9 @@
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* OjoMetropolitanoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OjoMetropolitanoTests.m; sourceTree = "<group>"; };
 		01F89BF8A41CBF0AA84B97DF /* libPods-OjoMetropolitano-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-OjoMetropolitano-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0489A3F622643F2D00D18A15 /* OjoMetropolitano.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = OjoMetropolitano.entitlements; path = OjoMetropolitano/OjoMetropolitano.entitlements; sourceTree = "<group>"; };
+		0489A3F722643FEE00D18A15 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		04C744FC2262FD1200AEC1B1 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		04D1E7A32262F04C0053EE0C /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		0E639F280EF1444F85E0908A /* libRNFirebase.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNFirebase.a; sourceTree = "<group>"; };
 		139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTSettings.xcodeproj; path = "../node_modules/react-native/Libraries/Settings/RCTSettings.xcodeproj"; sourceTree = "<group>"; };
 		139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWebSocket.xcodeproj; path = "../node_modules/react-native/Libraries/WebSocket/RCTWebSocket.xcodeproj"; sourceTree = "<group>"; };
@@ -614,6 +615,7 @@
 		13B07FAE1A68108700A75B9A /* OjoMetropolitano */ = {
 			isa = PBXGroup;
 			children = (
+				0489A3F622643F2D00D18A15 /* OjoMetropolitano.entitlements */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -822,7 +824,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				04D1E7A32262F04C0053EE0C /* GoogleService-Info.plist */,
+				0489A3F722643FEE00D18A15 /* GoogleService-Info.plist */,
 				52C6B2BF21EC2CBB00F5A1DE /* AirGoogleMaps */,
 				13B07FAE1A68108700A75B9A /* OjoMetropolitano */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
@@ -937,6 +939,14 @@
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = GRER3SSMXC;
 						LastSwiftMigration = 1010;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -1350,7 +1360,7 @@
 				B9082AC870764BBFB93CBBBB /* FontAwesome5_Regular.ttf in Resources */,
 				DBFF9B9DF700453BA7D70F56 /* FontAwesome5_Solid.ttf in Resources */,
 				2A7859E09E5A441FB1C18521 /* Foundation.ttf in Resources */,
-				04D1E7A42262F04D0053EE0C /* GoogleService-Info.plist in Resources */,
+				0489A3F822643FEF00D18A15 /* GoogleService-Info.plist in Resources */,
 				4A3DBEB57A3A4F0CA2906C4F /* Ionicons.ttf in Resources */,
 				49A3E8D2584A44788F9004A2 /* MaterialCommunityIcons.ttf in Resources */,
 				A26778CD53174934B7D04FE4 /* MaterialIcons.ttf in Resources */,
@@ -1581,6 +1591,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = OjoMetropolitano/OjoMetropolitano.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = GRER3SSMXC;
@@ -1595,7 +1606,11 @@
 					"eact-native-gesture-handlerios/**",
 					"$(SRCROOT)/../node_modules/react-native-maps/lib/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-m(ps/lib/ios/AirMaps/**",
-					"$(SRCROOT)..\node_modules\neact-native-firebaseiosRNFirebase/**",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-firebaseiosRNFirebase/**",
+					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/messaging",
+					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/notifications",
 				);
 				INFOPLIST_FILE = OjoMetropolitano/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1604,7 +1619,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = siliconBears.OjoMetropolitanoRN;
 				PRODUCT_NAME = OjoMetropolitano;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -1620,6 +1635,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = OjoMetropolitano/OjoMetropolitano.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = GRER3SSMXC;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1633,7 +1649,11 @@
 					"eact-native-gesture-handlerios/**",
 					"$(SRCROOT)/../node_modules/react-native-maps/lib/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-m(ps/lib/ios/AirMaps/**",
-					"$(SRCROOT)..\node_modules\neact-native-firebaseiosRNFirebase/**",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-firebaseiosRNFirebase/**",
+					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/messaging",
+					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/notifications",
 				);
 				INFOPLIST_FILE = OjoMetropolitano/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1642,7 +1662,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = siliconBears.OjoMetropolitanoRN;
 				PRODUCT_NAME = OjoMetropolitano;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_REFLECTION_METADATA_LEVEL = all;
