@@ -23,6 +23,11 @@
   //[[UNUserNotificationCenter currentNotificationCenter] setDelegate:self];
   [RNFirebaseNotifications configure];
   
+  UIUserNotificationType userNotificationTypes = UIUserNotificationTypeBadge;
+  UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:userNotificationTypes categories:nil];
+  [application registerUserNotificationSettings:settings];
+  [UIApplication sharedApplication].applicationIconBadgeNumber--;
+  
   #ifdef DEBUG
     jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
   #else
@@ -55,6 +60,14 @@ fetchCompletionHandler:(nonnull void (^)(UIBackgroundFetchResult))completionHand
 - (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings {
   [[RNFirebaseMessaging instance] didRegisterUserNotificationSettings:notificationSettings];
 }
+
+
+
+
+
+
+
+
 
 
 

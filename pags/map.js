@@ -5,10 +5,11 @@ import {Marker} from 'react-native-maps';
 import ActionButton from 'react-native-action-button';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { Request_API } from '../networking/server';
-import { Platform } from 'react-native';
 import DatePicker from 'react-native-datepicker';
 import moment from 'moment';
-import { colors } from "../node_modules/react-native-elements";
+
+import PouchDB from 'pouchdb-react-native'; 
+const db = new PouchDB('OjoMetropolitano');
 
 const couchbase_liteAndroid = NativeModules.couchbase_lite;
 const couchbase_lite_native = NativeModules.couchbase_lite_native;
@@ -155,7 +156,7 @@ export default class MapScreen extends React.Component {
         <MapView style={styles.map}
           provider={PROVIDER_GOOGLE}
           initialRegion={this.state.region}>
-            {this.state.globalReports ? this._renderGlobalReports():this._renderUserRepors()}
+            {this.state.globalReports ? this._renderGlobalReports():null}
         </MapView>
         <ActionButton buttonColor="rgba(0,200,200,1)" >
           <ActionButton.Item buttonColor='#9b59b6' size={45} title="Reportar" onPress={() => this.openModalReport(true)}>
@@ -189,13 +190,12 @@ export default class MapScreen extends React.Component {
         latitude: 0,
         longitude: 0,
       },
+      
       reports:[],
       userReports:[],
-      userInfo:{
-        id:"",
-        userName:"",
-        tokenSiliconBear:"",
-      },
+
+      userInfo:[],
+
       actualReportInfo:null,
       error: null,
       date:null,
@@ -230,19 +230,6 @@ export default class MapScreen extends React.Component {
     );
   }
 
-  _renderUserRepors(){
-    return(
-    this.state.userReports.map(marker => (
-      <Marker
-        coordinate={{latitude:Number(marker.latitud), longitude:Number(marker.longitud)}}
-        title={"Asalto"}
-        description={marker.fechaIncidente}
-        onCalloutPress={() => this.makeReportInfoRequest(marker.id)}
-      />
-      ))
-    );
-  }
-
   changeReports(){
     if(this.state.globalReports){
       this.setState({globalReports:false,Titulo:"Reportes globales"})
@@ -255,7 +242,6 @@ export default class MapScreen extends React.Component {
   componentWillMount(){
     this.startLocTrack().then(() => 
       this.reportsRequest(),
-      this.userReportsRequest()
     );
     
   }
@@ -284,8 +270,13 @@ export default class MapScreen extends React.Component {
     this.setState({modalInfoReport:visible})
   }
 
-  // User location Track 
   async startLocTrack() {
+    try {
+      this.setState({ userInfo: await db.get('BasicValues')});
+      console.log(this.state.userInfo.tokenSiliconBear)
+    } catch (err) {
+      //console.log(err);
+    }
     this.watchId = await navigator.geolocation.watchPosition(
       (position) => {
         this.setState({
@@ -307,91 +298,21 @@ export default class MapScreen extends React.Component {
   }
 
   reportsRequest(){
-    if (Platform.OS == 'android'){
-      couchbase_liteAndroid.getUserdataDoc(err => {
-        console.warn("chale me humillo")
-      },succ => {
-        this.setState({userInfo: succ[0]})
-        const userPetition = {
-          nombreUsuario: succ[0].userName,
-          tokenSiliconBear: succ[0].tokenSiliconBear,
-          ubicacionUsuario: this.state.region.latitude + ',' + this.state.region.longitude,
-        };
-        Request_API(userPetition, actualizarReportesGlobales)
-        .then(response => {
-          console.warn(JSON.stringify(response));
-          console.warn(this.state.userInfo.tokenSiliconBear);
-          if(response.codigoRespuesta === 200){
-            couchbase_liteAndroid.setReportDataDoc(JSON.stringify(response),1);
-            this.setState({reports:response.reportes});
-            console.warn(this.state.reports.id);
-          }
-        })
-      });
-    } 
-    if (Platform.OS == 'ios'){
-      couchbase_lite_native.getUserdataDocTXT(err => {
-        console.warn("chale me humillo")
-      }, succ => {
-          this.setState({userInfo: succ[0]})
-          const userPetition = {
-            nombreUsuario: succ[0].userName,
-            tokenSiliconBear: succ[0].tokenSiliconBear,
-            ubicacionUsuario: this.state.region.latitude + ',' + this.state.region.longitude,
-          };
-          Request_API(userPetition, actualizarReportesGlobales)
-          .then(response => {
-            console.log(JSON.stringify(response));
-            if(response.codigoRespuesta === 200){
-              /*couchbase_lite_native.setReportDataDocTXT(JSON.stringify(response));*/
-              this.setState({reports:response.reportes});
-            }
-          });
-      })
+    const userPetition = {
+      nombreUsuario: this.state.userInfo.nombreUsuario,
+      tokenSiliconBear: this.state.userInfo.tokenSiliconBear,
+      ubicacionUsuario: this.state.region.latitude + ',' + this.state.region.longitude,
     };
+    Request_API(userPetition, actualizarReportesGlobales).then(response => {
+      if(response.codigoRespuesta === 200){
+        this.setState({reports:response.reportes});
+      }
+    });
   }
-
-  userReportsRequest(){
-    if (Platform.OS == 'android'){
-      couchbase_liteAndroid.getUserdataDoc(err => {
-        console.warn("chale me humillo")
-      },succ => {
-        this.setState({userInfo: succ[0]})
-        const userPetition = {
-          nombreUsuario: succ[0].userName,
-          tokenSiliconBear: succ[0].tokenSiliconBear,
-          ubicacionUsuario: this.state.region.latitude + ',' + this.state.region.longitude,
-        };
-        Request_API(userPetition, reportesUsuario)
-        .then(response => {
-          console.warn(JSON.stringify(response));
-          if(response.codigoRespuesta === 200){
-            couchbase_liteAndroid.setReportDataDoc(JSON.stringify(response),2);
-            console.log("Se supone que ya quedaron en base de datos")
-            this.setState({userReports:response.reportes});
-            console.warn(this.state.reports.id);
-          }
-        })
-      });
-    } 
-    if (Platform.OS == 'ios'){
-      const reportes = {
-        nombreUsuario: 'Delta',
-        tokenSiliconBear: 'b9c194c8-d9d1-423f-8190-b7f29287fae4',
-        ubicacionUsuario: '50.258598,19.020420',
-      };
-      Request_API(reportes, reportesUsuario)
-      .then(response => {
-        console.log(JSON.stringify(response));
-        if(response.codigoRespuesta === 200){
-          this.setState({reports:response.reportes});
-        }
-      });
-    };
-  }
+  
   makeReportRequest(){
     const requestJHONSON = {
-      nombreUsuario: this.state.userInfo.userName,
+      nombreUsuario: this.state.userInfo.nombreUsuario,
       tipoReporte: this.state.idReporte,
       evidencia:null,
       descripcion: this.state.reportDescription,
@@ -412,7 +333,7 @@ export default class MapScreen extends React.Component {
   makeReportInfoRequest(idReport){
     const requestJHONSON = {
       idReporte:idReport,
-      nombreUsuario: this.state.userInfo.userName,
+      nombreUsuario: this.state.userInfo.nombreUsuario,
       tokenSiliconBear: this.state.userInfo.tokenSiliconBear,
       ubicacionUsuario: this.state.region.latitude + ',' + this.state.region.longitude
     }

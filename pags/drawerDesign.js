@@ -4,6 +4,7 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import { TextInput } from "react-native-gesture-handler";
 import { Button } from "../node_modules/react-native-elements";
 import { Request_API } from '../networking/server';
+import { PouchDB_Get_Document, PouchDB_DeleteDB } from '../PouchDB/PouchDBQuerys'
 let couchbase_lite = NativeModules.couchbase_lite;
 let couchbase_lite_native = NativeModules.couchbase_lite_native;
 const modURL = ':3030/API/miCuenta/ModificarInformacionUsuario'
@@ -11,45 +12,20 @@ const modURL = ':3030/API/miCuenta/ModificarInformacionUsuario'
 export default class drawerDesign extends React.Component {
   
   loguotPress = () =>{
-    if(Platform.OS == 'android'){
-      couchbase_lite.deleteUserdataDoc(err => {
-        console.log(err);
-      }, succ => {
-        console.log(succ);
-      });
-
-      couchbase_lite.deleteUserInfoDoc(error => {
-        console.log(error);
-      }, success => {console.log(success);});
-
-      couchbase_lite.deleteUserReportsDoc(err => {
-        console.log(err);
-      }, succ => {
-        console.log(succ);
-      });
-    }
-    if(Platform.OS == 'ios'){
-      couchbase_lite_native.deleteUserDataDocTXT(err => {
-        console.log(err);
-      }, succ => {
-        console.log(succ);
-      });
-    }
+    PouchDB_DeleteDB();
   }
 
   getUserInfo(){
-    if(Platform.OS == 'android'){
-      couchbase_lite.getUserInfoDoc(err => {
-        console.warn("Archivo no encontrado: " + err);
-      },succ => {
-        this.setState({userInfo: succ[0]});
-      });
-      couchbase_lite.getUserdataDoc(err => {
-        console.warn("Archivo no encontrado: " + err);
-      },succ => {
-        this.setState({userData: succ[0]});
-      });
-    }
+    PouchDB_Get_Document('ActualizarInformacionUsuario')
+      .then(response => {
+      //console.log(JSON.stringify(response));
+      this.setState({userInfo: response})
+    });
+    PouchDB_Get_Document('BasicValues')
+      .then(response => {
+      //console.log(JSON.stringify(response));
+      this.setState({userData: response})
+    });
   }
 
   componentWillMount(){

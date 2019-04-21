@@ -16,10 +16,14 @@ import {Platform, StyleSheet,
         Animated,Dimensions, 
         Keyboard, StatusBar} from 'react-native';
 import { Request_API } from '../networking/server';
-let couchbase_lite = NativeModules.couchbase_lite;
-let couchbase_lite_native = NativeModules.couchbase_lite_native;
-const URL = 'http://siliconbear.dynu.net:3030/API/inicio/IniciarSesion';
+import { PouchDB_Insert, PouchDB_ActualizarMisReportes } from '../PouchDB/PouchDBQuerys'
+import _ from 'lodash';
+import firebase from 'react-native-firebase'
+const URL = ':3030/API/inicio/IniciarSesion';
 const URL2 = ':3030/API/miCuenta/ActualizarInformacionUsuario';
+const modURL = ':3030/API/miCuenta/ModificarInformacionUsuario';
+const reportesUsuario = ':3030/API/inicio/ActualizarMisReportes';
+const AmigosyGrupos = ':3030/API/contactos/ActualizarAmigosYGrupos';
 const width = '80%';
 
 const window = Dimensions.get('window');
@@ -34,9 +38,24 @@ export default class LoginScreen extends React.Component
     this.state ={
       nombreUsuario:    '',
       contrasena:       '',
-      ubicacionUsuario: '0.0,-0.0'
+      ubicacionUsuario: '0.0,-0.0',
+      tokenFireBase:    ''
     };
+    this.getLocationUser();
+    this.tokenFR();
   }
+
+  getLocationUser(){
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        this.setState({
+          ubicacionUsuario: position.coords.latitude + ',' + position.coords.longitude
+        });
+      },
+      (error) => console.log(error)
+    );
+  }
+
   componentWillMount () {
     this.keyboardWillShowSub = Keyboard.addListener('keyboardWillShow', this.keyboardWillShow);
     this.keyboardWillHideSub = Keyboard.addListener('keyboardWillHide', this.keyboardWillHide);
@@ -70,10 +89,22 @@ export default class LoginScreen extends React.Component
       title,
       message,
       [,
-        {text: 'OK', onPress: () => console.log('OK Pressed')},
+        {text: 'OK'},
       ],
       {cancelable: false},
     );
+  }
+
+  tokenFR(){
+    firebase.messaging().getToken()
+    .then(fcmToken => {
+      if (fcmToken) {
+        this.setState({tokenFireBase: fcmToken})
+        console.log(fcmToken)
+      } else {
+        console.log("No hay token")
+      } 
+    });
   }
 
   userInfoRequest(info){
@@ -82,52 +113,94 @@ export default class LoginScreen extends React.Component
       tokenSiliconBear: info.tokenSiliconBear,
       ubicacionUsuario: this.state.ubicacionUsuario
     }
+    const body = {
+      nombreUsuario: this.state.nombreUsuario,
+      tokenSiliconBear: info.tokenSiliconBear,
+      tokenFirebase: this.state.tokenFireBase
+    }
     Request_API(request,URL2).then(response => {
-       console.log(JSON.stringify(response));
-      
-        if(Platform.OS == 'android'){
-            couchbase_lite.setUserInfoDoc(JSON.stringify(response))
-        }
-        this.props.navigation.replace('Main', {nombreUsuario: info.nombreUsuario, tokenSiliconBear: info.tokenSiliconBear});
+        if(response.codigoRespuesta === 200){
+          PouchDB_Insert('ActualizarInformacionUsuario', 'ActualizarInformacionUsuario', response.usuario);
+          PouchDB_Insert('BasicValues', 'BasicValues', body);
+          this.props.navigation.replace('Main', {});
+       }
+    });    
+  }
+
+  userReportsRequest(info){
+    const userReports = {
+      nombreUsuario: this.state.nombreUsuario,
+      tokenSiliconBear: info.tokenSiliconBear,
+      ubicacionUsuario: this.state.ubicacionUsuario,
+    };
+    Request_API(userReports, reportesUsuario).then(response => { 
+      if(response.codigoRespuesta === 200){
+        response.reportes.map((data) => {
+          PouchDB_Insert(data._id, 'userReports', data)
+        })
       }
-    )    
+    });
+  }
+
+  userFriendsAndGroups(info){
+    const userFyG = {
+      nombreUsuario: this.state.nombreUsuario,
+      tokenSiliconBear: info.tokenSiliconBear,
+      ubicacionUsuario: this.state.ubicacionUsuario,
+    };
+    Request_API(userFyG, AmigosyGrupos).then(response => { 
+      if(response.codigoRespuesta === 200){
+        if(_.size(response.amigos) > 0){
+          response.amigos.map((data) => {
+            PouchDB_Insert('friends', 'friends', data)
+          })
+        }
+        if(_.size(response.grupos) > 0){
+          response.grupos.map((data) => {
+            PouchDB_Insert(data.idGrupo, 'groups', data)
+          })
+        }
+      }
+    });
+  }
+
+  updateToken(info){
+    console.log(info.tokenSiliconBear);
+    const params = {
+      nombreUsuario: this.state.nombreUsuario,
+      atributoModificado: "tokenFirebase",
+      valorNuevo: this.state.tokenFireBase,
+      tokenSiliconBear: info.tokenSiliconBear,
+      ubicacionUsuario: this.state.ubicacionUsuario,
+    }
+    Request_API(params,modURL).then(response =>{
+      console.log(response);
+    })
   }
 
   loginPress(){
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        this.setState({
-          ubicacionUsuario: position.coords.latitude + ',' + position.coords.longitude
-        });
-      },
-      (error) => console.log(error)
-    );
-    fetch(URL,{
-      method: 'POST',
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(this.state),
-    }).then(res => res.json())
-    .then(response => {
-      console.log(JSON.stringify(response));
-      if(response.codigoRespuesta == 200){
-        this.userInfoRequest(response);
-        if(Platform.OS == 'android'){
-          couchbase_lite.setUserdataDoc(response.tokenSiliconBear, this.state.nombreUsuario);
-          
-        }
-        if(Platform.OS == "ios"){
-          //couchbase_lite_native.setUserdataDocTXT(response.tokenSiliconBear, this.state.nombreUsuario);
-        }
-      } else{
-        this.showAlert('No se puede iniciar sesión','El usuario o contraseña ingresada son incorrectos');
+    const body = {
+      nombreUsuario: this.state.nombreUsuario,
+      contrasena: this.state.contrasena,
+      ubicacionUsuario: this.state.ubicacionUsuario
+    }
+    Request_API(body, URL).then(response => {
+      if(response.codigoRespuesta === 200){
+        this.updateToken(response);
+        setTimeout(() => {
+          this.userInfoRequest(response);
+        }, 1000);
+        setTimeout(() => {
+          this.userReportsRequest(response);
+        }, 1000); 
+        setTimeout(() => {
+          this.userFriendsAndGroups(response);
+        }, 1000);  
+      } else {
+        this.showAlert('No se puede iniciar sesión',response.mensaje);
       }
     })
-    .catch(err => console.error(err));
   }
-
-
 
   registerPress = () =>{
     this.props.navigation.replace('Register');

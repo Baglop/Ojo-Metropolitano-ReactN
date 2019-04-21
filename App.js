@@ -12,21 +12,15 @@ import RegisterScreen from './pags/register';
 import Register2Screen from './pags/register2';
 import CameraScreen from './pags/camera';
 
-import {NativeModules, Platform, StatusBar} from 'react-native';
+import {StatusBar} from 'react-native';
 import { createStackNavigator, createAppContainer } from "react-navigation";
 import firebase  from 'react-native-firebase';
-
+import PouchdbFind from 'pouchdb-find';
 import PouchDB from 'pouchdb-react-native'; 
-const localDB = new PouchDB('OjoMetropolitano');
+const db = new PouchDB('OjoMetropolitano');
 
 console.disableYellowBox = true;
-let couch_base = NativeModules.couchbase_lite;
-let couchbase_lite_native = NativeModules.couchbase_lite_native;
 var initialRoute = "Main";
-
-
-// const localDB = new PouchDB('OjoMetropolitano')
-// console.log(localDB.adapter)
 
 const AppNavigatorM = createStackNavigator(
   {
@@ -97,6 +91,7 @@ export default class OjoMetropolitano extends React.Component {
   
   constructor(props) {
     super(props);
+    PouchDB.plugin(PouchdbFind);
     this.state = {
       logged:null,
     };
@@ -106,25 +101,37 @@ export default class OjoMetropolitano extends React.Component {
     StatusBar.setHidden(true);
  }
 
-  componentWillMount() { 
-    if(Platform.OS == 'android'){
-      couch_base.userDataDocExist(err => {
-        this.setState({logged: err});
-        console.log(this.state.logged);
-      }, succ => {
-        this.setState({logged: succ});
-        console.log(this.state.logged);
-      });
-    }
-    if(Platform.OS == 'ios'){
-      // couchbase_lite_native.userDataDocExistTXT(err => {
-      //   this.setState({logged: err});
-      //   console.log(this.state.logged);
-      // }, succ => {
-      //   this.setState({logged: succ});
-      //   console.log(this.state.logged);
-      // });
-    }
+  async componentWillMount() { 
+
+    await db.get('BasicValues').then(doc => {
+      this.setState({logged: true})
+    });
+    // await db.get('ActualizarMisReportes').then(doc => {
+    //   console.log(doc[0]);
+    // });
+
+    // await db.find({
+    //   selector: {
+    //     type: 'userReports',
+    //     _id: '5cbbc02e4b2a640886bf5ac9'
+    //   },
+    //   index: {
+    //   fields: ['type']
+    //   }
+    // }).then(result => {
+    //   console.log(result);
+    // }).catch(function (err) {
+    //   console.log(err);
+    // });
+
+    await db.allDocs({
+      include_docs: true,
+      attachments: true
+    }).then(function (result) {
+      console.log(result.rows);
+    }).catch(function (err) {
+      console.log(err);
+    });
   }
 
   render() {

@@ -16,3 +16,10 @@ export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
 Run-Android MacOS
 brew install dos2unix # Installs dos2unix Mac
 find . -type f -exec dos2unix {} \; # recursively removes windows related stuff
+
+Run on device iOS from command line
+npm install -g ios-deploy
+react-native run-ios --device "iPhone de Jesus"
+
+Mapas React native
+https://github.com/react-native-community/react-native-maps
