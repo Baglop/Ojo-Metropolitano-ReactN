@@ -15,15 +15,13 @@ export default class drawerDesign extends React.Component {
     PouchDB_DeleteDB();
   }
 
-  getUserInfo(){
-    PouchDB_Get_Document('ActualizarInformacionUsuario')
+  async getUserInfo(){
+    await PouchDB_Get_Document('ActualizarInformacionUsuario')
       .then(response => {
-      //console.log(JSON.stringify(response));
       this.setState({userInfo: response})
     });
-    PouchDB_Get_Document('BasicValues')
+    await PouchDB_Get_Document('BasicValues')
       .then(response => {
-      //console.log(JSON.stringify(response));
       this.setState({userData: response})
     });
   }

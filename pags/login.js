@@ -16,7 +16,7 @@ import {Platform, StyleSheet,
         Animated,Dimensions, 
         Keyboard, StatusBar} from 'react-native';
 import { Request_API } from '../networking/server';
-import { PouchDB_Insert, PouchDB_ActualizarMisReportes } from '../PouchDB/PouchDBQuerys'
+import { PouchDB_Insert } from '../PouchDB/PouchDBQuerys'
 import _ from 'lodash';
 import firebase from 'react-native-firebase'
 const URL = ':3030/API/inicio/IniciarSesion';

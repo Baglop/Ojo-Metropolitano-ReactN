@@ -391,21 +391,21 @@ export default class screens extends Component {
     if(this.state.atributo === 'evidencia'){
       Request_API(bodyPetition, updateReporte).then(response => {
         if(response.codigoRespuesta === 200){
-          const updateReporte = {
-            autorReporte: reporte.autorReporte,
-            descripcion: reporte.descripcion,
-            evidencia: 'http://res.cloudinary.com/siliconbear/image/upload/v1555824358/ojoMetropolitano/evidencias/' + reporte.autorReporte + '_' + reporte._id + '.jpg',
-            fechaIncidente: reporte.fechaIncidente,
-            fechaReporte: reporte.fechaReporte,
-            latitud: reporte.latitud,
-            longitud: reporte.longitud,
-            tipoReporte: reporte.tipoReporte,
-            type: reporte.type,
-            ubicacionUsuario: reporte.ubicacionUsuario,
-          }
-          _.set(_.find(this.state.userReports, {_id: reporte._id}), 'evidencia', 'http://res.cloudinary.com/siliconbear/image/upload/v1555824358/ojoMetropolitano/evidencias/' + reporte.autorReporte + '_' + reporte._id + '.jpg');
-          PouchDB_UpdateDoc(reporte._id, updateReporte);
-
+          console.log(response);
+          _.set(_.find(this.state.userReports, {_id: reporte._id}), 'evidencia', `${response.reporte.evidencia}`);
+          PouchDB_UpdateDoc(reporte._id, reporte.type, response.reporte);
+          // const updateReporte = {
+          //   autorReporte: reporte.autorReporte,
+          //   descripcion: reporte.descripcion,
+          //   evidencia: 'http://res.cloudinary.com/siliconbear/image/upload/v1555824358/ojoMetropolitano/evidencias/' + reporte.autorReporte + '_' + reporte._id + '.jpg',
+          //   fechaIncidente: reporte.fechaIncidente,
+          //   fechaReporte: reporte.fechaReporte,
+          //   latitud: reporte.latitud,
+          //   longitud: reporte.longitud,
+          //   tipoReporte: reporte.tipoReporte,
+          //   type: reporte.type,
+          //   ubicacionUsuario: reporte.ubicacionUsuario,
+          // }
           Alert.alert(
           'Correcto',
             response.mensaje,
@@ -414,6 +414,8 @@ export default class screens extends Component {
             ],
             {cancelable: false},
           );
+          // _.set(_.find(this.state.userReports, {_id: reporte._id}), 'evidencia', 'http://res.cloudinary.com/siliconbear/image/upload/v1555824358/ojoMetropolitano/evidencias/' + reporte.autorReporte + '_' + reporte._id + '.jpg');
+          // PouchDB_UpdateDoc(reporte._id, updateReporte);
         }
         else{
         Alert.alert(
@@ -430,20 +432,23 @@ export default class screens extends Component {
     } else if(this.state.atributo === 'descripcion'){
       Request_API(bodyPetition, updateReporte).then(response => {
           if(response.codigoRespuesta === 200){
-            const updateReporte = {
-              autorReporte: reporte.autorReporte,
-              descripcion: this.state.nuevoValor,
-              evidencia: reporte.evidencia,
-              fechaIncidente: reporte.fechaIncidente,
-              fechaReporte: reporte.fechaReporte,
-              latitud: reporte.latitud,
-              longitud: reporte.longitud,
-              tipoReporte: reporte.tipoReporte,
-              type: reporte.type,
-              ubicacionUsuario: reporte.ubicacionUsuario,
-            }
-            _.set(_.find(this.state.userReports, {_id: reporte._id}), 'descripcion', `${this.state.nuevoValor}`);
-            PouchDB_UpdateDoc(reporte._id, updateReporte);
+            console.log(response);
+            _.set(_.find(this.state.userReports, {_id: reporte._id}), 'descripcion', `${response.reporte.descripcion}`);
+            PouchDB_UpdateDoc(reporte._id, reporte.type, response.reporte);
+            // const updateReporte = {
+            //   autorReporte: reporte.autorReporte,
+            //   descripcion: this.state.nuevoValor,
+            //   evidencia: reporte.evidencia,
+            //   fechaIncidente: reporte.fechaIncidente,
+            //   fechaReporte: reporte.fechaReporte,
+            //   latitud: reporte.latitud,
+            //   longitud: reporte.longitud,
+            //   tipoReporte: reporte.tipoReporte,
+            //   type: reporte.type,
+            //   ubicacionUsuario: reporte.ubicacionUsuario,
+            // }
+            // _.set(_.find(this.state.userReports, {_id: reporte._id}), 'descripcion', `${this.state.nuevoValor}`);
+            // PouchDB_UpdateDoc(reporte._id, updateReporte);
 
             Alert.alert(
               'Correcto',
@@ -631,7 +636,7 @@ export default class screens extends Component {
           contentContainerStyle={styles.endPadding}
         >
           {this.state.userReports.map((marker, index) => (
-            <TouchableOpacity key={index} style={styles.cardImage} onPress={() => this.setState({ visibleModal: 2, reporte: marker }) /*this.setState({ visibleModal: 2, reporte: marker })*/}>
+            <TouchableOpacity key={index} style={styles.cardImage} onPress={() => this.setState({ visibleModal: 2, reporte: marker, image: null })}>
             <View style={styles.card} key={index}>
             
               <Image
