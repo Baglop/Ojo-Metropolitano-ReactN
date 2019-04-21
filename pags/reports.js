@@ -326,14 +326,14 @@ export default class screens extends Component {
         if (this.index !== index) {
           this.index = index;
           const coordinate2 = {
-            latitude: this.state.userReports[index].latitud,
-            longitude: this.state.userReports[index].longitud,
+            latitude: Number(this.state.userReports[index].latitud),
+            longitude: Number(this.state.userReports[index].longitud),
           }
           this.map.animateToRegion(
             {
               ...coordinate2,
-              latitudeDelta: this.state.region.latitudeDelta,
-              longitudeDelta: this.state.region.longitudeDelta,
+              latitudeDelta: Number(this.state.region.latitudeDelta),
+              longitudeDelta: Number(this.state.region.longitudeDelta),
             },
             350
           );
@@ -356,9 +356,8 @@ export default class screens extends Component {
       title,
       message,
       [,
-        // {text: 'OK'},
         {text: 'OK', onPress: () => this.deleteReport(_id)},
-        {text: 'Cancelar'/*, onPress: () => this.setState({ visibleModal: null })*/},
+        {text: 'Cancelar'},
       ],
     );
   }
@@ -391,21 +390,8 @@ export default class screens extends Component {
     if(this.state.atributo === 'evidencia'){
       Request_API(bodyPetition, updateReporte).then(response => {
         if(response.codigoRespuesta === 200){
-          console.log(response);
           _.set(_.find(this.state.userReports, {_id: reporte._id}), 'evidencia', `${response.reporte.evidencia}`);
           PouchDB_UpdateDoc(reporte._id, reporte.type, response.reporte);
-          // const updateReporte = {
-          //   autorReporte: reporte.autorReporte,
-          //   descripcion: reporte.descripcion,
-          //   evidencia: 'http://res.cloudinary.com/siliconbear/image/upload/v1555824358/ojoMetropolitano/evidencias/' + reporte.autorReporte + '_' + reporte._id + '.jpg',
-          //   fechaIncidente: reporte.fechaIncidente,
-          //   fechaReporte: reporte.fechaReporte,
-          //   latitud: reporte.latitud,
-          //   longitud: reporte.longitud,
-          //   tipoReporte: reporte.tipoReporte,
-          //   type: reporte.type,
-          //   ubicacionUsuario: reporte.ubicacionUsuario,
-          // }
           Alert.alert(
           'Correcto',
             response.mensaje,
@@ -414,8 +400,6 @@ export default class screens extends Component {
             ],
             {cancelable: false},
           );
-          // _.set(_.find(this.state.userReports, {_id: reporte._id}), 'evidencia', 'http://res.cloudinary.com/siliconbear/image/upload/v1555824358/ojoMetropolitano/evidencias/' + reporte.autorReporte + '_' + reporte._id + '.jpg');
-          // PouchDB_UpdateDoc(reporte._id, updateReporte);
         }
         else{
         Alert.alert(
@@ -432,24 +416,8 @@ export default class screens extends Component {
     } else if(this.state.atributo === 'descripcion'){
       Request_API(bodyPetition, updateReporte).then(response => {
           if(response.codigoRespuesta === 200){
-            console.log(response);
             _.set(_.find(this.state.userReports, {_id: reporte._id}), 'descripcion', `${response.reporte.descripcion}`);
             PouchDB_UpdateDoc(reporte._id, reporte.type, response.reporte);
-            // const updateReporte = {
-            //   autorReporte: reporte.autorReporte,
-            //   descripcion: this.state.nuevoValor,
-            //   evidencia: reporte.evidencia,
-            //   fechaIncidente: reporte.fechaIncidente,
-            //   fechaReporte: reporte.fechaReporte,
-            //   latitud: reporte.latitud,
-            //   longitud: reporte.longitud,
-            //   tipoReporte: reporte.tipoReporte,
-            //   type: reporte.type,
-            //   ubicacionUsuario: reporte.ubicacionUsuario,
-            // }
-            // _.set(_.find(this.state.userReports, {_id: reporte._id}), 'descripcion', `${this.state.nuevoValor}`);
-            // PouchDB_UpdateDoc(reporte._id, updateReporte);
-
             Alert.alert(
               'Correcto',
               response.mensaje,
@@ -493,7 +461,6 @@ export default class screens extends Component {
       } else {
         let source = { uri: response.uri };
         let source64 = response.data;
-        // console.log(source64)
         this.setState({
           image: source,
           atributo: 'evidencia',
@@ -596,15 +563,15 @@ export default class screens extends Component {
           ref={map => this.map = map}
           initialRegion={this.state.region}
           style={styles.container}
-          customMapStyle = {myMap}
+          // customMapStyle = {myMap}
         >
           {this.state.userReports.map((marker, index) => {
             const opacityStyle = {
               opacity: interpolations[index].opacity,
             };
             const coordinate = {
-              latitude: parseFloat(marker.latitud),
-              longitude: parseFloat(marker.longitud)
+              latitude: Number(marker.latitud),
+              longitude: Number(marker.longitud)
             } 
             return (
               <MapView.Marker key={index} coordinate={coordinate} title={this.getReportType(marker.tipoReporte)}>
@@ -640,12 +607,10 @@ export default class screens extends Component {
             <View style={styles.card} key={index}>
             
               <Image
-                // source={marker.image}
                 source={{uri: marker.evidencia}}
                 style={styles.cardImage}
                 resizeMode="cover"
-              />
-              
+              /> 
               <View style={styles.textContent}>
                 <Text numberOfLines={1} style={styles.cardtitle}>{this.getReportType(marker.tipoReporte)}</Text>
                 <Text numberOfLines={1} style={styles.cardDescription}>
@@ -723,7 +688,7 @@ const styles = StyleSheet.create({
     height: 15,
     borderRadius: 15/2,
     // backgroundColor: "rgba(130,4,150, 0.9)",
-    backgroundColor: "yellow",
+    backgroundColor: "red",
   },
   ring: {
     width: 30,
