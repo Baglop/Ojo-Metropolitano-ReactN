@@ -6,6 +6,9 @@ import { TextInput } from "react-native-gesture-handler";
 import Icon from 'react-native-vector-icons/Ionicons';
 import { Request_API } from '../networking/server';
 import {MenuProvider} from 'react-native-popup-menu';
+import PouchDB from 'pouchdb-react-native'; 
+import PouchdbFind from 'pouchdb-find';
+import { PouchDB_Get_Document } from '../PouchDB/PouchDBQuerys'
 
 let couchbase_lite_native = NativeModules.couchbase_lite_native;
 const couchbase_lite = NativeModules.couchbase_lite;
@@ -54,6 +57,8 @@ export default class ContactScreen extends React.Component {
 
   constructor(props){
     super(props);
+    ;
+    PouchDB.plugin(PouchdbFind);
     this.state ={
       showSearch:false,
       searchResult:[],
@@ -62,7 +67,11 @@ export default class ContactScreen extends React.Component {
       groups:null
     };
     this.friendsListRequest = this.friendsListRequest.bind(this);
-    this.getData();this.friendsListRequest();
+   
+  }
+
+  componentWillMount(){
+    this.getData();
   }
 
   static navigationOptions = {
@@ -90,14 +99,13 @@ export default class ContactScreen extends React.Component {
     this.setState({searchResult:[]})
   }
 
-  getData(){
-    if (Platform.OS === 'android'){
-      couchbase_lite.getUserdataDoc(err => {
-        console.warn("chale me humillo")
-      },succ => {
-        this.setState({userData: succ[0]})
-      });
-    }
+  async getData(){
+    await PouchDB_Get_Document('BasicValues')
+      .then(response => {
+      this.setState({userData: response})
+      console.log(response);
+    });
+    this.friendsListRequest();
   }
 
   async friendsListRequest(){
@@ -113,12 +121,13 @@ export default class ContactScreen extends React.Component {
     let position = await promise
     
     const params = {
-      nombreUsuario : this.state.userData.userName,
+      nombreUsuario : this.state.userData.nombreUsuario,
 	    tokenSiliconBear : this.state.userData.tokenSiliconBear,
       ubicacionUsuario : position
     }
 
     Request_API(params,friendListURL).then(response => {
+      console.log(params);
       console.log(response)
       this.setState({groups: response.grupos,contacts:response.amigos})
       console.log(this.state.groups)
@@ -128,7 +137,7 @@ export default class ContactScreen extends React.Component {
 
   async deleteFriend(pos){
     const params = {
-      nombreUsuario: this.state.userData.userName,
+      nombreUsuario: this.state.userData.nombreUsuario,
       amigo: user,
       tokenSiliconBear: this.state.userData.tokenSiliconBear,
       ubicacionUsuario: pos
@@ -151,7 +160,7 @@ export default class ContactScreen extends React.Component {
     });
     let position = await promise
     const params = {
-      nombreUsuario: this.state.userData.userName,
+      nombreUsuario: this.state.userData.nombreUsuario,
       usuarioSolicitado: user,
       tokenSiliconBear: this.state.userData.tokenSiliconBear,
       ubicacionUsuario: position
@@ -202,7 +211,7 @@ export default class ContactScreen extends React.Component {
         </View>
         {this.state.showSearch ? this._renderItemsSearch():null}
         <ScrollView style={{ flex: 1}} showsVerticalScrollIndicator = {false}>
-        {this.state.groups !== null ? <GroupList groups={this.state.groups&&this.state.groups} userData={this.state.userData&&this.state.userData} refrestList={this.friendsListRequest}/>: null}
+        {this.state.groups !== null ? <GroupList groups={this.state.groups&&this.state.groups} userData={this.state.userData&&this.state.userData} refrestList={this.friendsListRequest}/>: null }
         {this.state.contacts !== null ? <ContactList contacts={this.state.contacts&&this.state.contacts} userData={this.state.userData&&this.state.userData} refrestList={this.friendsListRequest}/>: null}
         </ScrollView>
       </View>
