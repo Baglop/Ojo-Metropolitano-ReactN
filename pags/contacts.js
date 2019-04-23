@@ -6,6 +6,11 @@ import { TextInput } from "react-native-gesture-handler";
 import Icon from 'react-native-vector-icons/Ionicons';
 import { Request_API } from '../networking/server';
 import {MenuProvider} from 'react-native-popup-menu';
+import PouchDB from 'pouchdb-react-native'; 
+import PouchdbFind from 'pouchdb-find';
+import { PouchDB_Get_Document, PouchDB_Insert } from '../PouchDB/PouchDBQuerys'
+
+const db = new PouchDB('OjoMetropolitano');
 
 let couchbase_lite_native = NativeModules.couchbase_lite_native;
 const couchbase_lite = NativeModules.couchbase_lite;
@@ -54,16 +59,27 @@ export default class ContactScreen extends React.Component {
 
   constructor(props){
     super(props);
+    ;
+    PouchDB.plugin(PouchdbFind);
     this.state ={
       showSearch:false,
       searchResult:[],
       userData:[],
-      contacts:null,
-      groups:null
+      contacts:[],
+      groups:[]
     };
     this.friendsListRequest = this.friendsListRequest.bind(this);
-    this.getData();this.friendsListRequest();
+   
   }
+
+  componentWillMount(){
+    this.getData();
+  }
+
+  componentWillReceiveProps(nextProps){
+    this.setState({userData: nextProps.userData})
+
+}
 
   static navigationOptions = {
     header: null
@@ -90,45 +106,37 @@ export default class ContactScreen extends React.Component {
     this.setState({searchResult:[]})
   }
 
-  getData(){
-    if (Platform.OS === 'android'){
-      couchbase_lite.getUserdataDoc(err => {
-        console.warn("chale me humillo")
-      },succ => {
-        this.setState({userData: succ[0]})
-      });
-    }
+  async getData(){
+    await PouchDB_Get_Document('BasicValues')
+      .then(response => {
+      this.setState({userData: response})
+      console.log(response);
+    });
+    this.friendsListRequest();
   }
 
   async friendsListRequest(){
-    let promise = new Promise((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          let pos = position.coords.latitude + ',' + position.coords.longitude;
-          resolve(pos);
-        },
-        (error) => console.log(error)
-      )
-    });
-    let position = await promise
     
-    const params = {
-      nombreUsuario : this.state.userData.userName,
-	    tokenSiliconBear : this.state.userData.tokenSiliconBear,
-      ubicacionUsuario : position
-    }
-
-    Request_API(params,friendListURL).then(response => {
-      console.log(response)
-      this.setState({groups: response.grupos,contacts:response.amigos})
-      console.log(this.state.groups)
-
-    })
+    await db.find({
+      selector: {
+        type: 'friends',
+      },
+      index: {
+      fields: ['type']
+      }
+    }).then(result => {
+      this.setState({
+        contacts:result.docs
+      })
+      console.log(result)
+    }).catch(function (err) {
+      console.log(err);
+    });
   }
 
   async deleteFriend(pos){
     const params = {
-      nombreUsuario: this.state.userData.userName,
+      nombreUsuario: this.state.userData.nombreUsuario,
       amigo: user,
       tokenSiliconBear: this.state.userData.tokenSiliconBear,
       ubicacionUsuario: pos
@@ -151,7 +159,7 @@ export default class ContactScreen extends React.Component {
     });
     let position = await promise
     const params = {
-      nombreUsuario: this.state.userData.userName,
+      nombreUsuario: this.state.userData.nombreUsuario,
       usuarioSolicitado: user,
       tokenSiliconBear: this.state.userData.tokenSiliconBear,
       ubicacionUsuario: position
@@ -159,8 +167,10 @@ export default class ContactScreen extends React.Component {
     console.log(params)
     Request_API(params,sendRequestURL).then(response => {
       console.log(response)
-      if(response.codigo == 505 || response.codigo == 490)
+      if(response.codigoRespuesta == 505 || response.codigoRespuesta == 490)
         this.deleteFriend(position)
+      else if(response.codigoRespuesta == 200)
+        this.friendsListRequest();
     })
     this.search.clear()
     this.textChangeFalse()
@@ -202,8 +212,8 @@ export default class ContactScreen extends React.Component {
         </View>
         {this.state.showSearch ? this._renderItemsSearch():null}
         <ScrollView style={{ flex: 1}} showsVerticalScrollIndicator = {false}>
-        {this.state.groups !== null ? <GroupList groups={this.state.groups&&this.state.groups} userData={this.state.userData&&this.state.userData} refrestList={this.friendsListRequest}/>: null}
-        {this.state.contacts !== null ? <ContactList contacts={this.state.contacts&&this.state.contacts} userData={this.state.userData&&this.state.userData} refrestList={this.friendsListRequest}/>: null}
+        { this.state.userData !== [] ? <GroupList userData={this.state.userData&&this.state.userData}/>:null}
+        {this.state.contacts.length > 0 ? <ContactList contacts={this.state.contacts&&this.state.contacts} userData={this.state.userData&&this.state.userData} refrestList={this.friendsListRequest}/>: null}
         </ScrollView>
       </View>
       
