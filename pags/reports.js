@@ -725,6 +725,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#c5c5c5',
     justifyContent: "center",
   },
+  titles: {
+    margin: 5,
+    fontWeight: 'bold'
+  },
 });
 
 AppRegistry.registerComponent("mapfocus", () => screens);

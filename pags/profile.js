@@ -31,6 +31,7 @@ class ProfileScreenConent extends React.Component {
       openBar: false,
       userData: [],
       userInfo:[],
+      image: require('../images/add_photo-512.png'),
     };
     this.selectPhotoTapped = this.selectPhotoTapped.bind(this);
   }
@@ -124,11 +125,16 @@ class ProfileScreenConent extends React.Component {
     return(
     <View>
       <View style={{alignItems:'center',justifyContent:'center',height:'100%'}} >
-        <TouchableOpacity style={{overflow:'hidden',borderRadius:200,borderWidth:2}}>
-          <Image style={styles.logoStyle} source={{uri: this.state.userInfo.imagenPerfil}}/>
+        <TouchableOpacity style={{borderRadius:50,borderWidth:2}} onPress={this.selectPhotoTapped.bind(this)}>
+          {/* <Image style={styles.logoStyle} source={{uri: this.state.userInfo.imagenPerfil}}/> */}
+          {this.state.image === null ? (
+              <Image style={styles.logoStyle} source={{uri: this.state.userInfo.imagenPerfil && this.state.userInfo.imagenPerfil}}/>
+            ) : (
+              <Image style={styles.logoStyle} source={this.state.image && this.state.image} />
+            )}
         </TouchableOpacity>
+        </View>
         <Text style={{color:'white',fontWeight:'bold'}}>{this.state.userInfo.nombreUsuario}</Text>
-      </View>
     </View>
     )
   }

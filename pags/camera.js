@@ -376,211 +376,449 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+// import React, { Component } from "react";
+// import {
+//   AppRegistry,
+//   StyleSheet,
+//   Text,
+//   View,
+//   ScrollView,
+//   Animated,
+//   Image,
+//   Dimensions,
+//   TouchableOpacity,
+// } from "react-native";
+// import Icon from 'react-native-vector-icons/Ionicons';
+// import MapView from "react-native-maps";
+// import Marker from "react-native-maps";
+// import Modal from "react-native-modal";
+
+// const Images = [
+//   { uri: "https://i.imgur.com/sNam9iJ.jpg" },
+//   { uri: "https://i.imgur.com/N7rlQYt.jpg" },
+//   { uri: "https://i.imgur.com/UDrH0wm.jpg" },
+//   { uri: "https://i.imgur.com/Ka8kNST.jpg" }
+// ]
+
+// const { width, height } = Dimensions.get("window");
+
+// const CARD_HEIGHT = height / 4;
+// const CARD_WIDTH = CARD_HEIGHT - 10;
+
+// export default class screens extends Component {
+
+//   static navigationOptions = {
+//     headerTransparent: true
+//   } 
+
+
+//   state = {
+//     markers: [
+//       {
+//         coordinate: {
+//           latitude: 45.524548,
+//           longitude: -122.6749817,
+//         },
+//         title: "Best Place",
+//         description: "This is the best place in Portland",
+//         image: Images[0],
+//       },
+//       {
+//         coordinate: {
+//           latitude: 45.524698,
+//           longitude: -122.6655507,
+//         },
+//         title: "Second Best Place",
+//         description: "This is the second best place in Portland",
+//         image: Images[1],
+//       },
+//       {
+//         coordinate: {
+//           latitude: 45.5230786,
+//           longitude: -122.6701034,
+//         },
+//         title: "Third Best Place",
+//         description: "This is the third best place in Portland",
+//         image: Images[2],
+//       },
+//       {
+//         coordinate: {
+//           latitude: 45.521016,
+//           longitude: -122.6561917,
+//         },
+//         title: "Fourth Best Place",
+//         description: "This is the fourth best place in Portland",
+//         image: Images[3],
+//       },
+//     ],
+//     region: {
+//       latitude: 45.52220671242907,
+//       longitude: -122.6653281029795,
+//       latitudeDelta: 0.04864195044303443,
+//       longitudeDelta: 0.040142817690068,
+//     },
+//   };
+
+//   componentWillMount() {
+//     this.index = 0;
+//     this.animation = new Animated.Value(0);
+//   }
+//   componentDidMount() {
+//     // We should detect when scrolling has stopped then animate
+//     // We should just debounce the event listener here
+//     this.animation.addListener(({ value }) => {
+//       let index = Math.floor(value / CARD_WIDTH + 0.3); // animate 30% away from landing on the next item
+//       if (index >= this.state.markers.length) {
+//         index = this.state.markers.length - 1;
+//       }
+//       if (index <= 0) {
+//         index = 0;
+//       }
+
+//       clearTimeout(this.regionTimeout);
+//       this.regionTimeout = setTimeout(() => {
+//         if (this.index !== index) {
+//           this.index = index;
+//           const { coordinate } = this.state.markers[index];
+//           this.map.animateToRegion(
+//             {
+//               ...coordinate,
+//               latitudeDelta: this.state.region.latitudeDelta,
+//               longitudeDelta: this.state.region.longitudeDelta,
+//             },
+//             350
+//           );
+//         }
+//       }, 10);
+//     });
+//   }
+
+//   render() {
+//     const interpolations = this.state.markers.map((marker, index) => {
+//       const inputRange = [
+//         (index - 1) * CARD_WIDTH,
+//         index * CARD_WIDTH,
+//         ((index + 1) * CARD_WIDTH),
+//       ];
+//       const scale = this.animation.interpolate({
+//         inputRange,
+//         outputRange: [0.5, 4, 0.5],
+//         extrapolate: "clamp",
+//       });
+//       const opacity = this.animation.interpolate({
+//         inputRange,
+//         outputRange: [0.35, 2, 0.35],
+//         extrapolate: "clamp",
+//       });
+//       return { scale, opacity };
+//     });
+
+//     return (
+//       <View style={styles.container}>
+//         <MapView
+//           ref={map => this.map = map}
+//           initialRegion={this.state.region}
+//           style={styles.container}
+//         >
+//           {this.state.markers.map((marker, index) => {
+//             const scaleStyle = {
+//               transform: [
+//                 {
+//                   scale: interpolations[index].scale,
+//                 },
+//               ],
+//             };
+//             const opacityStyle = {
+//               opacity: interpolations[index].opacity,
+//             };
+//             return (
+//               <MapView.Marker key={index} coordinate={marker.coordinate}>
+//                 <Animated.View style={[styles.markerWrap, opacityStyle]}>
+//                   <Animated.View style={[styles.ring, scaleStyle]} />
+//                   <View style={styles.marker} />
+//                 </Animated.View>
+//               </MapView.Marker>
+//               // <MapView.Marker key={index} coordinate={marker.coordinate} title={marker.title}>
+//               // </MapView.Marker>
+//             );
+//           })}
+//         </MapView>
+//         <Animated.ScrollView
+//           horizontal
+//           scrollEventThrottle={1}
+//           showsHorizontalScrollIndicator={false}
+//           snapToInterval={CARD_WIDTH}
+//           onScroll={Animated.event(
+//             [
+//               {
+//                 nativeEvent: {
+//                   contentOffset: {
+//                     x: this.animation,
+//                   },
+//                 },
+//               },
+//             ],
+//             { useNativeDriver: true }
+//           )}
+//           style={styles.scrollView}
+//           contentContainerStyle={styles.endPadding}
+//         >
+//           {this.state.markers.map((marker, index) => (
+//             <View style={styles.card} key={index}>
+//             <TouchableOpacity style={styles.cardImage}>
+//               <Image
+//                 source={marker.image}
+//                 style={styles.cardImage}
+//                 resizeMode="cover"
+//               />
+//               </TouchableOpacity>
+//               <View style={styles.textContent}>
+//                 <Text numberOfLines={1} style={styles.cardtitle}>{marker.title}</Text>
+//                 <Text numberOfLines={1} style={styles.cardDescription}>
+//                   {marker.description}
+//                 </Text>
+//               </View>
+//             </View>
+//           ))}
+//         </Animated.ScrollView>
+//       </View>
+//     );
+//   }
+// }
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//   },
+//   scrollView: {
+//     position: "absolute",
+//     bottom: 30,
+//     left: 0,
+//     right: 0,
+//     paddingVertical: 10,
+//   },
+//   endPadding: {
+//     paddingRight: width - CARD_WIDTH,
+//   },
+//   card: {
+//     padding: 10,
+//     elevation: 2,
+//     backgroundColor: "#FFF",
+//     marginHorizontal: 10,
+//     shadowColor: "#000",
+//     shadowRadius: 5,
+//     shadowOpacity: 0.3,
+//     shadowOffset: { x: 2, y: -2 },
+//     height: CARD_HEIGHT,
+//     width: CARD_WIDTH,
+//     overflow: "hidden",
+//   },
+//   cardImage: {
+//     flex: 3,
+//     width: "100%",
+//     height: "100%",
+//     alignSelf: "center",
+//   },
+//   textContent: {
+//     flex: 1,
+//   },
+//   cardtitle: {
+//     fontSize: 12,
+//     marginTop: 5,
+//     fontWeight: "bold",
+//   },
+//   cardDescription: {
+//     fontSize: 12,
+//     color: "#444",
+//   },
+//   markerWrap: {
+//     alignItems: "center",
+//     justifyContent: "center",
+//   },
+//   marker: {
+//     width: 10,
+//     height: 10,
+//     borderRadius: 10/2,
+//     backgroundColor: "rgba(130,4,150, 0.9)",
+//   },
+//   ring: {
+//     width: 30,
+//     height: 30,
+//     borderRadius: 30/2,
+//     backgroundColor: "rgba(130,4,150, 0.3)",
+//     position: "absolute",
+//     borderColor: "rgba(130,4,150, 0.5)",
+//   },
+//   modalButtonIcon: {
+//     fontSize: 35,
+//     height: 35,
+//     marginTop:5,
+//     marginEnd:5,
+//     color: 'black',
+//   },
+// });
+
+// AppRegistry.registerComponent("mapfocus", () => screens);
+
+
+
+
+
+
+
+
+/**
+ * Example usage of react-native-modal
+ * @format
+ */
+
 import React, { Component } from "react";
 import {
-  AppRegistry,
+  ScrollView,
   StyleSheet,
   Text,
-  View,
-  ScrollView,
-  Animated,
-  Image,
-  Dimensions,
   TouchableOpacity,
+  View,
 } from "react-native";
-import Icon from 'react-native-vector-icons/Ionicons';
-import MapView from "react-native-maps";
-import Marker from "react-native-maps";
 import Modal from "react-native-modal";
 
-const Images = [
-  { uri: "https://i.imgur.com/sNam9iJ.jpg" },
-  { uri: "https://i.imgur.com/N7rlQYt.jpg" },
-  { uri: "https://i.imgur.com/UDrH0wm.jpg" },
-  { uri: "https://i.imgur.com/Ka8kNST.jpg" }
-]
-
-const { width, height } = Dimensions.get("window");
-
-const CARD_HEIGHT = height / 4;
-const CARD_WIDTH = CARD_HEIGHT - 10;
-
-export default class screens extends Component {
-
-  static navigationOptions = {
-    headerTransparent: true
-  } 
-
-
+export default class Example extends Component {
   state = {
-    markers: [
-      {
-        coordinate: {
-          latitude: 45.524548,
-          longitude: -122.6749817,
-        },
-        title: "Best Place",
-        description: "This is the best place in Portland",
-        image: Images[0],
-      },
-      {
-        coordinate: {
-          latitude: 45.524698,
-          longitude: -122.6655507,
-        },
-        title: "Second Best Place",
-        description: "This is the second best place in Portland",
-        image: Images[1],
-      },
-      {
-        coordinate: {
-          latitude: 45.5230786,
-          longitude: -122.6701034,
-        },
-        title: "Third Best Place",
-        description: "This is the third best place in Portland",
-        image: Images[2],
-      },
-      {
-        coordinate: {
-          latitude: 45.521016,
-          longitude: -122.6561917,
-        },
-        title: "Fourth Best Place",
-        description: "This is the fourth best place in Portland",
-        image: Images[3],
-      },
-    ],
-    region: {
-      latitude: 45.52220671242907,
-      longitude: -122.6653281029795,
-      latitudeDelta: 0.04864195044303443,
-      longitudeDelta: 0.040142817690068,
-    },
+    visibleModal: null,
   };
 
-  componentWillMount() {
-    this.index = 0;
-    this.animation = new Animated.Value(0);
-  }
-  componentDidMount() {
-    // We should detect when scrolling has stopped then animate
-    // We should just debounce the event listener here
-    this.animation.addListener(({ value }) => {
-      let index = Math.floor(value / CARD_WIDTH + 0.3); // animate 30% away from landing on the next item
-      if (index >= this.state.markers.length) {
-        index = this.state.markers.length - 1;
-      }
-      if (index <= 0) {
-        index = 0;
-      }
+  renderButton = (text, onPress) => (
+    <TouchableOpacity onPress={onPress}>
+      <View style={styles.button}>
+        <Text>{text}</Text>
+      </View>
+    </TouchableOpacity>
+  );
 
-      clearTimeout(this.regionTimeout);
-      this.regionTimeout = setTimeout(() => {
-        if (this.index !== index) {
-          this.index = index;
-          const { coordinate } = this.state.markers[index];
-          this.map.animateToRegion(
-            {
-              ...coordinate,
-              latitudeDelta: this.state.region.latitudeDelta,
-              longitudeDelta: this.state.region.longitudeDelta,
-            },
-            350
-          );
-        }
-      }, 10);
+  renderModalContent = () => (
+    <View style={styles.modalContent}>
+      <Text>Hello!</Text>
+      {this.renderButton("Close", () => this.setState({ visibleModal: null }))}
+    </View>
+  );
+
+  handleOnScroll = event => {
+    this.setState({
+      scrollOffset: event.nativeEvent.contentOffset.y,
     });
-  }
+  };
+
+  handleScrollTo = p => {
+    if (this.scrollViewRef) {
+      this.scrollViewRef.scrollTo(p);
+    }
+  };
 
   render() {
-    const interpolations = this.state.markers.map((marker, index) => {
-      const inputRange = [
-        (index - 1) * CARD_WIDTH,
-        index * CARD_WIDTH,
-        ((index + 1) * CARD_WIDTH),
-      ];
-      const scale = this.animation.interpolate({
-        inputRange,
-        outputRange: [0.5, 4, 0.5],
-        extrapolate: "clamp",
-      });
-      const opacity = this.animation.interpolate({
-        inputRange,
-        outputRange: [0.35, 2, 0.35],
-        extrapolate: "clamp",
-      });
-      return { scale, opacity };
-    });
-
     return (
       <View style={styles.container}>
-        <MapView
-          ref={map => this.map = map}
-          initialRegion={this.state.region}
-          style={styles.container}
-        >
-          {this.state.markers.map((marker, index) => {
-            const scaleStyle = {
-              transform: [
-                {
-                  scale: interpolations[index].scale,
-                },
-              ],
-            };
-            const opacityStyle = {
-              opacity: interpolations[index].opacity,
-            };
-            return (
-              <MapView.Marker key={index} coordinate={marker.coordinate}>
-                <Animated.View style={[styles.markerWrap, opacityStyle]}>
-                  <Animated.View style={[styles.ring, scaleStyle]} />
-                  <View style={styles.marker} />
-                </Animated.View>
-              </MapView.Marker>
-              // <MapView.Marker key={index} coordinate={marker.coordinate} title={marker.title}>
-              // </MapView.Marker>
-            );
-          })}
-        </MapView>
-        <Animated.ScrollView
-          horizontal
-          scrollEventThrottle={1}
-          showsHorizontalScrollIndicator={false}
-          snapToInterval={CARD_WIDTH}
-          onScroll={Animated.event(
-            [
-              {
-                nativeEvent: {
-                  contentOffset: {
-                    x: this.animation,
-                  },
-                },
-              },
-            ],
-            { useNativeDriver: true }
-          )}
-          style={styles.scrollView}
-          contentContainerStyle={styles.endPadding}
-        >
-          {this.state.markers.map((marker, index) => (
-            <View style={styles.card} key={index}>
-            <TouchableOpacity style={styles.cardImage}>
-              <Image
-                source={marker.image}
-                style={styles.cardImage}
-                resizeMode="cover"
-              />
-              </TouchableOpacity>
-              <View style={styles.textContent}>
-                <Text numberOfLines={1} style={styles.cardtitle}>{marker.title}</Text>
-                <Text numberOfLines={1} style={styles.cardDescription}>
-                  {marker.description}
-                </Text>
+        {this.renderButton("Default modal", () =>
+          this.setState({ visibleModal: 1 }),
+        )}
+        {this.renderButton("Sliding from the sides", () =>
+          this.setState({ visibleModal: 2 }),
+        )}
+        {this.renderButton("A slower modal", () =>
+          this.setState({ visibleModal: 3 }),
+        )}
+        {this.renderButton("Fancy modal!", () =>
+          this.setState({ visibleModal: 4 }),
+        )}
+        {this.renderButton("Bottom half modal", () =>
+          this.setState({ visibleModal: 5 }),
+        )}
+        {this.renderButton("Modal that can be closed on backdrop press", () =>
+          this.setState({ visibleModal: 6 }),
+        )}
+        {this.renderButton("Swipeable modal", () =>
+          this.setState({ visibleModal: 7 }),
+        )}
+        {this.renderButton("Scrollable modal", () =>
+          this.setState({ visibleModal: 8 }),
+        )}
+        <Modal isVisible={this.state.visibleModal === 1}>
+          {this.renderModalContent()}
+        </Modal>
+        <Modal
+          isVisible={this.state.visibleModal === 2}
+          animationIn="slideInLeft"
+          animationOut="slideOutRight">
+          {this.renderModalContent()}
+        </Modal>
+        <Modal
+          isVisible={this.state.visibleModal === 3}
+          animationInTiming={2000}
+          animationOutTiming={2000}
+          backdropTransitionInTiming={2000}
+          backdropTransitionOutTiming={2000}>
+          {this.renderModalContent()}
+        </Modal>
+        <Modal
+          isVisible={this.state.visibleModal === 4}
+          backdropColor={"red"}
+          backdropOpacity={1}
+          animationIn="zoomInDown"
+          animationOut="zoomOutUp"
+          animationInTiming={1000}
+          animationOutTiming={1000}
+          backdropTransitionInTiming={1000}
+          backdropTransitionOutTiming={1000}>
+          {this.renderModalContent()}
+        </Modal>
+        <Modal
+          isVisible={this.state.visibleModal === 5}
+          style={styles.bottomModal}>
+          {this.renderModalContent()}
+        </Modal>
+        <Modal
+          isVisible={this.state.visibleModal === 6}
+          onBackdropPress={() => this.setState({ visibleModal: null })}>
+          {this.renderModalContent()}
+        </Modal>
+        <Modal
+          isVisible={this.state.visibleModal === 7}
+          onSwipeComplete={() => this.setState({ visibleModal: null })}
+          swipeDirection="left">
+          {this.renderModalContent()}
+        </Modal>
+        <Modal
+          isVisible={this.state.visibleModal === 8}
+          onSwipeComplete={() => this.setState({ visibleModal: null })}
+          swipeDirection="down"
+          scrollTo={this.handleScrollTo}
+          scrollOffset={this.state.scrollOffset}
+          scrollOffsetMax={400 - 300} // content height - ScrollView height
+          style={styles.bottomModal}>
+          <View style={styles.scrollableModal}>
+            <ScrollView
+              ref={ref => (this.scrollViewRef = ref)}
+              onScroll={this.handleOnScroll}
+              scrollEventThrottle={16}>
+              <View style={styles.scrollableModalContent1}>
+                <Text>Scroll me up</Text>
               </View>
-            </View>
-          ))}
-        </Animated.ScrollView>
+              <View style={styles.scrollableModalContent1}>
+                <Text>Scroll me up</Text>
+              </View>
+            </ScrollView>
+          </View>
+        </Modal>
       </View>
     );
   }
@@ -589,74 +827,43 @@ export default class screens extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
-  scrollView: {
-    position: "absolute",
-    bottom: 30,
-    left: 0,
-    right: 0,
-    paddingVertical: 10,
+  button: {
+    backgroundColor: "lightblue",
+    padding: 12,
+    margin: 16,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 4,
+    borderColor: "rgba(0, 0, 0, 0.1)",
   },
-  endPadding: {
-    paddingRight: width - CARD_WIDTH,
+  modalContent: {
+    backgroundColor: "white",
+    padding: 22,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 4,
+    borderColor: "rgba(0, 0, 0, 0.1)",
   },
-  card: {
-    padding: 10,
-    elevation: 2,
-    backgroundColor: "#FFF",
-    marginHorizontal: 10,
-    shadowColor: "#000",
-    shadowRadius: 5,
-    shadowOpacity: 0.3,
-    shadowOffset: { x: 2, y: -2 },
-    height: CARD_HEIGHT,
-    width: CARD_WIDTH,
-    overflow: "hidden",
+  bottomModal: {
+    justifyContent: "flex-end",
+    margin: 0,
   },
-  cardImage: {
-    flex: 3,
-    width: "100%",
-    height: "100%",
-    alignSelf: "center",
+  scrollableModal: {
+    height: 300,
   },
-  textContent: {
-    flex: 1,
-  },
-  cardtitle: {
-    fontSize: 12,
-    marginTop: 5,
-    fontWeight: "bold",
-  },
-  cardDescription: {
-    fontSize: 12,
-    color: "#444",
-  },
-  markerWrap: {
+  scrollableModalContent1: {
+    height: 200,
+    backgroundColor: "orange",
     alignItems: "center",
     justifyContent: "center",
   },
-  marker: {
-    width: 10,
-    height: 10,
-    borderRadius: 10/2,
-    backgroundColor: "rgba(130,4,150, 0.9)",
-  },
-  ring: {
-    width: 30,
-    height: 30,
-    borderRadius: 30/2,
-    backgroundColor: "rgba(130,4,150, 0.3)",
-    position: "absolute",
-    borderColor: "rgba(130,4,150, 0.5)",
-  },
-  modalButtonIcon: {
-    fontSize: 35,
-    height: 35,
-    marginTop:5,
-    marginEnd:5,
-    color: 'black',
+  scrollableModalContent2: {
+    height: 200,
+    backgroundColor: "lightgreen",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
-
-AppRegistry.registerComponent("mapfocus", () => screens);
-

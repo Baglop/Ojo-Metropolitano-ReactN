@@ -120,8 +120,8 @@ export default class LoginScreen extends React.Component
     }
     Request_API(request,URL2).then(response => {
         if(response.codigoRespuesta === 200){
-          PouchDB_Insert('ActualizarInformacionUsuario', 'ActualizarInformacionUsuario', response.usuario);
-          PouchDB_Insert('BasicValues', 'BasicValues', body);
+          // PouchDB_Insert('ActualizarInformacionUsuario', 'ActualizarInformacionUsuario', response.usuario);
+          // PouchDB_Insert('BasicValues', 'BasicValues', body);
           this.props.navigation.replace('Main', {});
        }
     });    
@@ -134,6 +134,7 @@ export default class LoginScreen extends React.Component
       ubicacionUsuario: this.state.ubicacionUsuario,
     };
     Request_API(userReports, reportesUsuario).then(response => { 
+      console.log(response);
       if(response.codigoRespuesta === 200){
         response.reportes.map((data) => {
           PouchDB_Insert(data._id, 'userReports', data)
@@ -149,10 +150,11 @@ export default class LoginScreen extends React.Component
       ubicacionUsuario: this.state.ubicacionUsuario,
     };
     Request_API(userFyG, AmigosyGrupos).then(response => { 
+      console.log(response);
       if(response.codigoRespuesta === 200){
         if(_.size(response.amigos) > 0){
           response.amigos.map((data) => {
-            PouchDB_Insert('friends', 'friends', data)
+            PouchDB_Insert(data._id, 'friends', data)
           })
         }
         if(_.size(response.grupos) > 0){
@@ -173,8 +175,17 @@ export default class LoginScreen extends React.Component
       tokenSiliconBear: info.tokenSiliconBear,
       ubicacionUsuario: this.state.ubicacionUsuario,
     }
+    const body = {
+      nombreUsuario: this.state.nombreUsuario,
+      tokenSiliconBear: info.tokenSiliconBear,
+      tokenFirebase: this.state.tokenFireBase
+    }
     Request_API(params,modURL).then(response =>{
       console.log(response);
+      if(response.codigoRespuesta === 200){
+        PouchDB_Insert('ActualizarInformacionUsuario', 'ActualizarInformacionUsuario', response.usuario);
+        PouchDB_Insert('BasicValues', 'BasicValues', body);
+      }
     })
   }
 
@@ -187,15 +198,18 @@ export default class LoginScreen extends React.Component
     Request_API(body, URL).then(response => {
       if(response.codigoRespuesta === 200){
         this.updateToken(response);
-        setTimeout(() => {
-          this.userInfoRequest(response);
-        }, 1000);
+        // setTimeout(() => {
+        //   this.userInfoRequest(response);
+        // }, 1000);
         setTimeout(() => {
           this.userReportsRequest(response);
         }, 1000); 
         setTimeout(() => {
           this.userFriendsAndGroups(response);
-        }, 1000);  
+        }, 1000);
+        setTimeout(() => {
+          this.props.navigation.replace('Main', {});
+        }, 1000);    
       } else {
         this.showAlert('No se puede iniciar sesión',response.mensaje);
       }
@@ -228,13 +242,13 @@ export default class LoginScreen extends React.Component
             onChangeText={(text) => this.setState({nombreUsuario:text})}
           />
         </View>
-        {/* <View style={styles.registerButton}>
+        <View style={styles.registerButton}>
           <Button
             title = "Camera"
             color = "#51738e"
             onPress = {() => navigate("Camera", {})}
             />
-        </View> */}
+        </View>
         <View style={styles.SectionStyle}>
           <View style={styles.imageBackground}>
             <Image source={require('../images/2x/round_lock_white_24dp.png')} style={styles.ImageStyle}/>

@@ -1,5 +1,5 @@
 import React from "react";
-import { ScrollView, View, Text, TextInput, StyleSheet, NativeModules, Modal, TouchableOpacity, Picker } from "react-native";
+import { ScrollView, View, Text, TextInput, StyleSheet, NativeModules, TouchableOpacity, Picker, KeyboardAvoidingView, Dimensions, Image, Alert} from "react-native";
 import MapView,{PROVIDER_GOOGLE} from 'react-native-maps';
 import {Marker} from 'react-native-maps';
 import ActionButton from 'react-native-action-button';
@@ -7,6 +7,11 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { Request_API } from '../networking/server';
 import DatePicker from 'react-native-datepicker';
 import moment from 'moment';
+import Modal from "react-native-modal";
+import { Dropdown } from 'react-native-material-dropdown';
+import ImagePicker from 'react-native-image-picker';
+import { PouchDB_Insert } from '../PouchDB/PouchDBQuerys'
+const window = Dimensions.get('window');
 
 import PouchDB from 'pouchdb-react-native'; 
 const db = new PouchDB('OjoMetropolitano');
@@ -18,6 +23,8 @@ const actualizarReportesGlobales = ':3030/API/inicio/ActualizarReportesGlobales'
 const realizarReporte= ':3030/API/inicio/LevantarReporte';
 const infoReporte=':3030/API/inicio/MostrarDetallesReporte';
 const reportesUsuario = ':3030/API/inicio/ActualizarMisReportes';
+
+
 
 
 export default class MapScreen extends React.Component {
@@ -44,17 +51,26 @@ export default class MapScreen extends React.Component {
               />
           </MapView>
           <ScrollView style={{width:'100%'}} >
-            <Text style={{marginTop:10, marginBottom:5}} >Tipo de delito</Text>
+          <View style={{marginTop:10, marginBottom:5, flexDirection:'column'}}>
+            <Text style={{marginTop:10, marginBottom:10}} >Tipo de delito</Text>
             <Picker
               selectedValue={this.state.idReporte}
-              style={{height: 50, width: 200}}
+              style={{height: 20, width: 300, marginTop:10, marginBottom:10}}
               onValueChange={(itemValue, itemIndex) =>
                 this.setState({idReporte: itemValue})
               }>
-              <Picker.Item label="Secuestro" value="1" />
+              <Picker.Item label="Robo" value="1" />
               <Picker.Item label="Asalto" value="2" />
+              <Picker.Item label="Acoso" value="3" />
+              <Picker.Item label="Vandalismo" value="4" />
+              <Picker.Item label="Pandillerismo" value="5" />
+              <Picker.Item label="Violación" value="6" />
+              <Picker.Item label="Secuestro o tentativa" value="7" />
+              <Picker.Item label="Asesinato" value="8" />
+              <Picker.Item label="Otro" value="9" />
             </Picker>
-            <Text >Descripción</Text>
+            </View>
+            <Text style={{marginTop:10, marginBottom:10}}>Descripción</Text>
             <TextInput
               style={{flex:1,height:50,
                 borderWidth: 2,
@@ -159,7 +175,7 @@ export default class MapScreen extends React.Component {
             {this.state.globalReports ? this._renderGlobalReports():null}
         </MapView>
         <ActionButton buttonColor="rgba(0,200,200,1)" >
-          <ActionButton.Item buttonColor='#9b59b6' size={45} title="Reportar" onPress={() => this.openModalReport(true)}>
+          <ActionButton.Item buttonColor='#9b59b6' size={45} title="Reportar" onPress={() => this.openModalReport(true)}/*onPress={() => this.setState({ visibleModal: 5})}*/>
             <Icon name="md-create" style={styles.actionButtonIcon} />
           </ActionButton.Item>
           <ActionButton.Item buttonColor='#9b59b6' size={45} title={this.state.Titulo} onPress={() => this.changeReports()}>
@@ -168,15 +184,212 @@ export default class MapScreen extends React.Component {
         </ActionButton>
         {this._renderModalReport()}
         {this._renderModalReportInfo()}
+        <Modal
+          isVisible={this.state.visibleModal === 5}
+          style={styles.bottomModal}
+          animationInTiming={400}
+          animationOutTiming={400}
+          backdropTransitionInTiming={400}
+          backdropTransitionOutTiming={400}
+          onBackdropPress={() => this.setState({ visibleModal: null })}
+          onRequestClose={() => {
+            this.openModalReport(!this.state.modalReport);
+          }}>
+          {this.renderModalContent()}
+        </Modal>
       </View>
     );
     else
      return null;
   }
 
+
+
+
+
+
+
+
+
+
+
+
+
+  getReportType(){
+    let data = [
+      {value: 'Robo', tipoReporte: 1},
+      {value: 'Asalto', tipoReporte: 2},
+      {value: 'Acoso',tipoReporte: 3},
+      {value: 'Vandalismo', tipoReporte: 4},
+      {value: 'Pandillerismo', tipoReporte: 5},
+      {value: 'Violación', tipoReporte: 6},
+      {value: 'Secuestro o tentativa', tipoReporte: 7},
+      {value: 'Asesinato', tipoReporte: 8},
+    ];
+    return data;
+  }
+
+  getReportTypeID(id){
+    switch(id){
+      case 'Robo':
+        return this.setState({idReporte: '1'});
+      case 'Asalto':
+        return this.setState({idReporte: '2'});
+      case 'Acoso':
+        return this.setState({idReporte: '3'});
+      case 'Vandalismo':
+        return this.setState({idReporte: '4'});
+      case 'Pandillerismo':
+        return this.setState({idReporte: '5'});
+      case 'Violación':
+        return this.setState({idReporte: '6'});
+      case 'Secuestro o tentativa':
+        return this.setState({idReporte: '7'});
+      case 'Asesinato':
+        return this.setState({idReporte: '8'});
+    }
+  }
+
+  selectPhotoTapped() {
+    const options = {
+      quality: 0.95,
+      maxWidth: 1000,
+      maxHeight: 1000,
+      storageOptions: {
+        skipBackup: true,
+      },
+    };
+
+    ImagePicker.showImagePicker(options, (response) => {
+      if (response.didCancel) {
+        // console.log('User cancelled photo picker');
+      } else if (response.error) {
+        // console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        // console.log('User tapped custom button: ', response.customButton);
+      } else {
+        let source = { uri: response.uri };
+        let source64 = response.data;
+        this.setState({
+          image: source,
+          imageBase64: source64,
+        });
+      }
+    });
+  }
+
+  onChangeHandler = (value) => {
+    this.getReportTypeID(value);
+    console.log(this.state.idReporte);
+  }
+
+  renderModalContent = () => (
+    <KeyboardAvoidingView behavior="padding">
+      <View style={styles.modalContent}>
+        <View height = {window.height - 130}>
+        <ScrollView width = {window.width - 10}>
+          <Text style={styles.titles}> Levantar un Reporte </Text>
+          <View height = {300}>
+            <MapView 
+              style={styles.modalMap}
+              provider={PROVIDER_GOOGLE}
+              initialRegion={this.state.region}>
+              <Marker
+                draggable
+                coordinate={{latitude: parseFloat(this.state.region.latitude) && parseFloat(this.state.region.latitude), 
+                longitude: parseFloat(this.state.region.longitude) && parseFloat(this.state.region.longitude)}}
+                title={"Reportar"}
+                description={"Reporta un incidente"}
+                onDragEnd={(e) => this.setState({markerCoord: e.nativeEvent.coordinate})}
+              />
+            </MapView>
+          </View>
+          <Text style={styles.titles}> Selecciona el tipo del Reporte </Text>
+          <Dropdown
+            style={{marginBottom:0, marginTop:0, width: window.width - 13}}
+            data={this.getReportType()}
+            onChangeText={value => this.onChangeHandler(value)}
+          />
+          <Text style={styles.titles}> Añade una descripción </Text>
+          <TextInput
+            width = {window.width - 15}
+            height = {60}
+            style={{
+              flex:1,
+              borderWidth: 1,
+              borderColor: 'lightgrey',
+            }}
+            onChangeText = {(text) => {this.setState({reportDescription:text})}}
+            placeholderTextColor="rgba(255,255,255,.4)"
+            underlineColorAndroid="transparent"
+            returnKeyType = "next"
+            multiline={true}
+          />
+          <Text style={styles.titles} >Añadir evidencia</Text>
+          <TouchableOpacity onPress={this.selectPhotoTapped.bind(this)}>
+            <Image style={styles.itemPic} source={this.state.image} />
+          </TouchableOpacity>
+          <Text style={styles.titles} >Fecha del incidente </Text>
+          <DatePicker
+            style={{marginBottom:10, width: window.width - 13}}
+            date={this.state.date}
+            mode="datetime"
+            placeholder="select date"
+            format="YYYY/MM/DD-HH:mm:ss"
+            minDate="2015-01-01"
+            maxDate={this.state.date}
+            confirmBtnText="Aceptar"
+            cancelBtnText="Cancelar"
+            customStyles = {{
+              dateIcon: {
+                position: 'absolute',
+                left: 0,
+                top: 4,
+                marginLeft: 0
+              },
+              dateInput: {
+                marginLeft: 36
+              }
+            }}
+            onDateChange={(date) => {this.setState({date: date})}}
+          />
+        </ScrollView>
+        </View>
+        <View style={{flexDirection:"row", width:'50%',justifyContent:"center", height: '8%'}} >
+          <TouchableOpacity onPress={() => this.makeReportRequest()}>
+            <Icon name="md-checkmark-circle" style={styles.modalButtonIcon}/>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => this.setState({ visibleModal: null })}>
+            <Icon name="md-close-circle" style={styles.modalButtonIcon}/>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </KeyboardAvoidingView>
+  );
+
+  getLocationUser(){
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        this.setState({
+          region:{
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            latitudeDelta: 0.0400,
+            longitudeDelta: 0.0200,
+          }
+        });
+      },
+      (error) => console.log(error)
+    );
+  }
+
   constructor() {
     super()
+    this.getLocationUser();
+    this.selectPhotoTapped = this.selectPhotoTapped.bind(this);
     this.state = {
+      visibleModal: null,
+      ubicacionUsuario: '0.0,-0.0',
       Titulo: "Mis reportes",
       region:{
         latitude: 0,
@@ -185,12 +398,13 @@ export default class MapScreen extends React.Component {
         longitudeDelta: 0.0200,
       },
       globalReports:true,
-      idReporte: 1,
+      idReporte: null,
       markerCoord:{
         latitude: 0,
         longitude: 0,
       },
-      
+      image: require('../images/add_photo-512.png'),
+      imageBase64: '',
       reports:[],
       userReports:[],
 
@@ -263,7 +477,7 @@ export default class MapScreen extends React.Component {
         date:currentDate
       });
     }
-    this.setState({modalReport:visible})
+    this.setState({ visibleModal: 5})
   }
 
   openModalReportInfo(visible){
@@ -310,11 +524,22 @@ export default class MapScreen extends React.Component {
     });
   }
   
+  showAlert(title, message){
+    Alert.alert(
+      title,
+      message,
+      [,
+          {text: 'OK', onPress: () => this.setState({ visibleModal: null})},
+      ],
+          {cancelable: false},
+      );
+  }
+
   makeReportRequest(){
     const requestJHONSON = {
       nombreUsuario: this.state.userInfo.nombreUsuario,
       tipoReporte: this.state.idReporte,
-      evidencia:null,
+      evidencia:this.state.imageBase64,
       descripcion: this.state.reportDescription,
       latitud: this.state.markerCoord.latitude,
       longitud: this.state.markerCoord.longitude,
@@ -322,11 +547,15 @@ export default class MapScreen extends React.Component {
       tokenSiliconBear: this.state.userInfo.tokenSiliconBear,
       ubicacionUsuario: this.state.region.latitude + ',' + this.state.region.longitude
     }
-    console.warn(JSON.stringify(requestJHONSON));
-    Request_API(requestJHONSON, realizarReporte)
-      .then(response => {
-        console.warn(JSON.stringify(response));
-        console.warn(this.state.userInfo.tokenSiliconBear);
+    console.log(JSON.stringify(requestJHONSON));
+    Request_API(requestJHONSON, realizarReporte).then(response => {
+      console.log(response);
+      if(response.codigoRespuesta === 200){
+        PouchDB_Insert(response.reporte._id, 'userReports', response.reporte)
+        this.showAlert("Correcto",response.mensaje);
+      } else {
+        this.showAlert("Error: " + response.codigoRespuesta, response.mensaje);
+      }
     })
   }
 
@@ -349,6 +578,9 @@ export default class MapScreen extends React.Component {
 
 }
 
+
+
+
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
@@ -360,11 +592,12 @@ const styles = StyleSheet.create({
   containerModal: {
     height: "100%",
     width: "100%",
+    flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
   },
   modalMap:{
-    height: "45%",
+    height: "100%",
     width: "100%",
   },
   map: {
@@ -394,5 +627,33 @@ const styles = StyleSheet.create({
     width:'100%',
     alignItems: 'center',
     marginBottom: 35
-  }
+  },
+  bottomModal: {
+    justifyContent: "flex-end",
+    margin: 0,
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: 22,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+    borderColor: "rgba(0, 0, 0, 0.1)",
+  },
+  titles: {
+    margin: 5,
+    fontWeight: 'bold',
+    fontSize:18,
+  },
+  Label: {
+    justifyContent: "center",
+    alignItems: 'center',
+  },
+  itemPic: {
+    margin: 5,
+    height: 200,
+    width: window.width - 20,
+    backgroundColor: '#c5c5c5',
+    justifyContent: "center",
+  },
  });

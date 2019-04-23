@@ -1,12 +1,15 @@
 import React from "react";
-import { View, Text, StyleSheet, Platform, TouchableOpacity, Alert, Modal, NativeModules, KeyboardAvoidingView, StatusBar,ScrollView } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Alert, Modal, KeyboardAvoidingView, StatusBar,ScrollView } from "react-native";
 import Icon from 'react-native-vector-icons/AntDesign';
 import { TextInput } from "react-native-gesture-handler";
 import { Button } from "../node_modules/react-native-elements";
 import { Request_API } from '../networking/server';
-import { PouchDB_Get_Document, PouchDB_DeleteDB } from '../PouchDB/PouchDBQuerys'
-let couchbase_lite = NativeModules.couchbase_lite;
-let couchbase_lite_native = NativeModules.couchbase_lite_native;
+import { PouchDB_Get_Document, PouchDB_DeleteDB, PouchDB_UpdateDoc } from '../PouchDB/PouchDBQuerys'
+import _ from 'lodash';
+// import PouchdbFind from 'pouchdb-find';
+// import PouchDB from 'pouchdb-react-native'; 
+// const db = new PouchDB('OjoMetropolitano');
+
 const modURL = ':3030/API/miCuenta/ModificarInformacionUsuario'
 
 export default class drawerDesign extends React.Component {
@@ -20,6 +23,21 @@ export default class drawerDesign extends React.Component {
       .then(response => {
       this.setState({userInfo: response})
     });
+    
+    // await db.find({
+    //   selector: {
+    //     type: 'InformacionUsuario',
+    //   },
+    //   index: {
+    //     fields: ['type']
+    //   }
+    // }).then(result => {
+    //   this.setState({
+    //     userInfo: result.docs
+    //   })
+    // }).catch(function (err) {
+    //   console.log(err);
+    // });
     await PouchDB_Get_Document('BasicValues')
       .then(response => {
       this.setState({userData: response})
@@ -32,6 +50,7 @@ export default class drawerDesign extends React.Component {
 
   constructor(props){
     super(props);
+    // PouchDB.plugin(PouchdbFind);
     this.state = {
       modalVisible: false,
       namesModalV: false,
@@ -51,6 +70,17 @@ export default class drawerDesign extends React.Component {
     this.getLocationUser();
   }
   
+  showAlert(title, message){
+    Alert.alert(
+      title,
+      message,
+      [,
+          {text: 'OK'},
+      ],
+          {cancelable: false},
+      );
+  }
+
   getLocationUser(){
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -74,20 +104,22 @@ export default class drawerDesign extends React.Component {
 
   async modRequest(property, value){
     const params = {
-      nombreUsuario: this.state.userInfo.nombreUsuario,
+      nombreUsuario: this.state.userData.nombreUsuario,
       atributoModificado: property,
       valorNuevo: value,
       tokenSiliconBear: this.state.userData.tokenSiliconBear,
       ubicacionUsuario: this.state.ubicacionUsuario,
     }
-    Request_API(params,modURL).then(response =>{
-       console.warn(response);
-       if(Platform.OS == 'android'){
-         couchbase_lite.updateUSerInfoDdc(property,value)
-       }
-       this.getUserInfo();
+    Request_API(params, modURL).then(response =>{
+      console.log(response)
+      if(response.codigoRespuesta === 200){
+        _.set(this.state.userInfo, `${property}`, `${value}`);
+        PouchDB_UpdateDoc(this.state.userInfo._id, this.state.userInfo.type, response.usuario);
+        this.showAlert("Correcto", response.mensaje);
+      } else {
+        this.showAlert("Error " + response.codigoRespuesta, response.mensaje);
       }
-    )
+    });
   }
 
   _renderNavBar(name, modalID){
@@ -210,7 +242,7 @@ export default class drawerDesign extends React.Component {
               style={{}}
               returnKeyType = "next"
               ref={(input) => this.nuevoNombre = input}
-              nChangeText={(text) => this.setState({newNames:text})}
+              onChangeText={(text) => this.setState({newNames:text})}
               autoFocus={true}
               placeholder={this.state.userInfo.nombres !== "" ? this.state.userInfo.nombres : "Nombres"}
               />
@@ -234,9 +266,16 @@ export default class drawerDesign extends React.Component {
         <View style={{ flex: 1,justifyContent: 'flex-end',}}>
           <KeyboardAvoidingView  enabled behavior="position" style={{justifyContent: 'flex-end',alignItems:'flex-end', position: 'absolute',bottom:0,width:'100%',borderTopWidth:0.5}} >
             <View style={{width:80,justifyContent: 'flex-end',alignContent:'flex-end', margin:10}}>
-            <Button  onPress={() => {if(this.state.newNames != "")this.modRequest("nombres",this.state.newNames).then(this.setState({newNames:"text"}));
-             if(this.state.newPSurname != "")this.modRequest("apellidoPaterno",this.state.newPSurname).then(this.setState({newPSurname:"text"}));
-             if(this.state.newMSurname != "")this.modRequest("apellidoMaterno",this.state.newMSurname).then(this.setState({newMSurname:"text"}))}} title="Aceptar"/>
+            <Button  
+              onPress={() => 
+              {
+                if(this.state.newNames !== "")    this.modRequest("nombres",this.state.newNames).then(this.setState({newNames:"text"}));
+                if(this.state.newPSurname !== "") this.modRequest("apellidoPaterno",this.state.newPSurname).then(this.setState({newPSurname:"text"}));
+                if(this.state.newMSurname !== "") this.modRequest("apellidoMaterno",this.state.newMSurname).then(this.setState({newMSurname:"text"}));
+              }
+              } 
+             title="Aceptar" 
+             />
             </View>
           </KeyboardAvoidingView>
         </View>
