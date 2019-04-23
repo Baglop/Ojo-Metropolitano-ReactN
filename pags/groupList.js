@@ -4,8 +4,14 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Modal from "react-native-modal";
 import { Request_API } from '../networking/server';
 import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header-scroll-view';
+
+import PouchDB from 'pouchdb-react-native'; 
+import { PouchDB_Insert } from '../PouchDB/PouchDBQuerys'
+import PouchdbFind from 'pouchdb-find';
 //import { TextInput } from "react-native-gesture-handler";
 let newGroupURL = ':3030/API/contactos/CrearGrupo';
+const AmigosyGrupos = ':3030/API/contactos/ActualizarAmigosYGrupos';
+const db = new PouchDB('OjoMetropolitano');
 
 const groups = [
     {
@@ -34,22 +40,58 @@ export default class GroupList extends React.Component {
    
     constructor(props){
         super(props);
+        PouchDB.plugin(PouchdbFind);
         this.state ={
-            groups:this.props.groups,
+            groups:[],
             userData: this.props.userData,
             modalVisible:false,
             modalGroupVisible:false,
             newGroupName:'',
             actualGroup:null,
         };
+        this.getGroups();
     }
 
-    componentWillReceiveProps(){
-        this.setState({groups:this.props.groups,
-                        userData: this.props.userData,})
-        
-        console.log(this.props.groups)
+    async getGroups(){
+        await db.find({
+            selector: {
+              type: 'groups',
+            },
+            index: {
+            fields: ['type']
+            }
+          }).then(result => {
+            this.setState({
+              groups: result.docs
+            })
+            console.log(result)
+          }).catch(function (err) {
+            console.log(err);
+          });
     }
+
+    componentWillReceiveProps(nextProps){
+        this.setState({userData: nextProps.userData})
+
+    }
+
+    
+  userFriendsAndGroups(pos){
+    const userFyG = {
+      nombreUsuario: this.state.userData.userName,
+      tokenSiliconBear: this.state.userData.tokenSiliconBear,
+      ubicacionUsuario: pos,
+    };
+    Request_API(userFyG, AmigosyGrupos).then(response => { 
+      if(response.codigoRespuesta === 200){
+        if(_.size(response.grupos[response.grupos.lenght -1 ]) > 0){
+          response.grupos.map((data) => {
+            PouchDB_Insert(data.idGrupo, 'groups', data)
+          })
+        }
+      }
+    });
+  }
 
     async newGroupRequest(){
         let promise = new Promise((resolve, reject) => {
@@ -63,17 +105,20 @@ export default class GroupList extends React.Component {
           });
         let position = await promise;
         const params = {
-            nombreUsuario: this.state.userData.userName,
+            nombreUsuario: this.state.userData.nombreUsuario,
             nombreGrupo: this.state.newGroupName,
             tokenSiliconBear: this.state.userData.tokenSiliconBear,
             ubicacionUsuario: position
         }
         console.log(params);
         Request_API(params,newGroupURL).then(response => {
-            
             if(response.codigoRespuesta == 200){
+                PouchDB_Insert(response.grupo.idGrupo, 'groups', response.grupo)
                 console.log(response)
-                this.props.refrestList();
+                setTimeout(() => {
+                    this.getGroups();
+                  }, 1500);  
+                
             }
         })
     }

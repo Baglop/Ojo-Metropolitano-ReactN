@@ -7,6 +7,11 @@ import { Menu,
     MenuOption,
     MenuTrigger} from 'react-native-popup-menu';
 import {Request_API} from '../networking/server'
+import { PouchDB_UpdateDoc, PouchDB_DeleteDoc } from '../PouchDB/PouchDBQuerys'
+import PouchdbFind from 'pouchdb-find';
+import PouchDB from 'pouchdb-react-native'; 
+
+const db = new PouchDB('OjoMetropolitano');
 
 const editfriendURL = ':3030/API/contactos/EditarAmigo';
 const deleteFriendURL = ':3030/API/contactos/EliminarAmigo';
@@ -62,6 +67,7 @@ export default class ContactsList extends React.Component {
     
     constructor(props){
         super(props);
+        PouchDB.plugin(PouchdbFind);
         this.state ={
           contacts:this.props.contacts,
           userData:this.props.userData,
@@ -70,6 +76,31 @@ export default class ContactsList extends React.Component {
           actualFriend:null,
         };
       }
+
+      
+    componentWillReceiveProps(nextProps){
+        this.setState({userData: nextProps.userData,contacts: nextProps.contacts})
+
+    }
+
+    async deleteFriendDoc(user){
+        await db.find({
+            selector: {
+              type: 'friends',
+              nombreUsuario: user
+            },
+            index: {
+            fields: ['type']
+            }
+          }).then(result => {
+              console.log(result)
+             PouchDB_DeleteDoc(result.docs[0]._id)
+            .then(this.props.refrestList());
+          }).catch(function (err) {
+            console.log(err);
+          });
+      
+    }
 
       async deleteFriend(user){
         let promise = new Promise((resolve, reject) => {
@@ -85,7 +116,7 @@ export default class ContactsList extends React.Component {
         let position = await promise;
 
         const params ={
-          nombreUsuario: this.state.userData.userName,
+          nombreUsuario: this.state.userData.nombreUsuario,
           amigo: user,
           tokenSiliconBear: this.state.userData.tokenSiliconBear,
           ubicacionUsuario: position
@@ -94,7 +125,7 @@ export default class ContactsList extends React.Component {
         Request_API(params, deleteFriendURL).then(response => {
             console.log(response)
             if(response.codigoRespuesta == 200){
-                this.props.refrestList();
+                this.deleteFriendDoc(user);
             }
         })
       }
@@ -113,7 +144,7 @@ export default class ContactsList extends React.Component {
         let position = await promise;
 
         const params ={
-          nombreUsuario: this.state.userData.userName,
+          nombreUsuario: this.state.userData.nombreUsuario,
           amigo: this.state.actualFriend,
           nuevoAlias: this.state.newAlias,
           tokenSiliconBear: this.state.userData.tokenSiliconBear,
@@ -123,10 +154,14 @@ export default class ContactsList extends React.Component {
         Request_API(params, editfriendURL).then(response => {
             if(response.codigoRespuesta == 200){
                 console.log(response)
-                this.props.refrestList();
+                PouchDB_UpdateDoc(response.amigo._id,'friends', response.amigo);
+                setTimeout(() => {
+                    this.props.refrestList();
+                }, 1500);  
             }
         })
       }
+
 
       setModalVisible = () =>
           this.setState({modalVisible:!this.state.modalVisible})
