@@ -29,6 +29,7 @@ const reportesUsuario = ':3030/API/inicio/ActualizarMisReportes';
 
 export default class MapScreen extends React.Component {
 
+  
   _renderModalReport(){
     return(
       <Modal
@@ -202,19 +203,9 @@ export default class MapScreen extends React.Component {
     else
      return null;
   }
+  
 
-
-
-
-
-
-
-
-
-
-
-
-
+  
   getReportType(){
     let data = [
       {value: 'Robo', tipoReporte: 1},
@@ -462,8 +453,43 @@ export default class MapScreen extends React.Component {
     this.startLocTrack().then(() => 
       this.reportsRequest(),
     );
-    
   }
+ 
+ componentDidMount(){
+  socket.on('reporteNuevo', (reporte)  => {
+
+    console.log("**************************************** reporteNuevo ****************************************");
+    console.log(reporte);
+
+    this.setState({reports:[...this.state.reports,reporte]})
+  
+    /**
+     * NOTAS:
+     * - Al ejecutarse este evento se debe agregar el reporte recibido al mapa con una animacion.
+    **/
+  
+  
+    // Objeto de reporte recibido:
+    // 
+    // var reporteNuevo = new Reporte({
+    //     _id: new mongoose.Types.ObjectId(),
+    //     autorReporte: autorReporte,
+    //     tipoReporte: tipoReporte,
+    //     descripcion: descripcion,
+    //     evidencia: " ",
+    //     fechaIncidente: fechaIncidente,
+    //     latitud: latitud,
+    //     longitud: longitud,
+    //     fechaReporte: moment().format('YYYY/MM/D-HH:mm:ss'),
+    //     ubicacionUsuario: ubicacionUsuario,
+    //     estatus: true
+    // });
+    
+  
+    // Agrega reporte al mapa
+  
+  });
+ } 
 
   getRegion(region){
     this.setState({region})
@@ -557,7 +583,9 @@ export default class MapScreen extends React.Component {
       console.log(response);
       if(response.codigoRespuesta === 200){
         PouchDB_Insert(response.reporte._id, 'userReports', response.reporte)
+        socket.emit('reporteNuevo', requestJHONSON);
         this.showAlert("Correcto",response.mensaje);
+        
       } else {
         this.showAlert("Error: " + response.codigoRespuesta, response.mensaje);
       }

@@ -6,6 +6,8 @@ import ContactScreen from "./contacts"
 import ProfileScreen from "./profile"
 import { createBottomTabNavigator, createAppContainer } from "react-navigation";
 import AntDesign from 'react-native-vector-icons/AntDesign'
+import io from 'socket.io-client/dist/socket.io';
+const url = 'http://siliconbear.dynu.net:3030';
 
 const TabNavigator = createBottomTabNavigator({
   Perfil: ProfileScreen,
@@ -45,6 +47,7 @@ export default class MainScreen extends React.Component {
   static navigationOptions = {
     header: null,
   }
+  
 
   constructor(props) {
     super(props);
@@ -53,9 +56,12 @@ export default class MainScreen extends React.Component {
       userInfo:[],
       userData: []
     };
-    
+    this.startSocket();
   }
-  
+    startSocket(){
+      global.socket = io.connect(url);
+    }
+
   render() {
     return (
       <AppContainer/>

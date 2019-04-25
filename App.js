@@ -16,7 +16,7 @@ import {StatusBar, Alert} from 'react-native';
 import { createStackNavigator, createAppContainer } from "react-navigation";
 import firebase  from 'react-native-firebase';
 import { Notification, NotificationOpen } from 'react-native-firebase';
-import DropdownAlert from 'react-native-dropdownalert';
+//import DropdownAlert from 'react-native-dropdownalert';
 import { PouchDB_UpdateDoc } from './PouchDB/PouchDBQuerys';
 
 import { Request_API } from './networking/server';
