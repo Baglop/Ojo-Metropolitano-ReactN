@@ -13,8 +13,8 @@ import {Platform, StyleSheet,
         Image,    Button, 
         NativeModules, Alert, 
         KeyboardAvoidingView, 
-        Animated,Dimensions, 
-        Keyboard, StatusBar} from 'react-native';
+        Animated,Dimensions, Text,
+        Keyboard, StatusBar, TouchableOpacity} from 'react-native';
 import { Request_API } from '../networking/server';
 import { PouchDB_Insert } from '../PouchDB/PouchDBQuerys'
 import _ from 'lodash';
@@ -27,8 +27,8 @@ const AmigosyGrupos = ':3030/API/contactos/ActualizarAmigosYGrupos';
 const width = '80%';
 
 const window = Dimensions.get('window');
-const IMAGE_HEIGHT = window.width / 1.2;
-const IMAGE_HEIGHT_SMALL = window.height / 4;
+const IMAGE_HEIGHT = window.width / 1.5;
+const IMAGE_HEIGHT_SMALL = window.height / 5;
 
 export default class LoginScreen extends React.Component 
 {
@@ -233,7 +233,7 @@ export default class LoginScreen extends React.Component
             <Image source={require('../images/2x/round_person_white_24dp.png')} style={styles.ImageStyle}/>
           </View>
           <TextInput
-            style={{flex:1}}
+            style={{flex:1,color:'white'}}
             placeholder=" Usuario"
             placeholderTextColor="rgba(255,255,255,.4)"
             underlineColorAndroid="transparent"
@@ -255,7 +255,7 @@ export default class LoginScreen extends React.Component
           </View>
           <TextInput
             secureTextEntry={true} 
-            style={{flex:1}}
+            style={{flex:1,color:'white'}}
             placeholder=" Contraseña"
             placeholderTextColor="rgba(255,255,255,.4)"
             underlineColorAndroid="transparent"
@@ -265,18 +265,18 @@ export default class LoginScreen extends React.Component
             />
         </View>
         <View style={styles.loginButton}>
-          <Button
-            title="Iniciar sesión"
-            color="#51738e"
-            onPress={() => this.loginPress()}
-          />
+          <TouchableOpacity 
+          style={{backgroundColor:'#51738e', alignContent:'center',alignItems:'center',padding:10,borderRadius:5}}
+          onPress={() => this.loginPress() }> 
+            <Text style={{color:'white'}}>Iniciar sesión</Text>
+          </TouchableOpacity>
         </View>
         <View style={styles.registerButton}>
-          <Button
-            title = "Aún no eres miembro? Registrarte aquí"
-            color = "#FFFFFF"
-            onPress = {() => navigate("Register", {})}
-            />
+        <TouchableOpacity 
+          style={{alignContent:'center',alignItems:'center',padding:10,}}
+          onPress={() => navigate("Register", {})}> 
+            <Text style={{color:'white'}}>¿Aún no eres miembro? Registrarte aquí</Text>
+          </TouchableOpacity>
         </View>
         
       </KeyboardAvoidingView>

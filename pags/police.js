@@ -10,22 +10,22 @@ const numbers=[
   },
   {
     key:'2',
-    name:'Policia de Guadalajara:',
+    name:'Policía de Guadalajara:',
     num:'201-6070'
   },
   {
     key:'3',
-    name:'Policia de Zapopan:',
+    name:'Policía de Zapopan:',
     num:'3836-3636'
   },
   {
     key:'4',
-    name:'Policia de Tonala',
+    name:'Policía de Tonalá',
     num:'35866101'
   },
   {
     key:'5',
-    name:'Policia de Tlajomulco',
+    name:'Policía de Tlajomulco',
     num:'32834400'
   }
 ]
@@ -50,12 +50,11 @@ export default class PoiliceScreen extends React.Component {
   render() {
     return (
       <View style={{ flex: 1}}>
-        <View style={{marginTop:30, alignItems:'center',justifyContent:'center'}} >
+        <View style={{marginTop:30,alignItems:'center',justifyContent:'center',borderBottomWidth:0.5,borderBottomColor:'rgba(0,0,0,0.1)'}} >
           <TouchableOpacity style={styles.button} >
-            <Text>Boton de panico</Text>
+            <Text>Botón de pánico</Text>
           </TouchableOpacity>
         </View>
-          <Text style={{fontWeight:"bold",marginStart:10,marginTop:5}}></Text>
           <FlatList
             data={numbers}
             ItemSeparatorComponent={() => <View style={{width:10}}/>}
@@ -77,7 +76,7 @@ const styles = StyleSheet.create({
       height:250 ,
       marginTop:5,
       marginEnd:5,marginStart:5,
-      marginBottom:5,
+      marginBottom:20,
       backgroundColor:'red',
       borderRadius:300,
   },

@@ -175,11 +175,8 @@ export default class MapScreen extends React.Component {
           initialRegion={this.state.region}>
             {this.state.globalReports ? this._renderGlobalReports():null}
         </MapView>
-        <ActionButton buttonColor="rgba(0,200,200,1)" >
-          <ActionButton.Item buttonColor='#9b59b6' size={45} title="Reportar" onPress={() => this.openModalReport(true)}/*onPress={() => this.setState({ visibleModal: 5})}*/>
-            <Icon name="md-create" style={styles.actionButtonIcon} />
-          </ActionButton.Item>
-          <ActionButton.Item buttonColor='#9b59b6' size={45} title={this.state.Titulo} onPress={() => this.changeReports()}>
+        <ActionButton buttonColor="#136bf7" >
+          <ActionButton.Item buttonColor='#3d84f4' size={45} title="Reportar" onPress={() => this.openModalReport(true)}/*onPress={() => this.setState({ visibleModal: 5})}*/>
             <Icon name="md-create" style={styles.actionButtonIcon} />
           </ActionButton.Item>
         </ActionButton>

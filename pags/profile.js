@@ -134,7 +134,7 @@ class ProfileScreenConent extends React.Component {
             )}
         </TouchableOpacity>
         </View>
-        <Text style={{color:'white',fontWeight:'bold'}}>{this.state.userInfo.nombreUsuario}</Text>
+        <Text style={{color:'white',fontWeight:'bold'}}>{this.state.userData.nombreUsuario}</Text>
     </View>
     )
   }
@@ -164,13 +164,20 @@ class ProfileScreenConent extends React.Component {
         )}
         renderForeground={() => this._renderProfile()}
         >
-          <View style={{ height: 1000 }}>
+          <View style={{ padding:10 }}>
             <TriggeringView onHide={() => console.log('text hidden')} >
-              <Text>Perfil</Text> 
+              <Text style={{fontSize:18,fontWeight:'bold'}}>Nombre de Usuario</Text>
+              <Text style={{fontSize:18}}>{this.state.userInfo.nombreUsuario}</Text>
+              <Text style={{fontSize:18,fontWeight:'bold',marginTop:5}}>Nombre</Text>
+              <Text style={{fontSize:18}}>{this.state.userInfo.nombres + ' ' + this.state.userInfo.apellidoPaterno + ' ' + this.state.userInfo.apellidoMaterno }</Text> 
+              <Text style={{fontSize:18,fontWeight:'bold',marginTop:5}}>Teléfono</Text>
+              <Text style={{fontSize:18}}>{this.state.userInfo.celular}</Text>
+              <Text style={{fontSize:18,fontWeight:'bold',marginTop:5}}>Correo electrónico</Text>
+              <Text style={{fontSize:18}}>{this.state.userInfo.correo}</Text>
               <Button
               backgroundColor='#03A9F4'
-              buttonStyle={{borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0}}
-              title='Mis Reportes!' 
+              buttonStyle={{borderRadius: 5, marginLeft: 0, marginRight: 0, marginBottom: 0, marginTop:15}}
+              title='Mis Reportes' 
               onPress = {() => navigate("Reportes", {})}
               />
             </TriggeringView>
@@ -189,7 +196,7 @@ const styles = StyleSheet.create({
   logoStyle: {
     height: 100,
     width: 100,
-    borderRadius: 50,
+    borderRadius: 500,
     resizeMode : 'stretch',
   },
   button: {

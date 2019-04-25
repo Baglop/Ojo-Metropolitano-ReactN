@@ -68,13 +68,11 @@ export default class ContactScreen extends React.Component {
       contacts:[],
       groups:[]
     };
+    this.getData();
     this.friendsListRequest = this.friendsListRequest.bind(this);
    
   }
 
-  componentWillMount(){
-    this.getData();
-  }
 
   componentWillReceiveProps(nextProps){
     this.setState({userData: nextProps.userData})

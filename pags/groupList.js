@@ -298,7 +298,7 @@ export default class GroupList extends React.Component {
     _renderModal(){
         return(
           
-           <View style={styles.modalContent}>
+           <View style={styles.modalContent} >
            <KeyboardAvoidingView behavior="padding">
         <Modal isVisible={this.state.modalVisible}
         onBackButtonPress={this.setModalVisible}
@@ -321,10 +321,10 @@ export default class GroupList extends React.Component {
                          
                 </View>
                 <View style ={{flexDirection: 'row', marginTop:5}} >
-                <TouchableOpacity keyboardShouldPersistTaps="handled"onPress={() => this.newGroupRequest()} >
+                <TouchableOpacity keyboardShouldPersistTaps="handled" onPress={() => {this.newGroupRequest(),this.setModalVisible()}}>
                     <Text style={{margin:5}} >Crear</Text>
                 </TouchableOpacity>
-                <TouchableOpacity keyboardShouldPersistTaps="handled">
+                <TouchableOpacity keyboardShouldPersistTaps="handled" onPress={this.setModalVisible}>
                     <Text style={{margin:5}}>Cancelar</Text>
                 </TouchableOpacity>
                 </View>
@@ -390,9 +390,8 @@ export default class GroupList extends React.Component {
 
   render() {
     return (
-      <View >
+      <View style={{borderBottomWidth:0.5, borderBottomColor:'rgba(0,0,0,0.08)'}}>
         <View>
-            <Text style={{fontWeight:"bold",marginStart:10,marginTop:5}}>Grupos:</Text>
             <FlatList
               data={[{nombreGrupo:"add"},...this.state.groups]}
               horizontal = {true}
@@ -417,9 +416,9 @@ const styles = StyleSheet.create({
         justifyContent:'center',
         width:70,
         height:70,
-        marginTop:5,
+        marginTop:10,
         marginEnd:5,marginStart:5,
-        marginBottom:5,
+        marginBottom:0,
         backgroundColor:'#fff',
         borderRadius:100,
     },

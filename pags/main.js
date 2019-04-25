@@ -5,15 +5,15 @@ import PoliceScreen from "./police"
 import ContactScreen from "./contacts"
 import ProfileScreen from "./profile"
 import { createBottomTabNavigator, createAppContainer } from "react-navigation";
-import AntDesign from 'react-native-vector-icons/AntDesign'
-import io from 'socket.io-client/dist/socket.io';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import io from 'socket.io-client/dist/socket.io.js';
 const url = 'http://siliconbear.dynu.net:3030';
 
 const TabNavigator = createBottomTabNavigator({
   Perfil: ProfileScreen,
   Contactos: ContactScreen,
   Inicio: MapScreen,
-  Lugares: PlaceScreen,
+  //Lugares: PlaceScreen,
   Policia: PoliceScreen
   },
   {
@@ -29,8 +29,6 @@ const TabNavigator = createBottomTabNavigator({
           AntName = 'home';
         }else if (routeName === 'Contactos'){
           AntName='contacts';
-        }else if (routeName === 'Lugares'){
-          AntName='pushpino';
         }else if (routeName === 'Policia'){
           AntName='Safety';
         }

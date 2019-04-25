@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, TextInput, Image, Animated, Keyboard, KeyboardAvoidingView, Dimensions, StyleSheet,Button} from 'react-native';
+import { View, TextInput, TouchableOpacity, Animated, Keyboard, KeyboardAvoidingView, Dimensions, StyleSheet,Text} from 'react-native';
 import { TextField } from 'react-native-material-textfield';
 import logo from '../images/ojometropolitano.png';
 const window = Dimensions.get('window');
@@ -96,13 +96,13 @@ export default class RegisterScreen extends React.Component {
             onChangeText = { (text) => this.setState({celular:text}) }
           />
           <View style={styles.loginButton}>
-            <Button
-                title   = "Continuar"
-                color   = "#FFFF"
-                onPress = { () => navigate("Register2" , { nombreUsuario: this.state.nombreUsuario,
-                                                           contrasena:    this.state.contrasena,
-                                                           celular:       this.state.celular}) }
-            />
+          <TouchableOpacity 
+          style={{backgroundColor:'#51738e', alignContent:'center',alignItems:'center',padding:10,borderRadius:5}}
+          onPress={() => () => navigate("Register2" , { nombreUsuario: this.state.nombreUsuario,
+            contrasena:    this.state.contrasena,
+            celular:       this.state.celular})}> 
+            <Text style={{color:'white'}}>Continuar</Text>
+          </TouchableOpacity>
           </View>
       </KeyboardAvoidingView>
     );
@@ -127,6 +127,7 @@ const styles = StyleSheet.create({
         borderRadius: 5 ,
         margin:       10,
         marginTop:    1,
+        color:        'white',
         width: window.width - 30
       },
     logo: {
