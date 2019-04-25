@@ -59,8 +59,8 @@ export default class ContactScreen extends React.Component {
 
   constructor(props){
     super(props);
-    ;
     PouchDB.plugin(PouchdbFind);
+    this.getData();
     this.state ={
       showSearch:false,
       searchResult:[],
@@ -73,6 +73,10 @@ export default class ContactScreen extends React.Component {
   }
 
   componentWillMount(){
+    
+  }
+
+  componentDidUpdate(){
     this.getData();
   }
 
@@ -110,7 +114,6 @@ export default class ContactScreen extends React.Component {
     await PouchDB_Get_Document('BasicValues')
       .then(response => {
       this.setState({userData: response})
-      console.log(response);
     });
     this.friendsListRequest();
   }
@@ -128,7 +131,6 @@ export default class ContactScreen extends React.Component {
       this.setState({
         contacts:result.docs
       })
-      console.log(result)
     }).catch(function (err) {
       console.log(err);
     });
