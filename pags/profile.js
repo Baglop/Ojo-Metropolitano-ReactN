@@ -127,7 +127,7 @@ class ProfileScreenConent extends React.Component {
       <View style={{alignItems:'center',justifyContent:'center',height:'100%'}} >
         <TouchableOpacity style={{borderRadius:50,borderWidth:2}} onPress={this.selectPhotoTapped.bind(this)}>
           {/* <Image style={styles.logoStyle} source={{uri: this.state.userInfo.imagenPerfil}}/> */}
-          {this.state.image === null ? (
+          {this.state.userInfo.imagenPerfil !== null ? (
               <Image style={styles.logoStyle} source={{uri: this.state.userInfo.imagenPerfil && this.state.userInfo.imagenPerfil}}/>
             ) : (
               <Image style={styles.logoStyle} source={this.state.image && this.state.image} />

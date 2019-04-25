@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, TextInput, Image } from "react-native";
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, TextInput, Image, KeyboardAvoidingView } from "react-native";
 import Icon from 'react-native-vector-icons/Ionicons';
 import Modal from "react-native-modal";
 import { Request_API } from '../networking/server';
@@ -176,14 +176,19 @@ export default class GroupList extends React.Component {
 
     _renderModal(){
         return(
+          
+           <View style={styles.modalContent}>
+           <KeyboardAvoidingView behavior="padding">
         <Modal isVisible={this.state.modalVisible}
         onBackButtonPress={this.setModalVisible}
         animationIn="slideInRight"
         animationOut="slideOutLeft"
         onBackdropPress={this.setModalVisible}>
+        
             <View style={styles.modalContent} >
                 <Text style={{fontWeight:"bold", fontSize:18}} >Nuevo Grupo</Text>
-                <View style={{width:'70%', borderBottomWidth:0.5}} >  
+                <View style={{width:'70%', borderBottomWidth:0.5}} >
+                
                     <TextInput
                         placeholder="Nombre del grupo"
                         placeholderTextColor="rgba(255,255,255,.4)"
@@ -192,6 +197,7 @@ export default class GroupList extends React.Component {
                         /* returnKeyType = { "next" } */
                         /* onSubmitEditing = {() => this.contrasena.focus()} */
                         onChangeText={(text) => this.setState({newGroupName:text})}/>
+                         
                 </View>
                 <View style ={{flexDirection: 'row', marginTop:5}} >
                 <TouchableOpacity keyboardShouldPersistTaps="handled"onPress={() => this.newGroupRequest()} >
@@ -202,7 +208,11 @@ export default class GroupList extends React.Component {
                 </TouchableOpacity>
                 </View>
             </View>
+            
         </Modal>
+        </KeyboardAvoidingView>
+        </View>
+       
         );
     }
          

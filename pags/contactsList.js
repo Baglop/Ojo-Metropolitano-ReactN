@@ -10,11 +10,14 @@ import {Request_API} from '../networking/server'
 import { PouchDB_UpdateDoc, PouchDB_DeleteDoc } from '../PouchDB/PouchDBQuerys'
 import PouchdbFind from 'pouchdb-find';
 import PouchDB from 'pouchdb-react-native'; 
+// import io from 'socket.io-client'
 
 const db = new PouchDB('OjoMetropolitano');
 
 const editfriendURL = ':3030/API/contactos/EditarAmigo';
 const deleteFriendURL = ':3030/API/contactos/EliminarAmigo';
+// const port = require('./server').port;
+// const socket = io.connect('siliconbear.dynu.net:3030' + port);
 
 const contacts = [
     {

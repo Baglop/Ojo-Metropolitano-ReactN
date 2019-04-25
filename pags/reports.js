@@ -14,7 +14,9 @@ import {
   Alert,
 
 } from "react-native";
-import Icon from 'react-native-vector-icons/Ionicons';
+import IconDelete from 'react-native-vector-icons/EvilIcons';
+import IconClose from 'react-native-vector-icons/EvilIcons';
+import IconUpdate from 'react-native-vector-icons/EvilIcons';
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import Marker from "react-native-maps";
 import Modal from "react-native-modal";
@@ -387,9 +389,11 @@ export default class screens extends Component {
       tokenSiliconBear: this.state.userData.tokenSiliconBear,
       ubicacionUsuario: this.state.ubicacionUsuario,
     }
+    console.log(bodyPetition)
     if(this.state.atributo === 'evidencia'){
       Request_API(bodyPetition, updateReporte).then(response => {
         if(response.codigoRespuesta === 200){
+          console.log(response);
           _.set(_.find(this.state.userReports, {_id: reporte._id}), 'evidencia', `${response.reporte.evidencia}`);
           PouchDB_UpdateDoc(reporte._id, reporte.type, response.reporte);
           Alert.alert(
@@ -499,15 +503,15 @@ export default class screens extends Component {
       <View style={{flexDirection:"row", width:'50%',justifyContent:"center", height: '8%'}} >
         <TouchableOpacity
           onPress={() => this.setState({ visibleModal: null })}>
-          <Icon name="md-checkmark-circle" style={styles.modalButtonIcon}/>
+          <IconClose name="close" style={styles.modalButtonIcon}/>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => this.showAlert('Confirmación','¿Seguro que quieres eliminar este reporte?', this.state.reporte._id)}>
-          <Icon name="md-close-circle" style={styles.modalButtonIcon}/>
+          <IconDelete name="trash" style={styles.modalButtonIcon}/>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => this.updateReports(this.state.reporte)}>
-          <Icon name="md-arrow-dropup-circle" style={styles.modalButtonIcon}/>
+          <IconUpdate name="refresh" style={styles.modalButtonIcon}/>
         </TouchableOpacity>
       </View>
     </View>

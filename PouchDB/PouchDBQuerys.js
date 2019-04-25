@@ -60,7 +60,11 @@ async function PouchDB_UpdateDoc(_id, type, params){
   }).then(function(response) {
     console.log("si se actualizo", response);
   }).catch(function (err) {
-    console.log(err);
+    console.log(err)
+    if(err.status === 404){
+      console.log("Si valido que sea el 404");
+      PouchDB_Insert(_id, type, params);
+    }
   });
 }
 

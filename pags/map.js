@@ -184,19 +184,19 @@ export default class MapScreen extends React.Component {
         </ActionButton>
         {this._renderModalReport()}
         {this._renderModalReportInfo()}
+        <View justifyContent= "flex-end" position='absolute' bottom= {-10} flex = {0.9} marginEnd= {-10} >
         <Modal
           isVisible={this.state.visibleModal === 5}
           style={styles.bottomModal}
-          animationInTiming={400}
-          animationOutTiming={400}
-          backdropTransitionInTiming={400}
-          backdropTransitionOutTiming={400}
+          animationIn="slideInUp"
+          animationOut="slideOutUp"
           onBackdropPress={() => this.setState({ visibleModal: null })}
           onRequestClose={() => {
             this.openModalReport(!this.state.modalReport);
           }}>
           {this.renderModalContent()}
         </Modal>
+        </View>
       </View>
     );
     else
@@ -286,8 +286,8 @@ export default class MapScreen extends React.Component {
   renderModalContent = () => (
     <KeyboardAvoidingView behavior="padding">
       <View style={styles.modalContent}>
-        <View height = {window.height - 130}>
-        <ScrollView width = {window.width - 10}>
+        <View height = {window.height - 150} alignItems='center'>
+        <ScrollView width = {window.width - 15}>
           <Text style={styles.titles}> Levantar un Reporte </Text>
           <View height = {300}>
             <MapView 
@@ -355,12 +355,17 @@ export default class MapScreen extends React.Component {
           />
         </ScrollView>
         </View>
-        <View style={{flexDirection:"row", width:'50%',justifyContent:"center", height: '8%'}} >
+        <View style={{flexDirection:"row", width:'50%',justifyContent:"center", height: '8%', alignItems: 'center'}} >
           <TouchableOpacity onPress={() => this.makeReportRequest()}>
-            <Icon name="md-checkmark-circle" style={styles.modalButtonIcon}/>
+            <View style={{flexDirection:"row", justifyContent:"center", alignItems: 'center'}}>
+              <Text>Reportar</Text>
+            </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => this.setState({ visibleModal: null })}>
-            <Icon name="md-close-circle" style={styles.modalButtonIcon}/>
+          <Text>                 </Text>
+          <TouchableOpacity justifyContent="center" alignItems= 'center' onPress={() => this.setState({ visibleModal: null })}>
+          <View style={{flexDirection:"row", justifyContent:"center", alignItems: 'center'}}>
+            <Text textAlign= {'center'} marginEnd={0}>Cancelar</Text>
+            </View>
           </TouchableOpacity>
         </View>
       </View>
