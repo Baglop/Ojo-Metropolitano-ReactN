@@ -1,6 +1,10 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, FlatList } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, FlatList, Alert } from "react-native";
 import Icon from 'react-native-vector-icons/AntDesign'
+import { PouchDB_Get_Document} from '../PouchDB/PouchDBQuerys';
+import { Request_API } from '../networking/server';
+
+const btnPanic = ':3030/API/agentePoliciaco/BotonDePanico';
 
 const numbers=[
   {
@@ -31,6 +35,74 @@ const numbers=[
 ]
 
 export default class PoiliceScreen extends React.Component {
+
+  state = {
+    userData:[],
+    ubicacionUsuario: '0.0,-0.0',
+  };
+
+  constructor(props){
+    super(props);
+    this.getInfo();
+    this.getLocationUser();
+  }
+
+  getLocationUser(){
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        this.setState({
+          ubicacionUsuario: position.coords.latitude + ',' + position.coords.longitude
+        });
+      },
+      (error) => console.log(error)
+    );
+  }
+
+  async getInfo(){
+    await PouchDB_Get_Document('BasicValues')
+      .then(response => {
+      this.setState({
+        userData: response
+      })
+    });
+  }
+
+
+PanicBottom(){
+  const bodyPetition = {
+    nombreUsuario: this.state.userData.nombreUsuario,
+    tokenSiliconBear: this.state.userData.tokenSiliconBear,
+    ubicacionUsuario: this.state.ubicacionUsuario,
+  }
+  Request_API(bodyPetition, btnPanic).then(response => {
+    if(response.codigoRespuesta === 200){
+      console.log(response)
+      // const data = {
+      //   nombreUsuario: "nombreUsuario",
+      //   salaVigilancia: salaVigilanciaPublica
+      // }
+      // socket.emit('botonDePanicoPresionado', data);
+      Alert.alert(
+          'Correcto',
+          response.mensaje,
+          [,
+            {text: 'OK'},
+          ],
+          {cancelable: false},
+        );
+    } else {
+      Alert.alert(
+          'Advertencia',
+          response.mensaje,
+          [,
+            {text: 'OK'},
+          ],
+          {cancelable: false},
+        );
+    }
+  }); 
+}
+
   _renderItems(item){
     return(
     <View style={{flex:1,flexDirection: 'row',justifyContent: 'flex-start',alignItems: 'center',height:70}}>
