@@ -19,6 +19,8 @@ import { Request_API } from '../networking/server';
 import { PouchDB_Insert } from '../PouchDB/PouchDBQuerys'
 import _ from 'lodash';
 import firebase from 'react-native-firebase'
+import Video from 'react-native-video'
+import backView from '../images/background.mp4'
 const URL = ':3030/API/inicio/IniciarSesion';
 const URL2 = ':3030/API/miCuenta/ActualizarInformacionUsuario';
 const modURL = ':3030/API/miCuenta/ModificarInformacionUsuario';
@@ -222,7 +224,17 @@ export default class LoginScreen extends React.Component
 
   render() {
     var { navigate } = this.props.navigation;
-    return (      
+    return ( 
+      
+      
+<View style={styles.root}> 
+      <Video 
+        repeat
+        source={backView}
+        resizeMode = 'cover'
+        style={StyleSheet.absoluteFill}
+      />
+
       <KeyboardAvoidingView behavior = "padding" style={styles.container}>
         <View style={{alignItems: 'center'}}>
         <StatusBar hidden />
@@ -271,25 +283,29 @@ export default class LoginScreen extends React.Component
             onPress={() => this.loginPress()}
           />
         </View>
-        <View style={styles.registerButton}>
+        <View style={styles.loginButton}>
           <Button
             title = "Aún no eres miembro? Registrarte aquí"
-            color = "#FFFFFF"
+            olor="#51738e"
             onPress = {() => navigate("Register", {})}
             />
         </View>
         
       </KeyboardAvoidingView>
+      </View>    
     );
   }
 }
  
 const styles = StyleSheet.create({
  
+  root:{
+    flex: 1
+  }, 
   container: {
     flex: 1,
     justifyContent:  'center',
-    backgroundColor: '#3e4d59',
+    //backgroundColor: '#3e4d59',
   },
   
   SectionStyle: {

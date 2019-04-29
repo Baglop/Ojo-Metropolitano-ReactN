@@ -290,7 +290,6 @@ export default class screens extends Component {
       latitudeDelta: 0.483,
       longitudeDelta: 0.293,
     },
-    
   };
 
   // renderButton = (text, onPress) => (
@@ -479,8 +478,8 @@ export default class screens extends Component {
     <KeyboardAvoidingView behavior="padding">
     <View style={styles.modalContent}>
       <View style = {{height: 300}}>
-        <ScrollView width = {window.width - 60}>
-        <View>
+        <ScrollView width = {window.width - 70} alignItems= "center">
+        <View width = {window.width - 70}>
           <Text style={styles.titles}> Categoría del reporte:</Text>
           <Text style={{margin:5}}> { this.getReportType(this.state.reporte.tipoReporte)} </Text>
           <Text style={styles.titles}> Fecha y hora del Incidente:</Text>
@@ -500,7 +499,7 @@ export default class screens extends Component {
           </View>
         </ScrollView>
       </View>
-      <View style={{flexDirection:"row", width:'50%',justifyContent:"center", height: '8%'}} >
+      <View style={{flexDirection:"row", width:'50%',justifyContent:'space-between', height: '8%'}} >
         <TouchableOpacity
           onPress={() => this.setState({ visibleModal: null })}>
           <IconClose name="close" style={styles.modalButtonIcon}/>
@@ -609,12 +608,13 @@ export default class screens extends Component {
           {this.state.userReports.map((marker, index) => (
             <TouchableOpacity key={index} style={styles.cardImage} onPress={() => this.setState({ visibleModal: 2, reporte: marker, image: null })}>
             <View style={styles.card} key={index}>
-            
+            <View style={styles.cardImage}>
               <Image
                 source={{uri: marker.evidencia}}
                 style={styles.cardImage}
                 resizeMode="cover"
               /> 
+              </View>
               <View style={styles.textContent}>
                 <Text numberOfLines={1} style={styles.cardtitle}>{this.getReportType(marker.tipoReporte)}</Text>
                 <Text numberOfLines={1} style={styles.cardDescription}>

@@ -17,7 +17,7 @@ import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
-
+import com.brentvatne.react.ReactVideoPackage;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,6 +33,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
             new MainReactPackage(),
+              new ReactVideoPackage(),
             new RandomBytesPackage(),
             new RNFirebasePackage(),
             new ImageResizerPackage(),

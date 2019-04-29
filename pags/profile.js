@@ -1,4 +1,4 @@
-import React from "react";
+import React, {Component} from "react";
 import { View, Text,StyleSheet, TouchableOpacity, Alert, Dimensions} from "react-native";
 import { createDrawerNavigator,createAppContainer, createStackNavigator} from "react-navigation";
 import Bg from '../images/citybackground.png';
@@ -125,7 +125,7 @@ class ProfileScreenConent extends React.Component {
     return(
     <View>
       <View style={{alignItems:'center',justifyContent:'center',height:'100%'}} >
-        <TouchableOpacity style={{borderRadius:50,borderWidth:2}} onPress={this.selectPhotoTapped.bind(this)}>
+        <TouchableOpacity style={{borderRadius:200,borderWidth:2}} onPress={this.selectPhotoTapped.bind(this)}>
           {/* <Image style={styles.logoStyle} source={{uri: this.state.userInfo.imagenPerfil}}/> */}
           {this.state.userInfo.imagenPerfil !== null ? (
               <Image style={styles.logoStyle} source={{uri: this.state.userInfo.imagenPerfil && this.state.userInfo.imagenPerfil}}/>
@@ -133,8 +133,8 @@ class ProfileScreenConent extends React.Component {
               <Image style={styles.logoStyle} source={this.state.image && this.state.image} />
             )}
         </TouchableOpacity>
-        </View>
-        <Text style={{color:'white',fontWeight:'bold'}}>{this.state.userInfo.nombreUsuario}</Text>
+        <Text style={{color:'white',fontWeight:'bold', fontSize: 14}}>{this.state.userInfo.nombreUsuario}</Text>
+      </View>
     </View>
     )
   }

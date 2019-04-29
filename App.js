@@ -133,7 +133,7 @@ export default class OjoMetropolitano extends React.Component {
   }
 
   componentDidMount() {
-    StatusBar.setHidden(true);
+    //StatusBar.setHidden(true);
     this.createNotificationListeners(); 
  }
 

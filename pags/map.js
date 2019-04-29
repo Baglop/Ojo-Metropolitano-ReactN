@@ -277,8 +277,8 @@ export default class MapScreen extends React.Component {
   renderModalContent = () => (
     <KeyboardAvoidingView behavior="padding">
       <View style={styles.modalContent}>
-        <View height = {window.height - 150} alignItems='center'>
-        <ScrollView width = {window.width - 15}>
+        <View height = {window.height - 140} alignItems='center'>
+        <ScrollView width = {window.width - 30}>
           <Text style={styles.titles}> Levantar un Reporte </Text>
           <View height = {300}>
             <MapView 
@@ -347,15 +347,15 @@ export default class MapScreen extends React.Component {
         </ScrollView>
         </View>
         <View style={{flexDirection:"row", width:'50%',justifyContent:"center", height: '8%', alignItems: 'center'}} >
-          <TouchableOpacity onPress={() => this.makeReportRequest()}>
-            <View style={{flexDirection:"row", justifyContent:"center", alignItems: 'center'}}>
-              <Text>Reportar</Text>
+          <TouchableOpacity flex={1} onPress={() => this.makeReportRequest()}>
+            <View style={{flex:1, flexDirection:"column", justifyContent:"center", alignItems: 'center'}}>
+              <Text  style={styles.textReportar}>Reportar</Text>
             </View>
           </TouchableOpacity>
           <Text>                 </Text>
-          <TouchableOpacity justifyContent="center" alignItems= 'center' onPress={() => this.setState({ visibleModal: null })}>
-          <View style={{flexDirection:"row", justifyContent:"center", alignItems: 'center'}}>
-            <Text textAlign= {'center'} marginEnd={0}>Cancelar</Text>
+          <TouchableOpacity flex={1} justifyContent="center" alignItems= 'center' onPress={() => this.setState({ visibleModal: null })}>
+          <View style={{flex: 1, flexDirection:"column", justifyContent:"center", alignItems: 'center'}}>
+            <Text textAlign= {'center'} marginEnd={0}  style={styles.textReportar} >Cancelar</Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -622,6 +622,11 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
+  textReportar:{
+    fontSize: 20,
+    fontWeight:'bold',
+    color: 'black'
+  },
   containerModal: {
     height: "100%",
     width: "100%",
@@ -674,7 +679,6 @@ const styles = StyleSheet.create({
     borderColor: "rgba(0, 0, 0, 0.1)",
   },
   titles: {
-    margin: 5,
     fontWeight: 'bold',
     fontSize:18,
   },
@@ -683,7 +687,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   itemPic: {
-    margin: 5,
     height: 200,
     width: window.width - 20,
     backgroundColor: '#c5c5c5',

@@ -9,6 +9,10 @@ import {MenuProvider} from 'react-native-popup-menu';
 import PouchDB from 'pouchdb-react-native'; 
 import PouchdbFind from 'pouchdb-find';
 import { PouchDB_Get_Document, PouchDB_Insert } from '../PouchDB/PouchDBQuerys'
+import CameraScreen from './camera';
+import { Button, Image } from 'react-native-elements';
+import {createAppContainer, createStackNavigator} from "react-navigation";
+
 
 const db = new PouchDB('OjoMetropolitano');
 
@@ -55,7 +59,7 @@ const contacts = [
   }
 ]
 
-export default class ContactScreen extends React.Component {
+class ContactScreen extends React.Component {
 
   constructor(props){
     super(props);
@@ -77,7 +81,7 @@ export default class ContactScreen extends React.Component {
   }
 
   componentDidUpdate(){
-    this.getData();
+    
   }
 
   componentWillReceiveProps(nextProps){
@@ -205,6 +209,7 @@ export default class ContactScreen extends React.Component {
   }
 
   render() {
+    var { navigate } = this.props.navigation;
     return (
       <MenuProvider>
       <View style={{flex:1}}>
@@ -218,7 +223,14 @@ export default class ContactScreen extends React.Component {
         {this.state.contacts.length > 0 ? <ContactList contacts={this.state.contacts&&this.state.contacts} userData={this.state.userData&&this.state.userData} refrestList={this.friendsListRequest}/>: null}
         </ScrollView>
       </View>
+      <Button
       
+      backgroundColor='#03A9F4'
+      buttonStyle={{borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0}}
+      title='Mis Reportes!' 
+      onPress = {() => navigate("Camera", {})}
+      
+      />
       </MenuProvider>
     );
   }
@@ -230,3 +242,27 @@ export default class ContactScreen extends React.Component {
       marginStart: 10,
     }
   })
+
+  const AppNavigator = createStackNavigator(
+    {
+      Home: {
+        screen: ContactScreen,
+      },
+      Camera: {
+        screen: CameraScreen
+      },
+    },
+    {
+        initialRouteName: "Home",
+    }
+  );
+
+const MyScreen = createAppContainer(AppNavigator);
+
+  export default class ScreenContact extends React.Component {
+    render(){
+      return(
+        <MyScreen/>
+      );
+    }
+  }
