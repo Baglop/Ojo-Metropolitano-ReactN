@@ -5,7 +5,7 @@ import Bg from '../images/citybackground.png';
 import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header-scroll-view';
 import Icon from 'react-native-vector-icons/Ionicons';
 import drawerDesign from './drawerDesign'
-import { Button, Image } from 'react-native-elements';
+import { Button, Image, Divider } from 'react-native-elements';
 import Modal from "react-native-modal";
 import _ from 'lodash';
 import ImagePicker from 'react-native-image-picker';
@@ -164,24 +164,27 @@ class ProfileScreenConent extends React.Component {
         )}
         renderForeground={() => this._renderProfile()}
         >
-          <View style={{ padding:10 }}>
             <TriggeringView onHide={() => console.log('text hidden')} >
-              <Text style={{fontSize:18,fontWeight:'bold'}}>Nombre de Usuario</Text>
-              <Text style={{fontSize:18}}>{this.state.userInfo.nombreUsuario}</Text>
-              <Text style={{fontSize:18,fontWeight:'bold',marginTop:5}}>Nombre</Text>
-              <Text style={{fontSize:18}}>{this.state.userInfo.nombres + ' ' + this.state.userInfo.apellidoPaterno + ' ' + this.state.userInfo.apellidoMaterno }</Text> 
-              <Text style={{fontSize:18,fontWeight:'bold',marginTop:5}}>Teléfono</Text>
-              <Text style={{fontSize:18}}>{this.state.userInfo.celular}</Text>
-              <Text style={{fontSize:18,fontWeight:'bold',marginTop:5}}>Correo electrónico</Text>
-              <Text style={{fontSize:18}}>{this.state.userInfo.correo}</Text>
-              <Button
-              backgroundColor='#03A9F4'
-              buttonStyle={{borderRadius: 5, marginLeft: 0, marginRight: 0, marginBottom: 0, marginTop:15}}
-              title='Mis Reportes' 
-              onPress = {() => navigate("Reportes", {})}
-              />
+              <View style={{ padding:10 }}>
+                <Text style={{fontSize:18,fontWeight:'bold'}}>Nombre de Usuario</Text>
+                <Text style={{fontSize:18}}>{this.state.userInfo.nombreUsuario}</Text>
+                <Text style={{fontSize:18,fontWeight:'bold',marginTop:20}}>Nombre</Text>
+                <Text style={{fontSize:18}}>{this.state.userInfo.nombres + ' ' + this.state.userInfo.apellidoPaterno + ' ' + this.state.userInfo.apellidoMaterno }</Text> 
+                <Text style={{fontSize:18,fontWeight:'bold',marginTop:20}}>Teléfono</Text>
+                <Text style={{fontSize:18}}>{this.state.userInfo.celular}</Text>
+                <Text style={{fontSize:18,fontWeight:'bold',marginTop:20}}>Correo electrónico</Text>
+                <Text style={{fontSize:18}}>{this.state.userInfo.correo}</Text>
+              </View>
+              <Divider style={{ backgroundColor: '#e8e9ed', height:10 }} />
+              <View style={{ padding:10 }}>
+                <Button
+                backgroundColor='#03A9F4'
+                buttonStyle={{borderRadius: 5, marginLeft: 0, marginRight: 0, marginBottom: 0, marginTop:5}}
+                title='Mis Reportes' 
+                onPress = {() => navigate("Reportes", {})}
+                />
+              </View>
             </TriggeringView>
-          </View>
         </HeaderImageScrollView>
       </View>
     );
