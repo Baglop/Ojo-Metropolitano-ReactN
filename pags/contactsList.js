@@ -2,23 +2,15 @@ import React from "react";
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, Image, TextInput, Alert } from "react-native";
 import Icon from 'react-native-vector-icons/Ionicons';
 import Modal from "react-native-modal";
-import { Menu,
-    MenuOptions,
-    MenuOption,
-    MenuTrigger} from 'react-native-popup-menu';
+import { Menu, MenuOptions, MenuOption, MenuTrigger} from 'react-native-popup-menu';
 import {Request_API} from '../networking/server'
 import { PouchDB_UpdateDoc, PouchDB_DeleteDoc } from '../PouchDB/PouchDBQuerys'
 import PouchdbFind from 'pouchdb-find';
 import PouchDB from 'pouchdb-react-native'; 
-// import io from 'socket.io-client'
-
 const db = new PouchDB('OjoMetropolitano');
-
 const editfriendURL = ':3030/API/contactos/EditarAmigo';
 const deleteFriendURL = ':3030/API/contactos/EliminarAmigo';
 const alertURL = ':3030/API/contactos/EnviarAlertaPreventiva';
-// const port = require('./server').port;
-// const socket = io.connect('siliconbear.dynu.net:3030' + port);
 
 
 class renderButton extends React.Component {

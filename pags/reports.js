@@ -1,230 +1,34 @@
 import React, { Component } from "react";
-import {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  View,
-  ScrollView,
-  Animated,
-  Image,
-  Dimensions,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  TextInput,
-  Alert,
-  StatusBar
-
-} from "react-native";
+import {AppRegistry, 
+        StyleSheet,
+        Text, 
+        View,  
+        ScrollView,
+        Animated, 
+        Image, 
+        Dimensions,
+        TouchableOpacity,
+        KeyboardAvoidingView,
+        TextInput,
+        Alert,
+        StatusBar}from "react-native";
 import IconDelete from 'react-native-vector-icons/EvilIcons';
 import IconClose from 'react-native-vector-icons/EvilIcons';
 import IconUpdate from 'react-native-vector-icons/EvilIcons';
-import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
-import Marker from "react-native-maps";
 import Modal from "react-native-modal";
 import { PouchDB_Get_Document, PouchDB_DeleteDoc, PouchDB_UpdateDoc } from '../PouchDB/PouchDBQuerys';
 import ImagePicker from 'react-native-image-picker';
 import { Request_API } from '../networking/server';
-import { Sae } from 'react-native-textinput-effects';
-
 import _ from 'lodash';
 import PouchdbFind from 'pouchdb-find';
 import PouchDB from 'pouchdb-react-native'; 
+import myMap from './kindOfMap';
 const db = new PouchDB('OjoMetropolitano');
-
 const updateReporte = ':3030/API/inicio/ModificarReporte'
 const deleteReporteUsuario = ':3030/API/inicio/EliminarReporte';
 const window = Dimensions.get('window');
-
-const myMap = [
-    {
-      "elementType": "geometry",
-      "stylers": [
-        {
-          "color": "#212121"
-        }
-      ]
-    },
-    {
-      "elementType": "labels.icon",
-      "stylers": [
-        {
-          "visibility": "off"
-        }
-      ]
-    },
-    {
-      "elementType": "labels.text.fill",
-      "stylers": [
-        {
-          "color": "#757575"
-        }
-      ]
-    },
-    {
-      "elementType": "labels.text.stroke",
-      "stylers": [
-        {
-          "color": "#212121"
-        }
-      ]
-    },
-    {
-      "featureType": "administrative",
-      "elementType": "geometry",
-      "stylers": [
-        {
-          "color": "#757575"
-        }
-      ]
-    },
-    {
-      "featureType": "administrative.country",
-      "elementType": "labels.text.fill",
-      "stylers": [
-        {
-          "color": "#9e9e9e"
-        }
-      ]
-    },
-    {
-      "featureType": "administrative.land_parcel",
-      "stylers": [
-        {
-          "visibility": "off"
-        }
-      ]
-    },
-    {
-      "featureType": "administrative.locality",
-      "elementType": "labels.text.fill",
-      "stylers": [
-        {
-          "color": "#bdbdbd"
-        }
-      ]
-    },
-    {
-      "featureType": "poi",
-      "elementType": "labels.text.fill",
-      "stylers": [
-        {
-          "color": "#757575"
-        }
-      ]
-    },
-    {
-      "featureType": "poi.park",
-      "elementType": "geometry",
-      "stylers": [
-        {
-          "color": "#181818"
-        }
-      ]
-    },
-    {
-      "featureType": "poi.park",
-      "elementType": "labels.text.fill",
-      "stylers": [
-        {
-          "color": "#616161"
-        }
-      ]
-    },
-    {
-      "featureType": "poi.park",
-      "elementType": "labels.text.stroke",
-      "stylers": [
-        {
-          "color": "#1b1b1b"
-        }
-      ]
-    },
-    {
-      "featureType": "road",
-      "elementType": "geometry.fill",
-      "stylers": [
-        {
-          "color": "#2c2c2c"
-        }
-      ]
-    },
-    {
-      "featureType": "road",
-      "elementType": "labels.text.fill",
-      "stylers": [
-        {
-          "color": "#8a8a8a"
-        }
-      ]
-    },
-    {
-      "featureType": "road.arterial",
-      "elementType": "geometry",
-      "stylers": [
-        {
-          "color": "#373737"
-        }
-      ]
-    },
-    {
-      "featureType": "road.highway",
-      "elementType": "geometry",
-      "stylers": [
-        {
-          "color": "#3c3c3c"
-        }
-      ]
-    },
-    {
-      "featureType": "road.highway.controlled_access",
-      "elementType": "geometry",
-      "stylers": [
-        {
-          "color": "#4e4e4e"
-        }
-      ]
-    },
-    {
-      "featureType": "road.local",
-      "elementType": "labels.text.fill",
-      "stylers": [
-        {
-          "color": "#616161"
-        }
-      ]
-    },
-    {
-      "featureType": "transit",
-      "elementType": "labels.text.fill",
-      "stylers": [
-        {
-          "color": "#757575"
-        }
-      ]
-    },
-    {
-      "featureType": "water",
-      "elementType": "geometry",
-      "stylers": [
-        {
-          "color": "#000000"
-        }
-      ]
-    },
-    {
-      "featureType": "water",
-      "elementType": "labels.text.fill",
-      "stylers": [
-        {
-          "color": "#3d3d3d"
-        }
-      ]
-    }
-  ]
-
 const { width, height } = Dimensions.get("window");
-
 const CARD_HEIGHT = height / 4;
 const CARD_WIDTH = CARD_HEIGHT - 10;
 
@@ -294,21 +98,6 @@ export default class screens extends Component {
       longitudeDelta: 0.293,
     },
   };
-
-  // renderButton = (text, onPress) => (
-  //   <TouchableOpacity onPress={onPress}>
-  //     <View style={styles.button}>
-  //       <Text>{text}</Text>
-  //     </View>
-  //   </TouchableOpacity>
-  // );
-
-  // renderModalContent = () => (
-  //   <View style={styles.modalContent}>
-  //     <Text>Hello!</Text>
-  //     {this.renderButton("Close", () => this.setState({ visibleModal: null }))}
-  //   </View>
-  // );
 
   componentWillMount() {
     this.index = 0;
@@ -489,21 +278,6 @@ export default class screens extends Component {
           <Text style={{margin:5}}>{this.state.reporte.fechaIncidente}</Text>
           <Text style={styles.titles}>Fecha y hora del Reporte:</Text>
           <Text style={{margin:5}}>{this.state.reporte.fechaReporte}</Text>
-          <Sae
-          style={{color: 'black'}}
-          iconClass={FontAwesomeIcon}
-          iconName={'pencil'}
-          iconColor={'black'}
-          inputPadding={16}
-          labelHeight={24}
-          // active border height
-          borderHeight={1}
-          // TextInput props
-          labelStyle={{ color: 'black' }}
-          inputStyle={{ color: 'black' }}
-          value={this.state.reporte.descripcion}
-          multiline = {true}
-          />
           <Text style={styles.titles}>Descripción:</Text>
           <TextInput style={{margin:5}} multiline = {true} onChangeText={(text) => this.setState({nuevoValor: text, atributo: 'descripcion'})}>{this.state.reporte.descripcion}</TextInput>
           <Text style={styles.titles}>Evidencia:</Text>
@@ -659,17 +433,17 @@ export default class screens extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1
   },
   scrollView: {
     position: "absolute",
     bottom: 30,
     left: 0,
     right: 0,
-    paddingVertical: 10,
+    paddingVertical: 10
   },
   endPadding: {
-    paddingRight: width - CARD_WIDTH,
+    paddingRight: width - CARD_WIDTH
   },
   card: {
     padding: 10,
@@ -682,36 +456,35 @@ const styles = StyleSheet.create({
     shadowOffset: { x: 2, y: -2 },
     height: CARD_HEIGHT,
     width: CARD_WIDTH,
-    overflow: "hidden",
+    overflow: "hidden"
   },
   cardImage: {
     flex: 3,
     width: "100%",
     height: "100%",
-    alignSelf: "center",
+    alignSelf: "center"
   },
   textContent: {
-    flex: 1,
+    flex: 1
   },
   cardtitle: {
     fontSize: 12,
     marginTop: 5,
-    fontWeight: "bold",
+    fontWeight: "bold"
   },
   cardDescription: {
     fontSize: 12,
-    color: "#444",
+    color: "#444"
   },
   markerWrap: {
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "center"
   },
   marker: {
     width: 15,
     height: 15,
     borderRadius: 15/2,
-    // backgroundColor: "rgba(130,4,150, 0.9)",
-    backgroundColor: "red",
+    backgroundColor: "red"
   },
   ring: {
     width: 30,
@@ -719,14 +492,14 @@ const styles = StyleSheet.create({
     borderRadius: 30/2,
     backgroundColor: "rgba(130,4,150, 0.3)",
     position: "absolute",
-    borderColor: "rgba(130,4,150, 0.5)",
+    borderColor: "rgba(130,4,150, 0.5)"
   },
   modalButtonIcon: {
     fontSize: 35,
     height: 35,
     marginTop:5,
     marginEnd:5,
-    color: 'black',
+    color: 'black'
   },
   modalContent: {
     backgroundColor: "white",
@@ -734,23 +507,23 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 10,
-    borderColor: "rgba(0, 0, 0, 0.1)",
+    borderColor: "rgba(0, 0, 0, 0.1)"
   },
   modalMap:{
     margin: 5,
     height: "100%",
-    width: "100%",
+    width: "100%"
   },
   itemPic: {
     height: 300,
     width: window.width - 60,
     backgroundColor: '#c5c5c5',
-    justifyContent: "center",
+    justifyContent: "center"
   },
   titles: {
     margin: 5,
     fontWeight: 'bold'
-  },
+  }
 });
 
 AppRegistry.registerComponent("mapfocus", () => screens);

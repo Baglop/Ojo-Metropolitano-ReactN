@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, TextInput, Image, Animated, Keyboard, KeyboardAvoidingView, Dimensions, StyleSheet,Button, Platform, TouchableOpacity, Alert, TouchableWithoutFeedback} from 'react-native';
+import { View, TextInput, Text, Image, Animated, Keyboard, KeyboardAvoidingView, Dimensions, StyleSheet,Button, Platform, TouchableOpacity, Alert, TouchableWithoutFeedback} from 'react-native';
 import ImagePicker from 'react-native-image-picker';
 import { Request_API } from '../networking/server';
 const window = Dimensions.get('window');

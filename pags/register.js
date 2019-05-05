@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, TextInput, Image, Animated, Keyboard, KeyboardAvoidingView, Dimensions, StyleSheet,Button, TouchableWithoutFeedback} from 'react-native';
+import { View, TextInput, TouchableOpacity, Image, Text, Animated, Keyboard, KeyboardAvoidingView, Dimensions, StyleSheet,Button, TouchableWithoutFeedback} from 'react-native';
 import { TextField } from 'react-native-material-textfield';
 import logo from '../images/ojometropolitano.png';
 import Video from 'react-native-video'
@@ -110,7 +110,7 @@ export default class RegisterScreen extends React.Component {
           <View style={styles.loginButton}>
           <TouchableOpacity 
           style={{backgroundColor:'#51738e', alignContent:'center',alignItems:'center',padding:10,borderRadius:5}}
-          onPress={() => () => navigate("Register2" , { nombreUsuario: this.state.nombreUsuario,
+          onPress={() => navigate("Register2" , { nombreUsuario: this.state.nombreUsuario,
             contrasena:    this.state.contrasena,
             celular:       this.state.celular})}> 
             <Text style={{color:'white'}}>Continuar</Text>
