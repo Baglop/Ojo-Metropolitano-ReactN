@@ -12,46 +12,22 @@ import RegisterScreen from './pags/register';
 import Register2Screen from './pags/register2';
 import CameraScreen from './pags/camera';
 import _ from 'lodash';
-import {StatusBar, Alert} from 'react-native';
+import {Alert, ImageBackground, Image} from 'react-native';
 import { createStackNavigator, createAppContainer } from "react-navigation";
 import firebase  from 'react-native-firebase';
-import { Notification, NotificationOpen } from 'react-native-firebase';
 //import DropdownAlert from 'react-native-dropdownalert';
 import { PouchDB_UpdateDoc } from './PouchDB/PouchDBQuerys';
-
+import Video from 'react-native-video'
+import backView from './images/background.mp4'
 import { Request_API } from './networking/server';
-import PouchdbFind from 'pouchdb-find';
 import PouchDB from 'pouchdb-react-native'; 
 const db = new PouchDB('OjoMetropolitano');
 
 const AmigosyGrupos = ':3030/API/contactos/ActualizarAmigosYGrupos';
 const respoderSolicitud = ':3030/API/contactos/ResponderSolicitudAmistad'
 
-
-
-// const notification = new firebase.notifications.Notification()
-//   .setNotificationId('notificationId')
-//   .setTitle('My notification title')
-//   .setBody('My notification body')
-//   .setData({
-//     key1: 'value1',
-//     key2: 'value2',
-//   });
-
-//   notification
-//   .android.setChannelId('channelId')
-//   .android.setSmallIcon('ic_launcher');
-
-//   notification
-//   .ios.setBadge();
-
-// //   // Build notification as above
-// // // Display the notification
-
-// firebase.notifications().displayNotification(notification)
-
 console.disableYellowBox = true;
-var initialRoute = "Main";
+
 
 const AppNavigatorM = createStackNavigator(
   {
@@ -60,16 +36,7 @@ const AppNavigatorM = createStackNavigator(
     },
     Main: {
         screen: MainScreen
-    },
-    Register: {
-      screen: RegisterScreen
-    },
-    Register2: {
-      screen: Register2Screen
-    },
-    Camera: {
-      screen: CameraScreen
-    },
+    }
   },
   {
       initialRouteName: "Main",
@@ -95,7 +62,7 @@ const AppNavigatorL = createStackNavigator(
     },
   },
   {
-      initialRouteName: "Login",
+    initialRouteName: "Login",
   }
 );
 
@@ -122,7 +89,7 @@ export default class OjoMetropolitano extends React.Component {
   
   constructor(props) {
     super(props);
-    PouchDB.plugin(PouchdbFind);
+    //this.getInfo();
     this.getLocationUser();
     this.state = {
       logged:null,
@@ -262,46 +229,38 @@ ActualizarAmigosYGrupos(){
   });
 }
 
+async getInfo(){
+  await db.get('BasicValues').then(doc => {
+    this.setState({logged: true, userInfo: doc})
+  });
+}
 
-  async componentWillMount() { 
-    await db.get('BasicValues').then(doc => {
-      this.setState({logged: true, userInfo: doc})
-    });
-    // await db.get('ActualizarMisReportes').then(doc => {
-    //   console.log(doc[0]);
-    // });
+componentWillMount() { 
+  db.get('BasicValues').then(doc => {
+    this.setState({logged: true, userInfo: doc})
+  });
 
-    // await db.find({
-    //   selector: {
-    //     type: 'userReports',
-    //     _id: '5cbbc02e4b2a640886bf5ac9'
-    //   },
-    //   index: {
-    //   fields: ['type']
-    //   }
-    // }).then(result => {
-    //   console.log(result);
-    // }).catch(function (err) {
-    //   console.log(err);
-    // });
+  // db.allDocs({
+  //   include_docs: true,
+  //   attachments: true
+  // }).then(function (result) {
+  //   console.log(result.rows);
+  // }).catch(function (err) {
+  //   console.log(err);
+  // });
+}
 
-    await db.allDocs({
-      include_docs: true,
-      attachments: true
-    }).then(function (result) {
-      console.log(result.rows);
-    }).catch(function (err) {
-      console.log(err);
-    });
-  }
+  // render() {
+  //   if(this.state.logged != null)
+  //     if(this.state.logged)
+  //       return <Logged />
+  //     else 
+  //       return <Unlogged/>
+  //   else
+  //     return <Unlogged/>;
+  // }
 
-  render() {
-    if(this.state.logged != null)
-      if(this.state.logged)
-        return <Logged />
-      else 
-        return <Unlogged/>
-    else
-      return <Unlogged/>;
+  render(){
+    return this.state.logged ? (<Logged ref='navigator'/>):(<Unlogged ref='navigator'/>)
   }
 }

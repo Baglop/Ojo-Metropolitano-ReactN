@@ -11,6 +11,8 @@ import Modal from "react-native-modal";
 import { Dropdown } from 'react-native-material-dropdown';
 import ImagePicker from 'react-native-image-picker';
 import { PouchDB_Insert } from '../PouchDB/PouchDBQuerys'
+import {createAppContainer, createStackNavigator} from "react-navigation";
+import MakeReport from './makeReport';
 const window = Dimensions.get('window');
 
 import PouchDB from 'pouchdb-react-native'; 
@@ -27,7 +29,7 @@ const reportesUsuario = ':3030/API/inicio/ActualizarMisReportes';
 
 
 
-export default class MapScreen extends React.Component {
+class MapScreen extends React.Component {
 
   
   _renderModalReport(){
@@ -167,6 +169,7 @@ export default class MapScreen extends React.Component {
   }
 
   render() {
+    var { navigate } = this.props.navigation;
     if(this.state.region.latitude > 0)
     return (
       <View style={styles.container}>
@@ -179,7 +182,7 @@ export default class MapScreen extends React.Component {
           <ActionButton.Item buttonColor='#9b59b6' size={45} title="Reportar" onPress={() => this.openModalReport(true)}/*onPress={() => this.setState({ visibleModal: 5})}*/>
             <Icon name="md-create" style={styles.actionButtonIcon} />
           </ActionButton.Item>
-          <ActionButton.Item buttonColor='#9b59b6' size={45} title={this.state.Titulo} onPress={() => this.changeReports()}>
+          <ActionButton.Item buttonColor='#9b59b6' size={45} title={this.state.Titulo} onPress={() => navigate("Camera", {})}>
             <Icon name="md-create" style={styles.actionButtonIcon} />
           </ActionButton.Item>
         </ActionButton>
@@ -377,6 +380,10 @@ export default class MapScreen extends React.Component {
       },
       (error) => console.log(error)
     );
+  }
+
+  static navigationOptions = {
+    headerTransparent: true
   }
 
   constructor() {
@@ -693,3 +700,29 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
  });
+
+
+ const AppNavigator = createStackNavigator(
+  {
+    Home: {
+      screen: MapScreen,
+    },
+    Camera: {
+      screen: MakeReport
+    },
+  },
+  {
+    mode: 'card',
+    initialRouteName: "Home",
+  }
+);
+
+const MyScreen = createAppContainer(AppNavigator);
+
+  export default class ScreenContact extends React.Component {
+    render(){
+      return(
+        <MyScreen/>
+      );
+    }
+  }

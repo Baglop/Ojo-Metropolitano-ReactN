@@ -1,10 +1,16 @@
 import React, { Component } from 'react';
-import { View, TextInput, Image, Animated, Keyboard, KeyboardAvoidingView, Dimensions, StyleSheet,Button, Platform, TouchableOpacity, Alert} from 'react-native';
+import { View, TextInput, Image, Animated, Keyboard, KeyboardAvoidingView, Dimensions, StyleSheet,Button, Platform, TouchableOpacity, Alert, TouchableWithoutFeedback} from 'react-native';
 import ImagePicker from 'react-native-image-picker';
 import { Request_API } from '../networking/server';
 const window = Dimensions.get('window');
 const registerUser = ':3030/API/inicio/RegistrarUsuario'
 let params = '';
+
+const DismissKeyboard = ({ children }) => (
+  <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+    {children}
+  </TouchableWithoutFeedback>
+);
 
 export default class RegisterScreen extends React.Component {
 
@@ -121,10 +127,10 @@ export default class RegisterScreen extends React.Component {
       // <KeyboardAvoidingView
       //   style    = { styles.container }
       //   >
-      <KeyboardAvoidingView style = {styles.container} behavior="padding">
+      <DismissKeyboard style = {styles.container}>
       <View style = {styles.container}>
+      <KeyboardAvoidingView style = {styles.container} behavior="padding">
           <TouchableOpacity onPress={this.selectPhotoTapped.bind(this)}>
-
           {this.state.image === null ? (
               <Animated.Image 
               source = { this.state.logo } 
@@ -182,8 +188,9 @@ export default class RegisterScreen extends React.Component {
             />
             </View>
           </View>
-          </View>
           </KeyboardAvoidingView>
+          </View>
+          </DismissKeyboard>
     );
   }
 };

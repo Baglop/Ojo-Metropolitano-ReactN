@@ -1,10 +1,18 @@
 import React, { Component } from 'react';
-import { View, TextInput, Image, Animated, Keyboard, KeyboardAvoidingView, Dimensions, StyleSheet,Button} from 'react-native';
+import { View, TextInput, Image, Animated, Keyboard, KeyboardAvoidingView, Dimensions, StyleSheet,Button, TouchableWithoutFeedback} from 'react-native';
 import { TextField } from 'react-native-material-textfield';
 import logo from '../images/ojometropolitano.png';
+import Video from 'react-native-video'
+import backView from '../images/background.mp4'
 const window = Dimensions.get('window');
-const IMAGE_HEIGHT = window.width / 1.5;
+const IMAGE_HEIGHT = window.width / 1.6;
 const IMAGE_HEIGHT_SMALL = window.height / 5;
+
+const DismissKeyboard = ({ children }) => (
+  <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+    {children}
+  </TouchableWithoutFeedback>
+);
 
 export default class RegisterScreen extends React.Component {
 
@@ -49,14 +57,18 @@ export default class RegisterScreen extends React.Component {
   render() {
     var { navigate } = this.props.navigation;
     return (
+      <DismissKeyboard>
+      <View style={styles.root}>
       <KeyboardAvoidingView
         style    = { styles.container }
         behavior = "padding"
         >
+        <View style={{alignItems: 'center'}}>
           <Animated.Image 
             source = { logo } 
             style  = { [styles.logo, { height: this.imageHeight }] }
           />
+          </View>
           <TextInput
             placeholder          = " Usuario"
             returnKeyType        = "next"
@@ -105,16 +117,20 @@ export default class RegisterScreen extends React.Component {
             />
           </View>
       </KeyboardAvoidingView>
+      </View>
+      </DismissKeyboard>
     );
   }
 };
 
 const styles = StyleSheet.create({
+  root:{
+    flex: 1
+  }, 
     container: {
-      flex: 1,
-      backgroundColor: '#3e4d59',      
-      alignItems:      'center',
+      flex: 1,  
       justifyContent:  'center',
+      backgroundColor: '#3e4d59',
     },
     input: {
         flexDirection:   'row',
@@ -127,7 +143,9 @@ const styles = StyleSheet.create({
         borderRadius: 5 ,
         margin:       10,
         marginTop:    1,
-        width: window.width - 30
+        width: window.width - 30,
+        paddingLeft: 8,
+        fontSize: 14
       },
     logo: {
       height:       IMAGE_HEIGHT,

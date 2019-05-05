@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
   logoStyle: {
     height: 100,
     width: 100,
-    borderRadius: 50,
+    borderRadius: 48,
     resizeMode : 'stretch',
   },
   button: {

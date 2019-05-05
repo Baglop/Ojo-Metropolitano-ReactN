@@ -29,7 +29,7 @@ const AmigosyGrupos = ':3030/API/contactos/ActualizarAmigosYGrupos';
 const width = '80%';
 
 const window = Dimensions.get('window');
-const IMAGE_HEIGHT = window.width / 1.2;
+const IMAGE_HEIGHT = window.width / 1.6;
 const IMAGE_HEIGHT_SMALL = window.height / 4;
 
 export default class LoginScreen extends React.Component 
@@ -225,19 +225,17 @@ export default class LoginScreen extends React.Component
   render() {
     var { navigate } = this.props.navigation;
     return ( 
-      
-      
-<View style={styles.root}> 
+    
+    <View style={styles.root}> 
       <Video 
         repeat
         source={backView}
         resizeMode = 'cover'
         style={StyleSheet.absoluteFill}
       />
-
       <KeyboardAvoidingView behavior = "padding" style={styles.container}>
+      <StatusBar hidden/>
         <View style={{alignItems: 'center'}}>
-        <StatusBar hidden />
           <Animated.Image source={logo} style={[styles.logo, { height: this.imageHeight }]} />
         </View>
         <View style={styles.SectionStyle}>
@@ -245,8 +243,8 @@ export default class LoginScreen extends React.Component
             <Image source={require('../images/2x/round_person_white_24dp.png')} style={styles.ImageStyle}/>
           </View>
           <TextInput
-            style={{flex:1}}
-            placeholder=" Usuario"
+            style={styles.userLogin}
+            placeholder="Usuario"
             placeholderTextColor="rgba(255,255,255,.4)"
             underlineColorAndroid="transparent"
             returnKeyType = { "next" }
@@ -267,8 +265,8 @@ export default class LoginScreen extends React.Component
           </View>
           <TextInput
             secureTextEntry={true} 
-            style={{flex:1}}
-            placeholder=" Contraseña"
+            style={styles.userLogin}
+            placeholder="Contraseña"
             placeholderTextColor="rgba(255,255,255,.4)"
             underlineColorAndroid="transparent"
             returnKeyType = "go"
@@ -286,7 +284,7 @@ export default class LoginScreen extends React.Component
         <View style={styles.loginButton}>
           <Button
             title = "Aún no eres miembro? Registrarte aquí"
-            olor="#51738e"
+            color="#51738e"
             onPress = {() => navigate("Register", {})}
             />
         </View>
@@ -355,4 +353,10 @@ const styles = StyleSheet.create({
       resizeMode: 'stretch',
       alignItems: 'center'
   },
+  userLogin:{
+    flex: 1,
+    color: 'white',
+    paddingLeft: 8,
+    fontSize: 16,
+  }
 });

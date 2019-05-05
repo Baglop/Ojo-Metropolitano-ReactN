@@ -690,6 +690,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  StatusBar
 } from "react-native";
 import Modal from "react-native-modal";
 
@@ -697,6 +698,10 @@ export default class Example extends Component {
   state = {
     visibleModal: null,
   };
+
+  static navigationOptions = {
+    headerTransparent: true
+  }
 
   renderButton = (text, onPress) => (
     <TouchableOpacity onPress={onPress}>
@@ -727,6 +732,9 @@ export default class Example extends Component {
 
   render() {
     return (
+     
+      <ScrollView>
+         <StatusBar hidden/>
       <View style={styles.container}>
         {this.renderButton("Default modal", () =>
           this.setState({ visibleModal: 1 }),
@@ -820,6 +828,7 @@ export default class Example extends Component {
           </View>
         </Modal>
       </View>
+      </ScrollView>
     );
   }
 }

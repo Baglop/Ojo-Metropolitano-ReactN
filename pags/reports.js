@@ -12,17 +12,20 @@ import {
   KeyboardAvoidingView,
   TextInput,
   Alert,
+  StatusBar
 
 } from "react-native";
 import IconDelete from 'react-native-vector-icons/EvilIcons';
 import IconClose from 'react-native-vector-icons/EvilIcons';
 import IconUpdate from 'react-native-vector-icons/EvilIcons';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import Marker from "react-native-maps";
 import Modal from "react-native-modal";
 import { PouchDB_Get_Document, PouchDB_DeleteDoc, PouchDB_UpdateDoc } from '../PouchDB/PouchDBQuerys';
 import ImagePicker from 'react-native-image-picker';
 import { Request_API } from '../networking/server';
+import { Sae } from 'react-native-textinput-effects';
 
 import _ from 'lodash';
 import PouchdbFind from 'pouchdb-find';
@@ -480,15 +483,30 @@ export default class screens extends Component {
       <View style = {{height: 300}}>
         <ScrollView width = {window.width - 70} alignItems= "center">
         <View width = {window.width - 70}>
-          <Text style={styles.titles}> Categoría del reporte:</Text>
-          <Text style={{margin:5}}> { this.getReportType(this.state.reporte.tipoReporte)} </Text>
-          <Text style={styles.titles}> Fecha y hora del Incidente:</Text>
-          <Text style={{margin:5}}> {this.state.reporte.fechaIncidente} </Text>
-          <Text style={styles.titles}> Fecha y hora del Reporte:</Text>
-          <Text style={{margin:5}}> {this.state.reporte.fechaReporte} </Text>
-          <Text style={styles.titles}> Descripción:</Text>
-          <TextInput style={{margin:5}} multiline = {true} onChangeText={(text) => this.setState({nuevoValor: text, atributo: 'descripcion'})}> {this.state.reporte.descripcion} </TextInput>
-          <Text style={styles.titles}> Evidencia:</Text>
+          <Text style={styles.titles}>Categoría del reporte:</Text>
+          <Text style={{margin:5}}>{this.getReportType(this.state.reporte.tipoReporte)}</Text>
+          <Text style={styles.titles}>Fecha y hora del Incidente:</Text>
+          <Text style={{margin:5}}>{this.state.reporte.fechaIncidente}</Text>
+          <Text style={styles.titles}>Fecha y hora del Reporte:</Text>
+          <Text style={{margin:5}}>{this.state.reporte.fechaReporte}</Text>
+          <Sae
+          style={{color: 'black'}}
+          iconClass={FontAwesomeIcon}
+          iconName={'pencil'}
+          iconColor={'black'}
+          inputPadding={16}
+          labelHeight={24}
+          // active border height
+          borderHeight={1}
+          // TextInput props
+          labelStyle={{ color: 'black' }}
+          inputStyle={{ color: 'black' }}
+          value={this.state.reporte.descripcion}
+          multiline = {true}
+          />
+          <Text style={styles.titles}>Descripción:</Text>
+          <TextInput style={{margin:5}} multiline = {true} onChangeText={(text) => this.setState({nuevoValor: text, atributo: 'descripcion'})}>{this.state.reporte.descripcion}</TextInput>
+          <Text style={styles.titles}>Evidencia:</Text>
           <TouchableOpacity onPress={this.selectPhotoTapped.bind(this)}>
           {this.state.image === null ? (
               <Image style={styles.itemPic} source={{uri: this.state.reporte.evidencia && this.state.reporte.evidencia}}/>
@@ -561,12 +579,13 @@ export default class screens extends Component {
 
     return (
       <View style={styles.container}>
+       <StatusBar hidden/>
         <MapView
           provider={PROVIDER_GOOGLE}
           ref={map => this.map = map}
           initialRegion={this.state.region}
           style={styles.container}
-          // customMapStyle = {myMap}
+          customMapStyle = {myMap}
         >
           {this.state.userReports.map((marker, index) => {
             const opacityStyle = {
@@ -723,7 +742,6 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   itemPic: {
-    margin: 5,
     height: 300,
     width: window.width - 60,
     backgroundColor: '#c5c5c5',
