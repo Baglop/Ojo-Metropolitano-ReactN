@@ -25,6 +25,7 @@
     "react-native-image-resizer": "^1.0.1",
     "react-native-keyboard-aware-scroll-view": "^0.8.0",
     "react-native-keyboard-manager": "^4.0.13-10",
+    "react-native-linear-gradient": "^2.5.4",
     "react-native-maps": "git://github.com/react-native-community/react-native-maps.git#master",
     "react-native-material-dropdown": "^0.11.1",
     "react-native-material-textfield": "^0.12.0",

@@ -13,6 +13,7 @@
 		00C302E91ABCBA2D00DB3ED1 /* libRCTNetwork.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302DC1ABCB9D200DB3ED1 /* libRCTNetwork.a */; };
 		00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302E41ABCB9EE00DB3ED1 /* libRCTVibration.a */; };
 		00E356F31AD99517003FC87E /* OjoMetropolitanoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* OjoMetropolitanoTests.m */; };
+		047F23D7227E782A0034DA22 /* libBVLinearGradient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 047F23A9227E77E30034DA22 /* libBVLinearGradient.a */; };
 		0489A3F822643FEF00D18A15 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0489A3F722643FEE00D18A15 /* GoogleService-Info.plist */; };
 		04B05AA322768D990043BC02 /* libRCTVideo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 04B05A8922768D640043BC02 /* libRCTVideo.a */; };
 		04C744FD2262FD1300AEC1B1 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04C744FC2262FD1200AEC1B1 /* JavaScriptCore.framework */; };
@@ -122,6 +123,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
 			remoteInfo = OjoMetropolitano;
+		};
+		047F23A8227E77E30034DA22 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 047F23A2227E77E30034DA22 /* BVLinearGradient.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = BVLinearGradient;
+		};
+		047F23AA227E77E30034DA22 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 047F23A2227E77E30034DA22 /* BVLinearGradient.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 64AA15081EF7F30100718508;
+			remoteInfo = "BVLinearGradient-tvOS";
 		};
 		04B05A8822768D640043BC02 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -409,6 +424,7 @@
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* OjoMetropolitanoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OjoMetropolitanoTests.m; sourceTree = "<group>"; };
 		01F89BF8A41CBF0AA84B97DF /* libPods-OjoMetropolitano-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-OjoMetropolitano-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		047F23A2227E77E30034DA22 /* BVLinearGradient.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BVLinearGradient.xcodeproj; path = "../node_modules/react-native-linear-gradient/BVLinearGradient.xcodeproj"; sourceTree = "<group>"; };
 		0489A3F622643F2D00D18A15 /* OjoMetropolitano.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = OjoMetropolitano.entitlements; path = OjoMetropolitano/OjoMetropolitano.entitlements; sourceTree = "<group>"; };
 		0489A3F722643FEE00D18A15 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		04B05A7022768D630043BC02 /* RCTVideo.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTVideo.xcodeproj; path = "../../../../Desktop/Backups/28 abril/Ojo-Metropolitano-ReactN/node_modules/react-native-video/ios/RCTVideo.xcodeproj"; sourceTree = "<group>"; };
@@ -527,6 +543,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				047F23D7227E782A0034DA22 /* libBVLinearGradient.a in Frameworks */,
 				04FB218C2276A49C005784A4 /* libAirMaps.a in Frameworks */,
 				04B05AA322768D990043BC02 /* libRCTVideo.a in Frameworks */,
 				04C744FD2262FD1300AEC1B1 /* JavaScriptCore.framework in Frameworks */,
@@ -610,6 +627,15 @@
 				00E356F11AD99517003FC87E /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		047F23A3227E77E30034DA22 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				047F23A9227E77E30034DA22 /* libBVLinearGradient.a */,
+				047F23AB227E77E30034DA22 /* libBVLinearGradient.a */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		04B05A7122768D630043BC02 /* Products */ = {
@@ -835,6 +861,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				047F23A2227E77E30034DA22 /* BVLinearGradient.xcodeproj */,
 				04B05A7022768D630043BC02 /* RCTVideo.xcodeproj */,
 				665F2BEC224C2EE300338948 /* RCTImageResizer.xcodeproj */,
 				52BBE6B7224B36EB0039C1C3 /* RNImagePicker.xcodeproj */,
@@ -1013,6 +1040,10 @@
 					ProjectRef = 451BA2006BEA41E5BF1E9DB1 /* AirMaps.xcodeproj */;
 				},
 				{
+					ProductGroup = 047F23A3227E77E30034DA22 /* Products */;
+					ProjectRef = 047F23A2227E77E30034DA22 /* BVLinearGradient.xcodeproj */;
+				},
+				{
 					ProductGroup = 00C302A81ABCB8CE00DB3ED1 /* Products */;
 					ProjectRef = 00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */;
 				},
@@ -1123,6 +1154,20 @@
 			fileType = archive.ar;
 			path = libRCTVibration.a;
 			remoteRef = 00C302E31ABCB9EE00DB3ED1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		047F23A9227E77E30034DA22 /* libBVLinearGradient.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libBVLinearGradient.a;
+			remoteRef = 047F23A8227E77E30034DA22 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		047F23AB227E77E30034DA22 /* libBVLinearGradient.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libBVLinearGradient.a;
+			remoteRef = 047F23AA227E77E30034DA22 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		04B05A8922768D640043BC02 /* libRCTVideo.a */ = {

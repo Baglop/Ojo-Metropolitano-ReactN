@@ -20,6 +20,7 @@ import com.facebook.soloader.SoLoader;
 import com.brentvatne.react.ReactVideoPackage;
 import java.util.Arrays;
 import java.util.List;
+import com.BV.LinearGradient.LinearGradientPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -33,7 +34,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
             new MainReactPackage(),
-              new ReactVideoPackage(),
+            new ReactVideoPackage(),
+            new LinearGradientPackage(),
             new RandomBytesPackage(),
             new RNFirebasePackage(),
             new ImageResizerPackage(),

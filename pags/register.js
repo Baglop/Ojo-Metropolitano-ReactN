@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { View, TextInput, TouchableOpacity, Image, Text, Animated, Keyboard, KeyboardAvoidingView, Dimensions, StyleSheet,Button, TouchableWithoutFeedback} from 'react-native';
 import { TextField } from 'react-native-material-textfield';
+import LinearGradient from 'react-native-linear-gradient';
 import logo from '../images/ojometropolitano.png';
 import Video from 'react-native-video'
 import backView from '../images/background.mp4'
@@ -59,6 +60,7 @@ export default class RegisterScreen extends React.Component {
     return (
       <DismissKeyboard>
       <View style={styles.root}>
+      <LinearGradient start={{x: 0, y: 0}} end={{x: 0, y: 1}} colors={['#4095ac','#122e39','#050e13','#050c12']} style={styles.root}>
       <KeyboardAvoidingView
         style    = { styles.container }
         behavior = "padding"
@@ -117,6 +119,7 @@ export default class RegisterScreen extends React.Component {
           </TouchableOpacity>
           </View>
       </KeyboardAvoidingView>
+      </LinearGradient>
       </View>
       </DismissKeyboard>
     );
@@ -130,7 +133,7 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,  
       justifyContent:  'center',
-      backgroundColor: '#3e4d59',
+      //backgroundColor: '#3e4d59',
     },
     input: {
         flexDirection:   'row',
