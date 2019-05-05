@@ -181,11 +181,11 @@ export default class RegisterScreen extends React.Component {
             onChangeText    = { (text) => this.setState({apellidoMaterno:text}) }       
           />
           <View style={styles.loginButton}>
-            <Button
-              title = "Registrar"
-              color = "#FFFF"
-              onPress = {() => this.joinSiliconBear()}
-            />
+          <TouchableOpacity 
+          style={{backgroundColor:'#51738e', alignContent:'center',alignItems:'center',padding:10,borderRadius:5}}
+          onPress={() => this.joinSiliconBear() }> 
+            <Text style={{color:'white'}}>Registrar</Text>
+          </TouchableOpacity>
             </View>
           </View>
           </KeyboardAvoidingView>
@@ -213,6 +213,7 @@ const styles = StyleSheet.create({
         borderRadius: 5 ,
         margin:       10,
         marginTop:    1,
+        color:        'white',
         width: window.width - 30
       },
     logo: {

@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, FlatList,ScrollView,StyleSheet,TouchableOpacity, NativeModules, Platform } from "react-native";
+import { SearchBar,Divider  } from 'react-native-elements';
 import GroupList from "./groupList";
 import ContactList from "./contactsList"
 import { TextInput } from "react-native-gesture-handler";
@@ -70,8 +71,11 @@ class ContactScreen extends React.Component {
       searchResult:[],
       userData:[],
       contacts:[],
-      groups:[]
+      groups:[],
+      searchValue:"",
+      searchIcon:false,
     };
+    this.getData();
     this.friendsListRequest = this.friendsListRequest.bind(this);
    
   }
@@ -105,11 +109,15 @@ class ContactScreen extends React.Component {
   }
 
   textChangeTrue(text){
+    this.setState({searchIcon:true})
+    this.setState({searchValue:text})
     this.searchUserRequest(text).then(
-    this.setState({showSearch:true}));
+    this.setState({showSearch:true}),
+    this.setState({searchIcon:false}));
   }
 
   textChangeFalse(){
+    this.setState({searchValue:""})
     this.setState({showSearch:false})
     this.setState({searchResult:[]})
   }
@@ -213,13 +221,25 @@ class ContactScreen extends React.Component {
     return (
       <MenuProvider>
       <View style={{flex:1}}>
-        <View style={{flexDirection: 'row',justifyContent: 'flex-start',alignItems: 'center', borderBottomWidth:0.5}} >
-          <Icon name="md-search" style={styles.searchIcon}/>
-          <TextInput ref={input => { this.search = input }} style={{width:'80%', marginStart:5}} onChangeText={(text) => text !== "" ? this.textChangeTrue(text):this.textChangeFalse()} />
-        </View>
+        {/* <View style={{flexDirection: 'row',justifyContent: 'flex-start',alignItems: 'center', borderBottomWidth:0.5}} > */}
+          {/* <Icon name="md-search" style={styles.searchIcon}/>
+          <TextInput ref={input => { this.search = input }} style={{width:'80%', marginStart:5}} onChangeText={(text) => text !== "" ? this.textChangeTrue(text):this.textChangeFalse()} /> */}
+        {/* </View> */}
+          
+        <SearchBar
+          lightTheme ={true}
+          placeholder="Buscar amigo"
+          onChangeText={(text) => text !== "" ? this.textChangeTrue(text):this.textChangeFalse()}
+          value={this.state.searchValue}
+          showLoading={this.state.searchIcon}
+          inputContainerStyle={{backgroundColor:'white'}}
+          containerStyle={{backgroundColor: '#e8e9ed'}}
+        />
+          
         {this.state.showSearch ? this._renderItemsSearch():null}
         <ScrollView style={{ flex: 1}} showsVerticalScrollIndicator = {false}>
-        { this.state.userData !== [] ? <GroupList userData={this.state.userData&&this.state.userData}/>:null}
+        { this.state.userData !== [] ? <GroupList contacts={this.state.contacts&&this.state.contacts} userData={this.state.userData&&this.state.userData}/>:null}
+        <Divider style={{ backgroundColor: '#e8e9ed', height:10 }} />
         {this.state.contacts.length > 0 ? <ContactList contacts={this.state.contacts&&this.state.contacts} userData={this.state.userData&&this.state.userData} refrestList={this.friendsListRequest}/>: null}
         </ScrollView>
       </View>

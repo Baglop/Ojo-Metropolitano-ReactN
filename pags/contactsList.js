@@ -16,43 +16,10 @@ const db = new PouchDB('OjoMetropolitano');
 
 const editfriendURL = ':3030/API/contactos/EditarAmigo';
 const deleteFriendURL = ':3030/API/contactos/EliminarAmigo';
+const alertURL = ':3030/API/contactos/EnviarAlertaPreventiva';
 // const port = require('./server').port;
 // const socket = io.connect('siliconbear.dynu.net:3030' + port);
 
-const contacts = [
-    {
-        key: "1",
-        name: "Pepe"
-    },
-    {
-        key: "2",
-        name: "Fursio"
-    },
-    {
-        key: "3",
-        name: "Kokun"
-    },
-    {
-        key: "4",
-        name: "AMLO"
-    },
-    {
-        key: "5",
-        name: "EPN-MIente"
-    },
-    {
-        key: "6",
-        name: "Francis"
-    },
-    {
-        key: "7",
-        name: "Delta"
-    },
-    {
-        key: "8",
-        name: "Luisito Comunica"
-    }
-]
 
 class renderButton extends React.Component {
     render(){
@@ -77,6 +44,8 @@ export default class ContactsList extends React.Component {
           newAlias:null,
           modalVisible:false,
           actualFriend:null,
+          salaVigilancia:'',
+          userLoc:'0.0,0.0'
         };
       }
 
@@ -84,6 +53,13 @@ export default class ContactsList extends React.Component {
     componentWillReceiveProps(nextProps){
         this.setState({userData: nextProps.userData,contacts: nextProps.contacts})
 
+    }
+
+    componentWillUnmount(){
+        const data = {
+            salaVigilancia: this.state.salaVigilancia
+        }
+        socket.emit('alertaPreventivaTerminada', data);
     }
 
     async deleteFriendDoc(user){
@@ -242,6 +218,9 @@ export default class ContactsList extends React.Component {
                     <MenuOption customStyles={{TriggerTouchableComponent:TouchableOpacity}} onSelect={() => {this.setModalVisible(), this.setState({actualFriend:item.nombreUsuario})}}>
                         <Text style={{fontSize:16,margin:5}} >Editar</Text>
                     </MenuOption>
+                    <MenuOption customStyles={{TriggerTouchableComponent:TouchableOpacity}} onSelect={() => {this.alertaPreventiva(), this.setState({actualFriend:item.nombreUsuario})}}>
+                        <Text style={{fontSize:16,margin:5}} >Enviar alerta preventiva</Text>
+                    </MenuOption>
                     <MenuOption customStyles={{TriggerTouchableComponent:TouchableOpacity}} onSelect={() => this.showAlert(item.nombreUsuario)} >
                         <Text style={{fontSize:16,margin:5}} >Eliminar</Text>
                     </MenuOption>
@@ -251,11 +230,62 @@ export default class ContactsList extends React.Component {
         )
     }
 
+    async alertaPreventiva(){
+        let promise = new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(
+              (position) => {
+                let pos = position.coords.latitude + ',' + position.coords.longitude;
+                resolve(pos);
+              },
+              (error) => console.log(error)
+            )
+          });
+          
+          let position = await promise;
+  
+          const params ={
+            nombreUsuario: this.state.userData.nombreUsuario,
+            listaAmigos: [this.state.actualFriend],
+            tokenSiliconBear: this.state.userData.tokenSiliconBear,
+            ubicacionUsuario: position
+          }
+  
+          await Request_API(params, alertURL).then(response => {
+              if(response.codigoRespuesta == 200){
+                  console.log(response)
+                  this.setState({salaVigilancia:response.salaVigilancia})
+              }
+          })
+
+          this.startRoom();
+    }
+
+    startRoom(){
+        const data = {
+            nombreUsuario: this.state.userData.nombreUsuario,
+            salaVigilancia: this.state.salaVigilancia
+        }
+        console.log(data);
+        socket.emit('alertaPreventivaEnviada', data);
+        this.trackUserLoc();
+    }
+
+    trackUserLoc(){
+        this.watchID = navigator.geolocation.watchPosition((lastPosition) => {
+            var data = {
+                     salaVigilancia: this.state.salaVigilancia,
+                     coordenadaX: astPosition.coords.latitude,
+                     coordenadaY: lastPosition.coords.longitude
+                 };
+                 console.log(data);
+            socket.emit('alertaPrivada_posicionActualizada', data);
+        },(error) => console.log(error),{distanceFilter: 10});
+    }
+
   render() {
     return (
       <View style={{ flex: 1}}>
         <View>
-            <Text style={{fontWeight:"bold",marginStart:10,marginTop:5}}>Contactos:</Text>
             <FlatList
               data={this.state.contacts&&this.state.contacts}
               ItemSeparatorComponent={() => <View style={{width:10}}/>}

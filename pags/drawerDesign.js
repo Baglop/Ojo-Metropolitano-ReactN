@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Alert, Modal, KeyboardAvoidingView, StatusBar,ScrollView } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Alert, Modal, KeyboardAvoidingView,ScrollView } from "react-native";
 import Icon from 'react-native-vector-icons/AntDesign';
 import { TextInput } from "react-native-gesture-handler";
 import { Button } from "../node_modules/react-native-elements";
@@ -128,10 +128,8 @@ export default class drawerDesign extends React.Component {
         
         <TouchableOpacity
           onPress={() => {
-            if(modalID == 1){
+            if(modalID == 1)
             this.setModalVisible(!this.state.modalVisible)
-            StatusBar.setHidden(true);
-            }
             else if (modalID == 2)
             this.setNamesModalV(!this.state.namesModalV)
             else if (modalID ==3)
@@ -153,12 +151,10 @@ export default class drawerDesign extends React.Component {
         animationType="slide"
         transparent={false}
         visible={this.state.modalVisible}
-        onShow={() => {this.getUserInfo();StatusBar.setHidden(false);}}
-        onDismiss={() => StatusBar.setHidden(true)}
-        onRequestClose={() => {
-          this.setModalVisible(!this.state.modalVisible);
-          StatusBar.setHidden(true);
-        }}>
+        onShow={() => this.getUserInfo()}
+        onRequestClose={() => 
+          this.setModalVisible(!this.state.modalVisible)
+        }>
         <View>
           {this._renderNavBar("Modificar Cuenta",1)}
           <View>

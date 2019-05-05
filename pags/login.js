@@ -13,8 +13,8 @@ import {Platform, StyleSheet,
         Image,    Button, 
         NativeModules, Alert, 
         KeyboardAvoidingView, 
-        Animated,Dimensions, 
-        Keyboard, StatusBar} from 'react-native';
+        Animated,Dimensions, Text,
+        Keyboard, StatusBar, TouchableOpacity} from 'react-native';
 import { Request_API } from '../networking/server';
 import { PouchDB_Insert } from '../PouchDB/PouchDBQuerys'
 import _ from 'lodash';
@@ -275,11 +275,11 @@ export default class LoginScreen extends React.Component
             />
         </View>
         <View style={styles.loginButton}>
-          <Button
-            title="Iniciar sesión"
-            color="#51738e"
-            onPress={() => this.loginPress()}
-          />
+          <TouchableOpacity 
+          style={{backgroundColor:'#51738e', alignContent:'center',alignItems:'center',padding:10,borderRadius:5}}
+          onPress={() => this.loginPress() }> 
+            <Text style={{color:'white'}}>Iniciar sesión</Text>
+          </TouchableOpacity>
         </View>
         <View style={styles.loginButton}>
           <Button
