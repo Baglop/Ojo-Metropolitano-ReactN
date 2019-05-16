@@ -20,6 +20,7 @@ const deleteGroupURL = ':3030/API/contactos/EliminarGrupo'
 const modGroupURL = ':3030/API/contactos/EditarGrupo'
 const addFriendGroupURL = ':3030/API/contactos/AgregarAmigosAGrupo'
 const deleteFriendGroupURL = ":3030/API/contactos/BorrarAmigosDeGrupo"
+const alertURL = ':3030/API/contactos/EnviarAlertaPreventiva';
 const db = new PouchDB('OjoMetropolitano');
 const window = Dimensions.get('window');
 
@@ -72,7 +73,7 @@ export default class GroupList extends React.Component {
             friendsToDelete:[],
             members:[],
             groupMembers:[],
-
+            salaVigilancia:'',
         };
         this.getGroups();
     }
@@ -99,6 +100,9 @@ export default class GroupList extends React.Component {
     componentWillReceiveProps(nextProps){
         this.setState({userData: nextProps.userData, contacts:nextProps.contacts})
         this.startList();
+    }
+    componentWillUnmount(){
+        this.endRoom();
     }
 
     async modRequest(value){
@@ -266,6 +270,88 @@ export default class GroupList extends React.Component {
                   }, 1000);  
             }
         })
+    }
+
+    async alertaPreventiva(){
+        let promise = new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(
+              (position) => {
+                let pos = position.coords.latitude + ',' + position.coords.longitude;
+                resolve(pos);
+              },
+              (error) => console.log(error)
+            )
+          });
+          
+          let position = await promise;
+  
+          const params ={
+            nombreUsuario: this.state.userData.nombreUsuario,
+            listaAmigos: [...this.state.groupMembers.map(a => a.nombreUsuario)],
+            tokenSiliconBear: this.state.userData.tokenSiliconBear,
+            ubicacionUsuario: position
+          }
+  
+          await Request_API(params, alertURL).then(response => {
+              if(response.codigoRespuesta == 200){
+                  console.log(response)
+                  this.setState({salaVigilancia:response.salaVigilancia},this.startRoom())
+              }
+          })
+
+    }
+
+    startRoom(){
+        const data = {
+            nombreUsuario: this.state.userData.nombreUsuario,
+            salaVigilancia: this.state.salaVigilancia
+        }
+        console.log(data);
+        socket.emit('alertaPreventivaEnviada', data);
+        this.trackUserLoc()
+        this.props.adviceChange('groups');
+    }
+
+    endRoom(){
+        if(this.state.salaVigilancia != ''){
+            const data = {
+                salaVigilancia: this.state.salaVigilancia
+            }
+            socket.emit('alertaPreventivaTerminada', data);
+            navigator.geolocation.clearWatch(this.watchID);
+            this.setState({salaVigilancia:''});
+            console.log(data + ' grupos')
+            this.props.adviceChange();
+        }
+    }
+
+    async trackUserLoc(){
+        let promise = new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(
+              (position) => {
+                let data = {
+                    salaVigilancia: this.state.salaVigilancia,
+                    coordenadaX: position.coords.latitude,
+                    coordenadaY: position.coords.longitude
+                }
+                resolve(data);
+              },
+              (error) => console.log(error)
+            )
+          });
+          
+        let firstPos = await promise;
+        socket.emit('alertaPrivada_posicionActualizada', firstPos);
+        console.log(firstPos)
+        this.watchID = navigator.geolocation.watchPosition((lastPosition) => {
+            var data = {
+                     salaVigilancia: this.state.salaVigilancia,
+                     coordenadaX: lastPosition.coords.latitude,
+                     coordenadaY: lastPosition.coords.longitude
+                 };
+                 console.log(data);
+            socket.emit('alertaPrivada_posicionActualizada', data);
+        },(error) => console.log(error),{distanceFilter: 10});
     }
 
     setModalVisible = () =>
@@ -486,6 +572,9 @@ export default class GroupList extends React.Component {
                 <MenuOptions>
                     <MenuOption customStyles={{TriggerTouchableComponent:TouchableOpacity}} onSelect={this.setModalAddVisible} >
                         <Text style={{fontSize:16,margin:5}} >Añadir miembros</Text>
+                    </MenuOption>
+                    <MenuOption customStyles={{TriggerTouchableComponent:TouchableOpacity}} onSelect={() => this.alertaPreventiva()} >
+                        <Text style={{fontSize:16,margin:5}} >Enviar alerta preventiva</Text>
                     </MenuOption>
                     <MenuOption customStyles={{TriggerTouchableComponent:TouchableOpacity}} onSelect={this.setModalDelFriendVisible}>
                         <Text style={{fontSize:16,margin:5}} >Eliminar miembros</Text>
