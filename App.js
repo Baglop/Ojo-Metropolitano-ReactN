@@ -25,7 +25,6 @@ const db = new PouchDB('OjoMetropolitano');
 
 const AmigosyGrupos = ':3030/API/contactos/ActualizarAmigosYGrupos';
 const respoderSolicitud = ':3030/API/contactos/ResponderSolicitudAmistad'
-
 console.disableYellowBox = true;
 
 
@@ -240,14 +239,14 @@ componentWillMount() {
     this.setState({logged: true, userInfo: doc})
   });
 
-  // db.allDocs({
-  //   include_docs: true,
-  //   attachments: true
-  // }).then(function (result) {
-  //   console.log(result.rows);
-  // }).catch(function (err) {
-  //   console.log(err);
-  // });
+  db.allDocs({
+    include_docs: true,
+    attachments: true
+  }).then(function (result) {
+    console.log(result.rows);
+  }).catch(function (err) {
+    console.log(err);
+  });
 }
 
   // render() {

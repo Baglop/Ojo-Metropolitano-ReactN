@@ -5,12 +5,14 @@ import { TextInput } from "react-native-gesture-handler";
 import { Button } from "../node_modules/react-native-elements";
 import { Request_API } from '../networking/server';
 import { PouchDB_Get_Document, PouchDB_DeleteDB, PouchDB_UpdateDoc } from '../PouchDB/PouchDBQuerys'
+import LinearGradient from 'react-native-linear-gradient';
 import _ from 'lodash';
 // import PouchdbFind from 'pouchdb-find';
 // import PouchDB from 'pouchdb-react-native'; 
 // const db = new PouchDB('OjoMetropolitano');
 
 const modURL = ':3030/API/miCuenta/ModificarInformacionUsuario'
+const deleteAccount = ':3030/API/miCuenta/EliminarCuenta'
 
 export default class drawerDesign extends React.Component {
   
@@ -90,6 +92,26 @@ export default class drawerDesign extends React.Component {
       },
       (error) => console.log(error)
     );
+  }
+
+  deleteAccount(){
+    const params = {
+      nombreUsuario: this.state.userData.nombreUsuario,
+      atributoModificado: property,
+      valorNuevo: value,
+      tokenSiliconBear: this.state.userData.tokenSiliconBear,
+      ubicacionUsuario: this.state.ubicacionUsuario,
+    }
+    Request_API(params, deleteAccount).then(response =>{
+      console.log(response)
+      if(response.codigoRespuesta === 200){
+        _.set(this.state.userInfo, `${property}`, `${value}`);
+        PouchDB_UpdateDoc(this.state.userInfo._id, this.state.userInfo.type, response.usuario);
+        this.showAlert("Correcto", response.mensaje);
+      } else {
+        this.showAlert("Error " + response.codigoRespuesta, response.mensaje);
+      }
+    });
   }
 
   setModalVisible(visible){
@@ -324,8 +346,10 @@ export default class drawerDesign extends React.Component {
   render() {
     return (
       <View style={{ flex: 1 }}>
-        <View style={{height:200,backgroundColor:'black'}} >
+        <View style={{height:200}} >
+        <LinearGradient start={{x: 0, y: 0}} end={{x: 0, y: 1}} colors={['#4095ac','#122e39','#050e13','#050c12']} style={{height:200}}/>
         </View>
+        <ScrollView>
         <View style={{marginTop:30,marginStart:10}} >
             <TouchableOpacity style={styles.button} onPress={() => this.setModalVisible(true)}>
                 <Icon name="edit" style={styles.buttonIcon} />
@@ -351,6 +375,7 @@ export default class drawerDesign extends React.Component {
             </TouchableOpacity>
             {this._renderModal()}
         </View>
+        </ScrollView>
       </View>
     );
   }

@@ -23,7 +23,7 @@ class ProfileScreenConent extends React.Component {
   componentWillMount(){
     
   }
-
+  
   constructor(props) {
     super(props);
     this.getInfo();
@@ -124,7 +124,7 @@ class ProfileScreenConent extends React.Component {
   _renderProfile(){
     return(
     <View>
-      <View style={{alignItems:'center',justifyContent:'center',height:'100%'}} >
+      <View style={{alignItems:'center',justifyContent:'center',height:'100%', width:'100%'}} >
         <TouchableOpacity style={{borderRadius:200,borderWidth:2}} onPress={this.selectPhotoTapped.bind(this)}>
           {/* <Image style={styles.logoStyle} source={{uri: this.state.userInfo.imagenPerfil}}/> */}
           {this.state.userInfo.imagenPerfil !== null ? (
@@ -197,9 +197,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   logoStyle: {
-    height: 100,
-    width: 100,
-    borderRadius: 500,
+    height: 150,
+    width: 150,
+    borderRadius: 150/2,
     resizeMode : 'stretch',
   },
   button: {

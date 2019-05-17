@@ -238,9 +238,9 @@ export default class screens extends Component {
 
   selectPhotoTapped() {
     const options = {
-      quality: 0.95,
-      maxWidth: 1000,
-      maxHeight: 1000,
+      quality: 0.90,
+      maxWidth: 750,
+      maxHeight: 750,
       storageOptions: {
         skipBackup: true,
       },
@@ -353,13 +353,12 @@ export default class screens extends Component {
 
     return (
       <View style={styles.container}>
-       <StatusBar hidden/>
         <MapView
           provider={PROVIDER_GOOGLE}
           ref={map => this.map = map}
           initialRegion={this.state.region}
           style={styles.container}
-          customMapStyle = {myMap}
+          // customMapStyle = {myMap}
         >
           {this.state.userReports.map((marker, index) => {
             const opacityStyle = {

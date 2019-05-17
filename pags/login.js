@@ -8,13 +8,13 @@
 
 import logo from '../images/ojometropolitano.png';
 import React from 'react';
-import {Platform, StyleSheet, 
-        View,     TextInput, 
-        Image,    Button, 
-        NativeModules, Alert, 
+import {StyleSheet, View,
+        TextInput,  Image,
+        Button, Alert, 
         KeyboardAvoidingView, 
         Animated,Dimensions, Text,
-        Keyboard, StatusBar, TouchableOpacity} from 'react-native';
+        Keyboard, StatusBar, TouchableOpacity,
+        TouchableWithoutFeedback} from 'react-native';
 import { Request_API } from '../networking/server';
 import { PouchDB_Insert } from '../PouchDB/PouchDBQuerys'
 import _ from 'lodash';
@@ -31,6 +31,12 @@ const width = '80%';
 const window = Dimensions.get('window');
 const IMAGE_HEIGHT = window.width / 1.6;
 const IMAGE_HEIGHT_SMALL = window.height / 4;
+
+const DismissKeyboard = ({ children }) => (
+  <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+    {children}
+  </TouchableWithoutFeedback>
+);
 
 export default class LoginScreen extends React.Component 
 {
@@ -225,7 +231,7 @@ export default class LoginScreen extends React.Component
   render() {
     var { navigate } = this.props.navigation;
     return ( 
-    
+    <DismissKeyboard>
     <View style={styles.root}> 
       <Video 
         repeat
@@ -288,9 +294,9 @@ export default class LoginScreen extends React.Component
             onPress = {() => navigate("Register", {})}
             />
         </View>
-        
       </KeyboardAvoidingView>
-      </View>    
+      </View>
+      </DismissKeyboard>    
     );
   }
 }
@@ -357,6 +363,6 @@ const styles = StyleSheet.create({
     flex: 1,
     color: 'white',
     paddingLeft: 8,
-    fontSize: 16,
+    fontSize: 18,
   }
 });

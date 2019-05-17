@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import { View, TextInput, TouchableOpacity, Image, Text, Animated, Keyboard, KeyboardAvoidingView, Dimensions, StyleSheet,Button, TouchableWithoutFeedback} from 'react-native';
-import { TextField } from 'react-native-material-textfield';
 import LinearGradient from 'react-native-linear-gradient';
 import logo from '../images/ojometropolitano.png';
-import Video from 'react-native-video'
-import backView from '../images/background.mp4'
+import DropdownAlert from 'react-native-dropdownalert';
 const window = Dimensions.get('window');
 const IMAGE_HEIGHT = window.width / 1.6;
 const IMAGE_HEIGHT_SMALL = window.height / 5;
+
+import { Request_API } from '../networking/server';
+const validarUser = ':3030/API/contactos/BuscarUsuario'
 
 const DismissKeyboard = ({ children }) => (
   <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -26,8 +27,14 @@ export default class RegisterScreen extends React.Component {
     this.imageHeight = new Animated.Value(IMAGE_HEIGHT);
     this.state = {
       nombreUsuario: '',
-      contrasena:    '',
+      contrasena1:   '',
+      contrasena2:   '',
       celular:       '',
+      disable:       true,
+      password:      false,
+      contrasena1TXT: false,
+      contrasena2TXT: false,
+      celularTXT: false,
     }
   }
 
@@ -55,6 +62,64 @@ export default class RegisterScreen extends React.Component {
     }).start();
   };
 
+  validateUserName(){
+    if(this.state.nombreUsuario !== ''){
+      const bodyPetition = {
+        nombreUsuario: this.state.nombreUsuario
+      }
+      Request_API(bodyPetition, validarUser)
+        .then(response => {
+        if(response.codigoRespuesta !== 200){
+          this.dropdown.alertWithType('success','Correcto','Este nombre de usuario está disponible para su uso')
+        }
+        else {
+          this.dropdown.alertWithType('error','Error','Este usuario ya existe')
+        }
+      });
+    } else {
+      this.dropdown.alertWithType('error','Error','Este campo es requerido')
+    }
+  }
+
+  validatePass1(){
+    if(this.state.contrasena1 === ''){
+      this.dropdown.alertWithType('error','Error','Este campo es requerido')
+    } else {
+      if(this.state.contrasena1.length < 5){
+        this.dropdown.alertWithType('error','Error','La contraseña debe tener más de 5 caracateres')
+      }
+    }
+  }
+
+  validatePass2(){
+  if(this.state.contrasena2 !== ''){
+    if(this.state.contrasena1 !== this.state.contrasena2){
+      this.dropdown.alertWithType('error','Error','Las contraseñas ingresadas no son las mismas')
+    }
+  } else {
+    this.dropdown.alertWithType('error','Error','Este campo es requerido')
+  }
+  }
+
+  validatePhone(){
+    if(this.state.celular !== ''){
+      if(this.state.celular.length < 10){
+        this.dropdown.alertWithType('error','Error','Ingresa un número telefónico válido')
+      } 
+      if(this.state.celular.length > 10) {
+        this.dropdown.alertWithType('error','Error','Ingresa un número telefónico válido')
+      } else {
+        if(this.state.nombreUsuario !== '' && this.state.contrasena1 !== '' && this.state.contrasena2 !== '' && this.state.celular !== ''){
+          this.setState({disable: false})
+        } else {
+          this.dropdown.alertWithType('error','Error','Todos los campos deben de ser completados')
+        }
+      }
+    } else {
+      this.dropdown.alertWithType('error','Error','Este campo es requerido')
+    }
+  }
+
   render() {
     var { navigate } = this.props.navigation;
     return (
@@ -72,25 +137,29 @@ export default class RegisterScreen extends React.Component {
           />
           </View>
           <TextInput
-            placeholder          = " Usuario"
+            placeholder          = "Usuario"
             returnKeyType        = "next"
             placeholderTextColor = "rgba(255,255,255,.4)"
             style           = { styles.input }
             onSubmitEditing = { () => this.pass.focus() }
-            onChangeText    = { (text) => this.setState({nombreUsuario:text}) }            
+            onChangeText    = { text => this.setState({nombreUsuario: text}) }
+            onEndEditing    = {() => this.validateUserName()}  
+                   
           />
           <TextInput
-            placeholder          = " Contraseña"
+            placeholder          = "Contraseña"
             returnKeyType        = "next"
             placeholderTextColor = "rgba(255,255,255,.4)"
             style = { {flex:1} }
             style = { styles.input }
             ref   = { (input) => this.pass = input}
             onSubmitEditing = {() => this.confirm_pass.focus() }
-            secureTextEntry = { true}  
+            onChangeText    = { (text) => this.setState({contrasena1 :text}) }
+            secureTextEntry = { true}
+            onEndEditing    = {() => this.validatePass1()}  
           />
           <TextInput
-            placeholder          = " Confirmar contraseña"
+            placeholder          = "Confirmar contraseña"
             returnKeyType        = "next"
             placeholderTextColor = "rgba(255,255,255,.4)"
             style = { {flex:1} }
@@ -98,26 +167,33 @@ export default class RegisterScreen extends React.Component {
             ref   = { (input) => this.confirm_pass = input }
             onSubmitEditing = { () => this.phone.focus() }
             secureTextEntry = { true } 
-            onChangeText    = { (text) => this.setState({contrasena:text}) }
+            onChangeText    = { (text) => this.setState({contrasena2 :text}) }
+            onEndEditing    = {() => this.validatePass2()} 
           />
           <TextInput
-            placeholder          = " Celular"
+            placeholder          = "Celular"
             keyboardType         = "number-pad"
             returnKeyType        = "done"
             placeholderTextColor = "rgba(255,255,255,.4)"
             ref   = { (input) => this.phone = input }
             style = { styles.input }
             onChangeText = { (text) => this.setState({celular:text}) }
+            onEndEditing    = {() => this.validatePhone()} 
           />
           <View style={styles.loginButton}>
           <TouchableOpacity 
+          disabled={this.state.disable}
           style={{backgroundColor:'#51738e', alignContent:'center',alignItems:'center',padding:10,borderRadius:5}}
           onPress={() => navigate("Register2" , { nombreUsuario: this.state.nombreUsuario,
-            contrasena:    this.state.contrasena,
+            contrasena:    this.state.contrasena2,
             celular:       this.state.celular})}> 
             <Text style={{color:'white'}}>Continuar</Text>
           </TouchableOpacity>
           </View>
+          <DropdownAlert
+          ref={ref => this.dropdown = ref}
+          showCancel={true}
+        />
       </KeyboardAvoidingView>
       </LinearGradient>
       </View>
@@ -148,7 +224,9 @@ const styles = StyleSheet.create({
         marginTop:    1,
         width: window.width - 30,
         paddingLeft: 8,
-        fontSize: 14
+        fontSize: 17,
+        paddingLeft: 8,
+        color: 'white',
       },
     logo: {
       height:       IMAGE_HEIGHT,

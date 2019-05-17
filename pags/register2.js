@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { View, TextInput, Text, Image, Animated, Keyboard, KeyboardAvoidingView, Dimensions, StyleSheet,Button, Platform, TouchableOpacity, Alert, TouchableWithoutFeedback} from 'react-native';
 import ImagePicker from 'react-native-image-picker';
 import { Request_API } from '../networking/server';
+import LinearGradient from 'react-native-linear-gradient';
+import DropdownAlert from 'react-native-dropdownalert';
 const window = Dimensions.get('window');
 const registerUser = ':3030/API/inicio/RegistrarUsuario'
 let params = '';
@@ -80,7 +82,6 @@ export default class RegisterScreen extends React.Component {
   }
 
   joinSiliconBear(){
-    if(Platform.OS === 'ios'){
     const bodyPetition = {
       nombreUsuario: params.params.nombreUsuario,
       contrasena:    params.params.contrasena,
@@ -99,9 +100,9 @@ export default class RegisterScreen extends React.Component {
         if(response.codigoRespuesta === 200){
           Alert.alert(
             'Correcto',
-            response.mensaje,
+            response.mensaje + ' Verifica tu correo para poder continuar.',
             [,
-              {text: 'OK', onPress: () => this.setState({ visibleModal: null })},
+              {text: 'OK', onPress: () => this.props.navigation.navigate('Login', {})},
             ],
             {cancelable: false},
           );
@@ -117,19 +118,37 @@ export default class RegisterScreen extends React.Component {
           );
         }
       });
+  }
+
+  validateEmail(){
+    if(this.state.correo !== ''){
+
+    let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/ ;
+    if(reg.test(this.state.correo) === false)
+    {
+    this.dropdown.alertWithType('error','Error','Se requiere un email válido')
+    }
+    else {
+      console.log("Email is Correct");
+    }
+    
+
+    } else {
+      this.dropdown.alertWithType('error','Error','Este campo es requerido')
     }
   }
 
   render() {
     params = this.props.navigation.state;
-    console.log(params.params)
     return (
       // <KeyboardAvoidingView
       //   style    = { styles.container }
       //   >
-      <DismissKeyboard style = {styles.container}>
-      <View style = {styles.container}>
+      <DismissKeyboard>
+      <View style = {styles.root}>
+      <LinearGradient start={{x: 0, y: 0}} end={{x: 0, y: 1}} colors={['#4095ac','#122e39','#050e13','#050c12']} style={styles.root}>
       <KeyboardAvoidingView style = {styles.container} behavior="padding">
+      <View style={{alignItems: 'center'}}>
           <TouchableOpacity onPress={this.selectPhotoTapped.bind(this)}>
           {this.state.image === null ? (
               <Animated.Image 
@@ -144,27 +163,29 @@ export default class RegisterScreen extends React.Component {
             )}
           
           </TouchableOpacity>
+          </View>
           <View>
           <TextInput
-            placeholder          = " Email"
+            placeholder          = "Email"
             returnKeyType        = "next"
             keyboardType         = "email-address"
             placeholderTextColor = "rgba(255,255,255,.4)"
             style           = { styles.input }
             onSubmitEditing = { () => this.email.focus() }
-            onChangeText    = { (text) => this.setState({correo:text}) }
+            onChangeText    = { (text) => this.setState({correo: text})}
+            onEndEditing    = {() => this.validateEmail()}  
           />
           <TextInput
-            placeholder          = " Nombre(s)"
+            placeholder          = "Nombre's (opcional)"
             returnKeyType        = "next"
             placeholderTextColor = "rgba(255,255,255,.4)"
             style = { styles.input }
             ref   = { (input) => this.email = input }
             onSubmitEditing = { () => this.names.focus() } 
-            onChangeText    = { (text) => this.setState({nombres:text}) }           
+            onChangeText    = { (text) => this.setState({nombres:text}) }       
           />
           <TextInput
-            placeholder          = " Apellido paterno"
+            placeholder          = "Apellido paterno (opcional)"
             returnKeyType        = "next"
             placeholderTextColor = "rgba(255,255,255,.4)"
             style = { styles.input }
@@ -173,7 +194,7 @@ export default class RegisterScreen extends React.Component {
             onChangeText    = { (text) => this.setState({apellidoPaterno:text}) }
           />
           <TextInput
-            placeholder          = " Apellido materno"
+            placeholder          = "Apellido materno (opcional)"
             returnKeyType        = "done"
             placeholderTextColor = "rgba(255,255,255,.4)"
             style = { styles.input }
@@ -188,7 +209,12 @@ export default class RegisterScreen extends React.Component {
           </TouchableOpacity>
             </View>
           </View>
+          <DropdownAlert
+          ref={ref => this.dropdown = ref}
+          showCancel={true}
+        />
           </KeyboardAvoidingView>
+          </LinearGradient>
           </View>
           </DismissKeyboard>
     );
@@ -196,12 +222,13 @@ export default class RegisterScreen extends React.Component {
 };
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#3e4d59',      
-      alignItems:      'center',
-      justifyContent:  'center',
-    },
+  root:{
+    flex: 1
+  }, 
+  container: {
+    flex: 1,  
+    justifyContent:  'center',
+  },
     input: {
         flexDirection:   'row',
         justifyContent:  'center',
@@ -214,7 +241,9 @@ const styles = StyleSheet.create({
         margin:       10,
         marginTop:    1,
         color:        'white',
-        width: window.width - 30
+        width: window.width - 30,
+        paddingLeft: 8,
+        fontSize: 17,
       },
     logo: {
       height:       170,
