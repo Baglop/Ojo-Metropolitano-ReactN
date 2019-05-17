@@ -48,10 +48,7 @@ export default class ContactsList extends React.Component {
     }
 
     componentWillUnmount(){
-        const data = {
-            salaVigilancia: this.state.salaVigilancia
-        }
-        socket.emit('alertaPreventivaTerminada', data);
+        this.endRoom();
     }
 
     async deleteFriendDoc(user){
@@ -245,11 +242,10 @@ export default class ContactsList extends React.Component {
           await Request_API(params, alertURL).then(response => {
               if(response.codigoRespuesta == 200){
                   console.log(response)
-                  this.setState({salaVigilancia:response.salaVigilancia})
+                  this.setState({salaVigilancia:response.salaVigilancia},this.startRoom())
               }
           })
 
-          this.startRoom();
     }
 
     startRoom(){
@@ -259,14 +255,45 @@ export default class ContactsList extends React.Component {
         }
         console.log(data);
         socket.emit('alertaPreventivaEnviada', data);
-        this.trackUserLoc();
+        this.trackUserLoc()
+        this.props.adviceChange();
     }
 
-    trackUserLoc(){
+    endRoom(){
+        if(this.state.salaVigilancia != ''){
+            const data = {
+                salaVigilancia: this.state.salaVigilancia
+            }
+            socket.emit('alertaPreventivaTerminada', data);
+            navigator.geolocation.clearWatch(this.watchID);
+            this.setState({salaVigilancia:''});
+            console.log(data + ' contactos')
+            this.props.adviceChange();
+        }
+    }
+
+    async trackUserLoc(){
+        let promise = new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(
+              (position) => {
+                let data = {
+                    salaVigilancia: this.state.salaVigilancia,
+                    coordenadaX: position.coords.latitude,
+                    coordenadaY: position.coords.longitude
+                }
+                resolve(data);
+              },
+              (error) => console.log(error)
+            )
+          });
+          
+        let firstPos = await promise;
+        socket.emit('alertaPrivada_posicionActualizada', firstPos);
+        console.log(firstPos)
         this.watchID = navigator.geolocation.watchPosition((lastPosition) => {
             var data = {
                      salaVigilancia: this.state.salaVigilancia,
-                     coordenadaX: astPosition.coords.latitude,
+                     coordenadaX: lastPosition.coords.latitude,
                      coordenadaY: lastPosition.coords.longitude
                  };
                  console.log(data);

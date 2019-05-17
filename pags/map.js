@@ -504,7 +504,6 @@ class MapScreen extends React.Component {
       console.log(response);
       if(response.codigoRespuesta === 200){
         PouchDB_Insert(response.reporte._id, 'userReports', response.reporte)
-        socket.emit('reporteNuevo', requestJHONSON);
         this.showAlert("Correcto",response.mensaje);
       } else {
         this.showAlert("Error: " + response.codigoRespuesta, response.mensaje);

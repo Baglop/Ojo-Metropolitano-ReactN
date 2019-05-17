@@ -3,8 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, FlatList, Alert } from "react
 import Icon from 'react-native-vector-icons/AntDesign'
 import { PouchDB_Get_Document} from '../PouchDB/PouchDBQuerys';
 import { Request_API } from '../networking/server';
-
-const btnPanic = ':3030/API/agentePoliciaco/BotonDePanico';
+const alertURL = ':3030/API/agentePoliciaco/BotonDePanico';
 
 const numbers=[
   {
@@ -36,17 +35,20 @@ const numbers=[
 
 export default class PoiliceScreen extends React.Component {
 
-  state = {
-    userData:[],
-    ubicacionUsuario: '0.0,-0.0',
-  };
+  
 
   constructor(props){
     super(props);
+    this.state = {
+      userData:[],
+      ubicacionUsuario: {},
+      advice:false,
+    };
+    
     this.getInfo();
-    this.getLocationUser();
+    //this.getLocationUser();
   }
-
+/* 
   getLocationUser(){
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -56,8 +58,10 @@ export default class PoiliceScreen extends React.Component {
       },
       (error) => console.log(error)
     );
+  } */
+  adviceChange(){
+    this.setState({advice:!this.state.advice})
   }
-
   async getInfo(){
     await PouchDB_Get_Document('BasicValues')
       .then(response => {
@@ -67,40 +71,88 @@ export default class PoiliceScreen extends React.Component {
     });
   }
 
+  async alertaPreventiva(){
+    let promise = new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            let pos = position.coords.latitude + ',' + position.coords.longitude;
+            resolve(pos);
+          },
+          (error) => console.log(error)
+        )
+      });
+      
+      let position = await promise;
 
-PanicBottom(){
-  const bodyPetition = {
-    nombreUsuario: this.state.userData.nombreUsuario,
-    tokenSiliconBear: this.state.userData.tokenSiliconBear,
-    ubicacionUsuario: this.state.ubicacionUsuario,
-  }
-  Request_API(bodyPetition, btnPanic).then(response => {
-    if(response.codigoRespuesta === 200){
-      console.log(response)
-      // const data = {
-      //   nombreUsuario: "nombreUsuario",
-      //   salaVigilancia: salaVigilanciaPublica
-      // }
-      // socket.emit('botonDePanicoPresionado', data);
-      Alert.alert(
-          'Correcto',
-          response.mensaje,
-          [,
-            {text: 'OK'},
-          ],
-          {cancelable: false},
-        );
-    } else {
-      Alert.alert(
-          'Advertencia',
-          response.mensaje,
-          [,
-            {text: 'OK'},
-          ],
-          {cancelable: false},
-        );
+      const params ={
+        nombreUsuario: this.state.userData.nombreUsuario,
+        tokenSiliconBear: this.state.userData.tokenSiliconBear,
+        ubicacionUsuario: position
+      }
+      console.log(params)
+      await Request_API(params, alertURL).then(response => {
+          if(response.codigoRespuesta == 200){
+              console.log(response)
+              this.startRoom();
+          }
+      })
+
+}
+
+startRoom(){
+    const data = {
+        nombreUsuario: this.state.userData.nombreUsuario,
     }
-  }); 
+    console.log(data);
+    socket.emit('botonDePanicoPresionado', data);
+    this.trackUserLoc()
+    this.adviceChange();
+}
+
+endRoom(){
+        const data = {
+            salaVigilancia: this.state.salaVigilancia
+        }
+        socket.emit('alertaPublicaTerminada', data);
+        navigator.geolocation.clearWatch(this.watchID);
+        this.setState({salaVigilancia:''});
+        console.log(data)
+        clearInterval(this.intervalID)
+        this.adviceChange();
+}
+
+async trackUserLoc(){
+  let promise = new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          let data = {
+              nombreUsuario: this.state.userData.nombreUsuario,
+              coordenadaX: position.coords.latitude.toString(),
+              coordenadaY: position.coords.longitude.toString()
+          }
+          resolve(data);
+        },
+        (error) => console.log(error)
+      )
+    });
+  
+  let firstPos = await promise;
+  this.setState({ubicacionUsuario:firstPos}, () => {
+      this.intervalID = setInterval(() => {socket.emit('alertaPublica_posicionActualizada', this.state.ubicacionUsuario); console.log( this.state.ubicacionUsuario)}, 2000)
+    }
+  )
+   
+  console.log(firstPos)
+  this.watchID = navigator.geolocation.watchPosition((lastPosition) => {
+      var data = {
+               nombreUsuario: this.state.userData.nombreUsuario,
+               coordenadaX: lastPosition.coords.latitude.toString(),
+               coordenadaY: lastPosition.coords.longitude.toString()
+           };
+           this.setState({ubicacionUsuario:data},() => socket.emit('alertaPublica_posicionActualizada', data));
+           console.log(data);
+           
+  },(error) => console.log(error),{distanceFilter: 10});
 }
 
   _renderItems(item){
@@ -118,12 +170,24 @@ PanicBottom(){
     </View>
     )
 }
-  
+_renderAdvice(){
+  return(
+  <View style={{height:30,flexDirection:'row',padding:5,paddingStart:10,backgroundColor:'yellow'}} >
+    <Text style={{fontWeight:'bold'}} >Compartiendo ubicacion</Text>
+    <View style={{marginLeft: 'auto'}}>
+      <TouchableOpacity onPress={() => this.endRoom()}>
+        <Text style={{right:0, }} >Cancelar </Text>
+      </TouchableOpacity>
+    </View>
+  </View>
+  )
+}
   render() {
     return (
       <View style={{ flex: 1}}>
+        {this.state.advice ? this._renderAdvice():null}
         <View style={{marginTop:30,alignItems:'center',justifyContent:'center',borderBottomWidth:0.5,borderBottomColor:'rgba(0,0,0,0.1)'}} >
-          <TouchableOpacity style={styles.button} >
+          <TouchableOpacity style={styles.button} onPress={() => this.alertaPreventiva()} >
             <Text>Botón de pánico</Text>
           </TouchableOpacity>
         </View>

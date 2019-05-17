@@ -3,62 +3,21 @@ import { View, Text, FlatList,ScrollView,StyleSheet,TouchableOpacity, NativeModu
 import { SearchBar,Divider  } from 'react-native-elements';
 import GroupList from "./groupList";
 import ContactList from "./contactsList"
-import { TextInput } from "react-native-gesture-handler";
-import Icon from 'react-native-vector-icons/Ionicons';
 import { Request_API } from '../networking/server';
 import {MenuProvider} from 'react-native-popup-menu';
 import PouchDB from 'pouchdb-react-native'; 
 import PouchdbFind from 'pouchdb-find';
 import { PouchDB_Get_Document, PouchDB_Insert } from '../PouchDB/PouchDBQuerys'
 import CameraScreen from './camera';
-import { Button, Image } from 'react-native-elements';
 import {createAppContainer, createStackNavigator} from "react-navigation";
 
 
 const db = new PouchDB('OjoMetropolitano');
 
-let couchbase_lite_native = NativeModules.couchbase_lite_native;
-const couchbase_lite = NativeModules.couchbase_lite;
-
 const searchURL =":3030/API/contactos/BuscarUsuario";
 const sendRequestURL = ":3030/API/contactos/EnviarSolicitudAmistad"
 const deleteFrienURL = ":3030/API/contactos/EliminarAmigo"
 const friendListURL = ":3030/API/contactos/ActualizarAmigosYGrupos"
-
-const contacts = [
-  {
-      key: "1",
-      name: "Pepe"
-  },
-  {
-      key: "2",
-      name: "Fursio"
-  },
-  {
-      key: "3",
-      name: "Kokun"
-  },
-  {
-      key: "4",
-      name: "AMLO"
-  },
-  {
-      key: "5",
-      name: "EPN-MIente"
-  },
-  {
-      key: "6",
-      name: "Francis"
-  },
-  {
-      key: "7",
-      name: "Delta"
-  },
-  {
-      key: "8",
-      name: "Luisito Comunica"
-  }
-]
 
 class ContactScreen extends React.Component {
 
@@ -74,18 +33,15 @@ class ContactScreen extends React.Component {
       groups:[],
       searchValue:"",
       searchIcon:false,
+      advice:false,
     };
     this.getData();
     this.friendsListRequest = this.friendsListRequest.bind(this);
-   
+    this.adviceChange = this.adviceChange.bind(this);
   }
 
-  componentWillMount(){
-    
-  }
-
-  componentDidUpdate(){
-    
+  adviceChange(){
+    this.setState({advice:!this.state.advice})
   }
 
   componentWillReceiveProps(nextProps){
@@ -216,6 +172,19 @@ class ContactScreen extends React.Component {
     );
   }
 
+  _renderAdvice(){
+    return(
+    <View style={{height:30,flexDirection:'row',padding:5,paddingStart:10,backgroundColor:'yellow'}} >
+      <Text style={{fontWeight:'bold'}} >Compartiendo ubicacion</Text>
+      <View style={{marginLeft: 'auto'}}>
+        <TouchableOpacity onPress={() => {this.contactList.endRoom(),this.grouplist.endRoom()}}>
+          <Text style={{right:0, }} >Cancelar </Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+    )
+  }
+
   render() {
     var { navigate } = this.props.navigation;
     return (
@@ -225,7 +194,7 @@ class ContactScreen extends React.Component {
           {/* <Icon name="md-search" style={styles.searchIcon}/>
           <TextInput ref={input => { this.search = input }} style={{width:'80%', marginStart:5}} onChangeText={(text) => text !== "" ? this.textChangeTrue(text):this.textChangeFalse()} /> */}
         {/* </View> */}
-          
+        {this.state.advice ? this._renderAdvice():null}
         <SearchBar
           lightTheme ={true}
           placeholder="Buscar amigo"
@@ -238,19 +207,11 @@ class ContactScreen extends React.Component {
           
         {this.state.showSearch ? this._renderItemsSearch():null}
         <ScrollView style={{ flex: 1}} showsVerticalScrollIndicator = {false}>
-        { this.state.userData !== [] ? <GroupList contacts={this.state.contacts&&this.state.contacts} userData={this.state.userData&&this.state.userData}/>:null}
+        { this.state.userData !== [] ? <GroupList ref={instance => { this.grouplist = instance; }} contacts={this.state.contacts&&this.state.contacts} userData={this.state.userData&&this.state.userData} adviceChange={this.adviceChange}/>:null}
         <Divider style={{ backgroundColor: '#e8e9ed', height:10 }} />
-        {this.state.contacts.length > 0 ? <ContactList contacts={this.state.contacts&&this.state.contacts} userData={this.state.userData&&this.state.userData} refrestList={this.friendsListRequest}/>: null}
+        {this.state.contacts.length > 0 ? <ContactList ref={instance => { this.contactList = instance; }} contacts={this.state.contacts&&this.state.contacts} userData={this.state.userData&&this.state.userData} refrestList={this.friendsListRequest} adviceChange={this.adviceChange} />: null}
         </ScrollView>
       </View>
-      <Button
-      
-      backgroundColor='#03A9F4'
-      buttonStyle={{borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0}}
-      title='Mis Reportes!' 
-      onPress = {() => navigate("Camera", {})}
-      
-      />
       </MenuProvider>
     );
   }
