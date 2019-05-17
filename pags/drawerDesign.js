@@ -1,55 +1,49 @@
 import React from "react";
-import { View, Text, StyleSheet, Platform, TouchableOpacity, Alert, Modal, NativeModules, KeyboardAvoidingView, StatusBar,ScrollView } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Alert, Modal, KeyboardAvoidingView,ScrollView } from "react-native";
 import Icon from 'react-native-vector-icons/AntDesign';
 import { TextInput } from "react-native-gesture-handler";
 import { Button } from "../node_modules/react-native-elements";
 import { Request_API } from '../networking/server';
-let couchbase_lite = NativeModules.couchbase_lite;
-let couchbase_lite_native = NativeModules.couchbase_lite_native;
+import { PouchDB_Get_Document, PouchDB_DeleteDB, PouchDB_UpdateDoc } from '../PouchDB/PouchDBQuerys'
+import LinearGradient from 'react-native-linear-gradient';
+import _ from 'lodash';
+// import PouchdbFind from 'pouchdb-find';
+// import PouchDB from 'pouchdb-react-native'; 
+// const db = new PouchDB('OjoMetropolitano');
+
 const modURL = ':3030/API/miCuenta/ModificarInformacionUsuario'
+const deleteAccount = ':3030/API/miCuenta/EliminarCuenta'
 
 export default class drawerDesign extends React.Component {
   
   loguotPress = () =>{
-    if(Platform.OS == 'android'){
-      couchbase_lite.deleteUserdataDoc(err => {
-        console.log(err);
-      }, succ => {
-        console.log(succ);
-      });
-
-      couchbase_lite.deleteUserInfoDoc(error => {
-        console.log(error);
-      }, success => {console.log(success);});
-
-      couchbase_lite.deleteUserReportsDoc(err => {
-        console.log(err);
-      }, succ => {
-        console.log(succ);
-      });
-    }
-    if(Platform.OS == 'ios'){
-      couchbase_lite_native.deleteUserDataDocTXT(err => {
-        console.log(err);
-      }, succ => {
-        console.log(succ);
-      });
-    }
+    PouchDB_DeleteDB();
   }
 
-  getUserInfo(){
-    if(Platform.OS == 'android'){
-      couchbase_lite.getUserInfoDoc(err => {
-        console.warn("Archivo no encontrado: " + err);
-      },succ => {
-        this.setState({userInfo: succ[0]});
-      });
-      couchbase_lite.getUserdataDoc(err => {
-        console.warn("Archivo no encontrado: " + err);
-      },succ => {
-        this.setState({userData: succ[0]});
-      });
-    }
+  async getUserInfo(){
+    await PouchDB_Get_Document('ActualizarInformacionUsuario')
+      .then(response => {
+      this.setState({userInfo: response})
+    });
+    
+    // await db.find({
+    //   selector: {
+    //     type: 'InformacionUsuario',
+    //   },
+    //   index: {
+    //     fields: ['type']
+    //   }
+    // }).then(result => {
+    //   this.setState({
+    //     userInfo: result.docs
+    //   })
+    // }).catch(function (err) {
+    //   console.log(err);
+    // });
+    await PouchDB_Get_Document('BasicValues')
+      .then(response => {
+      this.setState({userData: response})
+    });
   }
 
   componentWillMount(){
@@ -58,6 +52,7 @@ export default class drawerDesign extends React.Component {
 
   constructor(props){
     super(props);
+    // PouchDB.plugin(PouchdbFind);
     this.state = {
       modalVisible: false,
       namesModalV: false,
@@ -77,6 +72,17 @@ export default class drawerDesign extends React.Component {
     this.getLocationUser();
   }
   
+  showAlert(title, message){
+    Alert.alert(
+      title,
+      message,
+      [,
+          {text: 'OK'},
+      ],
+          {cancelable: false},
+      );
+  }
+
   getLocationUser(){
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -86,6 +92,26 @@ export default class drawerDesign extends React.Component {
       },
       (error) => console.log(error)
     );
+  }
+
+  deleteAccount(){
+    const params = {
+      nombreUsuario: this.state.userData.nombreUsuario,
+      atributoModificado: property,
+      valorNuevo: value,
+      tokenSiliconBear: this.state.userData.tokenSiliconBear,
+      ubicacionUsuario: this.state.ubicacionUsuario,
+    }
+    Request_API(params, deleteAccount).then(response =>{
+      console.log(response)
+      if(response.codigoRespuesta === 200){
+        _.set(this.state.userInfo, `${property}`, `${value}`);
+        PouchDB_UpdateDoc(this.state.userInfo._id, this.state.userInfo.type, response.usuario);
+        this.showAlert("Correcto", response.mensaje);
+      } else {
+        this.showAlert("Error " + response.codigoRespuesta, response.mensaje);
+      }
+    });
   }
 
   setModalVisible(visible){
@@ -100,20 +126,22 @@ export default class drawerDesign extends React.Component {
 
   async modRequest(property, value){
     const params = {
-      nombreUsuario: this.state.userInfo.nombreUsuario,
+      nombreUsuario: this.state.userData.nombreUsuario,
       atributoModificado: property,
       valorNuevo: value,
       tokenSiliconBear: this.state.userData.tokenSiliconBear,
       ubicacionUsuario: this.state.ubicacionUsuario,
     }
-    Request_API(params,modURL).then(response =>{
-       console.warn(response);
-       if(Platform.OS == 'android'){
-         couchbase_lite.updateUSerInfoDdc(property,value)
-       }
-       this.getUserInfo();
+    Request_API(params, modURL).then(response =>{
+      console.log(response)
+      if(response.codigoRespuesta === 200){
+        _.set(this.state.userInfo, `${property}`, `${value}`);
+        PouchDB_UpdateDoc(this.state.userInfo._id, this.state.userInfo.type, response.usuario);
+        this.showAlert("Correcto", response.mensaje);
+      } else {
+        this.showAlert("Error " + response.codigoRespuesta, response.mensaje);
       }
-    )
+    });
   }
 
   _renderNavBar(name, modalID){
@@ -122,10 +150,8 @@ export default class drawerDesign extends React.Component {
         
         <TouchableOpacity
           onPress={() => {
-            if(modalID == 1){
+            if(modalID == 1)
             this.setModalVisible(!this.state.modalVisible)
-            StatusBar.setHidden(true);
-            }
             else if (modalID == 2)
             this.setNamesModalV(!this.state.namesModalV)
             else if (modalID ==3)
@@ -147,12 +173,10 @@ export default class drawerDesign extends React.Component {
         animationType="slide"
         transparent={false}
         visible={this.state.modalVisible}
-        onShow={() => {this.getUserInfo();StatusBar.setHidden(false);}}
-        onDismiss={() => StatusBar.setHidden(true)}
-        onRequestClose={() => {
-          this.setModalVisible(!this.state.modalVisible);
-          StatusBar.setHidden(true);
-        }}>
+        onShow={() => this.getUserInfo()}
+        onRequestClose={() => 
+          this.setModalVisible(!this.state.modalVisible)
+        }>
         <View>
           {this._renderNavBar("Modificar Cuenta",1)}
           <View>
@@ -234,15 +258,15 @@ export default class drawerDesign extends React.Component {
               <Text style={styles.boldText}>Nuevo nombre</Text>
               <TextInput
               style={{}}
-              returnKeyType = "go"
+              returnKeyType = "next"
               ref={(input) => this.nuevoNombre = input}
-              nChangeText={(text) => this.setState({newNames:text})}
+              onChangeText={(text) => this.setState({newNames:text})}
               autoFocus={true}
               placeholder={this.state.userInfo.nombres !== "" ? this.state.userInfo.nombres : "Nombres"}
               />
               <TextInput
               style={{}}
-              returnKeyType = "go"
+              returnKeyType = "next"
               ref={(input) => this.NuevoApellidoP = input}
               onChangeText={(text) => this.setState({newPSurname:text})}
               placeholder={this.state.userInfo.apellidoPaterno !== "" ? this.state.userInfo.apellidoPaterno : "Apellido Paterno"}
@@ -260,9 +284,16 @@ export default class drawerDesign extends React.Component {
         <View style={{ flex: 1,justifyContent: 'flex-end',}}>
           <KeyboardAvoidingView  enabled behavior="position" style={{justifyContent: 'flex-end',alignItems:'flex-end', position: 'absolute',bottom:0,width:'100%',borderTopWidth:0.5}} >
             <View style={{width:80,justifyContent: 'flex-end',alignContent:'flex-end', margin:10}}>
-            <Button  onPress={() => {if(this.state.newNames != "")this.modRequest("nombres",this.state.newNames).then(this.setState({newNames:"text"}));
-             if(this.state.newPSurname != "")this.modRequest("apellidoPaterno",this.state.newPSurname).then(this.setState({newPSurname:"text"}));
-             if(this.state.newMSurname != "")this.modRequest("apellidoMaterno",this.state.newMSurname).then(this.setState({newMSurname:"text"}))}} title="Aceptar"/>
+            <Button  
+              onPress={() => 
+              {
+                if(this.state.newNames !== "")    this.modRequest("nombres",this.state.newNames).then(this.setState({newNames:"text"}));
+                if(this.state.newPSurname !== "") this.modRequest("apellidoPaterno",this.state.newPSurname).then(this.setState({newPSurname:"text"}));
+                if(this.state.newMSurname !== "") this.modRequest("apellidoMaterno",this.state.newMSurname).then(this.setState({newMSurname:"text"}));
+              }
+              } 
+             title="Aceptar" 
+             />
             </View>
           </KeyboardAvoidingView>
         </View>
@@ -315,8 +346,10 @@ export default class drawerDesign extends React.Component {
   render() {
     return (
       <View style={{ flex: 1 }}>
-        <View style={{height:200,backgroundColor:'black'}} >
+        <View style={{height:200}} >
+        <LinearGradient start={{x: 0, y: 0}} end={{x: 0, y: 1}} colors={['#4095ac','#122e39','#050e13','#050c12']} style={{height:200}}/>
         </View>
+        <ScrollView>
         <View style={{marginTop:30,marginStart:10}} >
             <TouchableOpacity style={styles.button} onPress={() => this.setModalVisible(true)}>
                 <Icon name="edit" style={styles.buttonIcon} />
@@ -342,6 +375,7 @@ export default class drawerDesign extends React.Component {
             </TouchableOpacity>
             {this._renderModal()}
         </View>
+        </ScrollView>
       </View>
     );
   }

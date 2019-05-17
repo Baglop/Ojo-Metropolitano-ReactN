@@ -8,23 +8,35 @@
 
 import logo from '../images/ojometropolitano.png';
 import React from 'react';
-import {Platform, StyleSheet, 
-        View,     TextInput, 
-        Image,    Button, 
-        NativeModules, Alert, 
+import {StyleSheet, View,
+        TextInput,  Image,
+        Button, Alert, 
         KeyboardAvoidingView, 
-        Animated,Dimensions, 
-        Keyboard, StatusBar} from 'react-native';
+        Animated,Dimensions, Text,
+        Keyboard, StatusBar, TouchableOpacity,
+        TouchableWithoutFeedback} from 'react-native';
 import { Request_API } from '../networking/server';
-let couchbase_lite = NativeModules.couchbase_lite;
-let couchbase_lite_native = NativeModules.couchbase_lite_native;
-const URL = 'http://siliconbear.dynu.net:3030/API/inicio/IniciarSesion';
+import { PouchDB_Insert } from '../PouchDB/PouchDBQuerys'
+import _ from 'lodash';
+import firebase from 'react-native-firebase'
+import Video from 'react-native-video'
+import backView from '../images/background.mp4'
+const URL = ':3030/API/inicio/IniciarSesion';
 const URL2 = ':3030/API/miCuenta/ActualizarInformacionUsuario';
+const modURL = ':3030/API/miCuenta/ModificarInformacionUsuario';
+const reportesUsuario = ':3030/API/inicio/ActualizarMisReportes';
+const AmigosyGrupos = ':3030/API/contactos/ActualizarAmigosYGrupos';
 const width = '80%';
 
 const window = Dimensions.get('window');
-const IMAGE_HEIGHT = window.width / 1.2;
+const IMAGE_HEIGHT = window.width / 1.6;
 const IMAGE_HEIGHT_SMALL = window.height / 4;
+
+const DismissKeyboard = ({ children }) => (
+  <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+    {children}
+  </TouchableWithoutFeedback>
+);
 
 export default class LoginScreen extends React.Component 
 {
@@ -34,9 +46,24 @@ export default class LoginScreen extends React.Component
     this.state ={
       nombreUsuario:    '',
       contrasena:       '',
-      ubicacionUsuario: '0.0,-0.0'
+      ubicacionUsuario: '0.0,-0.0',
+      tokenFireBase:    ''
     };
+    this.getLocationUser();
+    this.tokenFR();
   }
+
+  getLocationUser(){
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        this.setState({
+          ubicacionUsuario: position.coords.latitude + ',' + position.coords.longitude
+        });
+      },
+      (error) => console.log(error)
+    );
+  }
+
   componentWillMount () {
     this.keyboardWillShowSub = Keyboard.addListener('keyboardWillShow', this.keyboardWillShow);
     this.keyboardWillHideSub = Keyboard.addListener('keyboardWillHide', this.keyboardWillHide);
@@ -70,45 +97,22 @@ export default class LoginScreen extends React.Component
       title,
       message,
       [,
-        {text: 'OK', onPress: () => console.log('OK Pressed')},
+        {text: 'OK'},
       ],
       {cancelable: false},
     );
   }
 
-  loginPress = () =>{
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        this.setState({
-          ubicacionUsuario: position.coords.latitude + ',' + position.coords.longitude
-        });
-      },
-      (error) => console.log(error)
-    );
-    fetch(URL,{
-      method: 'POST',
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(this.state),
-    }).then(res => res.json())
-    .then(response => {
-      console.log(JSON.stringify(response));
-      if(response.codigoRespuesta == 200){
-        if(Platform.OS == 'android'){
-          couchbase_lite.setUserdataDoc(response.tokenSiliconBear, this.state.nombreUsuario);
-          this.props.navigation.replace('Main', {nombreUsuario: response.nombreUsuario, tokenSiliconBear: response.tokenSiliconBear});
-        }
-        if(Platform.OS === "ios"){
-          //couchbase_lite_native.setUserdataDocTXT(response.tokenSiliconBear, this.state.nombreUsuario);
-          this.props.navigation.replace('Main', {nombreUsuario: response.nombreUsuario, tokenSiliconBear: response.tokenSiliconBear});
-        }
-        this.userInfoRequest(response)
-      } else{
-        this.showAlert('No se puede iniciar sesión','El usuario o contraseña ingresada son incorrectos');
-      }
-    })
-    .catch(err => console.error(err));
+  tokenFR(){
+    firebase.messaging().getToken()
+    .then(fcmToken => {
+      if (fcmToken) {
+        this.setState({tokenFireBase: fcmToken})
+        console.log(fcmToken)
+      } else {
+        console.log("No hay token")
+      } 
+    });
   }
 
   userInfoRequest(info){
@@ -117,14 +121,107 @@ export default class LoginScreen extends React.Component
       tokenSiliconBear: info.tokenSiliconBear,
       ubicacionUsuario: this.state.ubicacionUsuario
     }
+    const body = {
+      nombreUsuario: this.state.nombreUsuario,
+      tokenSiliconBear: info.tokenSiliconBear,
+      tokenFirebase: this.state.tokenFireBase
+    }
     Request_API(request,URL2).then(response => {
-        console.warn(JSON.stringify(response));
-        
-        if(Platform.OS == 'android'){
-          couchbase_lite.setUserInfoDoc(JSON.stringify(response))
+        if(response.codigoRespuesta === 200){
+          // PouchDB_Insert('ActualizarInformacionUsuario', 'ActualizarInformacionUsuario', response.usuario);
+          // PouchDB_Insert('BasicValues', 'BasicValues', body);
+          this.props.navigation.replace('Main', {});
+       }
+    });    
+  }
+
+  userReportsRequest(info){
+    const userReports = {
+      nombreUsuario: this.state.nombreUsuario,
+      tokenSiliconBear: info.tokenSiliconBear,
+      ubicacionUsuario: this.state.ubicacionUsuario,
+    };
+    Request_API(userReports, reportesUsuario).then(response => { 
+      console.log(response);
+      if(response.codigoRespuesta === 200){
+        response.reportes.map((data) => {
+          PouchDB_Insert(data._id, 'userReports', data)
+        })
+      }
+    });
+  }
+
+  userFriendsAndGroups(info){
+    const userFyG = {
+      nombreUsuario: this.state.nombreUsuario,
+      tokenSiliconBear: info.tokenSiliconBear,
+      ubicacionUsuario: this.state.ubicacionUsuario,
+    };
+    Request_API(userFyG, AmigosyGrupos).then(response => { 
+      console.log(response);
+      if(response.codigoRespuesta === 200){
+        if(_.size(response.amigos) > 0){
+          response.amigos.map((data) => {
+            PouchDB_Insert(data._id, 'friends', data)
+          })
+        }
+        if(_.size(response.grupos) > 0){
+          response.grupos.map((data) => {
+            PouchDB_Insert(data.idGrupo, 'groups', data)
+          })
         }
       }
-    )
+    });
+  }
+
+  updateToken(info){
+    console.log(info.tokenSiliconBear);
+    const params = {
+      nombreUsuario: this.state.nombreUsuario,
+      atributoModificado: "tokenFirebase",
+      valorNuevo: this.state.tokenFireBase,
+      tokenSiliconBear: info.tokenSiliconBear,
+      ubicacionUsuario: this.state.ubicacionUsuario,
+    }
+    const body = {
+      nombreUsuario: this.state.nombreUsuario,
+      tokenSiliconBear: info.tokenSiliconBear,
+      tokenFirebase: this.state.tokenFireBase
+    }
+    Request_API(params,modURL).then(response =>{
+      console.log(response);
+      if(response.codigoRespuesta === 200){
+        PouchDB_Insert('ActualizarInformacionUsuario', 'ActualizarInformacionUsuario', response.usuario);
+        PouchDB_Insert('BasicValues', 'BasicValues', body);
+      }
+    })
+  }
+
+  loginPress(){
+    const body = {
+      nombreUsuario: this.state.nombreUsuario,
+      contrasena: this.state.contrasena,
+      ubicacionUsuario: this.state.ubicacionUsuario
+    }
+    Request_API(body, URL).then(response => {
+      if(response.codigoRespuesta === 200){
+        this.updateToken(response);
+        // setTimeout(() => {
+        //   this.userInfoRequest(response);
+        // }, 1000);
+        setTimeout(() => {
+          this.userReportsRequest(response);
+        }, 1000); 
+        setTimeout(() => {
+          this.userFriendsAndGroups(response);
+        }, 1000);
+        setTimeout(() => {
+          this.props.navigation.replace('Main', {});
+        }, 1000);    
+      } else {
+        this.showAlert('No se puede iniciar sesión',response.mensaje);
+      }
+    })
   }
 
   registerPress = () =>{
@@ -133,10 +230,18 @@ export default class LoginScreen extends React.Component
 
   render() {
     var { navigate } = this.props.navigation;
-    return (      
+    return ( 
+    <DismissKeyboard>
+    <View style={styles.root}> 
+      <Video 
+        repeat
+        source={backView}
+        resizeMode = 'cover'
+        style={StyleSheet.absoluteFill}
+      />
       <KeyboardAvoidingView behavior = "padding" style={styles.container}>
+      <StatusBar hidden/>
         <View style={{alignItems: 'center'}}>
-        <StatusBar hidden />
           <Animated.Image source={logo} style={[styles.logo, { height: this.imageHeight }]} />
         </View>
         <View style={styles.SectionStyle}>
@@ -144,8 +249,8 @@ export default class LoginScreen extends React.Component
             <Image source={require('../images/2x/round_person_white_24dp.png')} style={styles.ImageStyle}/>
           </View>
           <TextInput
-            style={{flex:1}}
-            placeholder=" Usuario"
+            style={styles.userLogin}
+            placeholder="Usuario"
             placeholderTextColor="rgba(255,255,255,.4)"
             underlineColorAndroid="transparent"
             returnKeyType = { "next" }
@@ -166,8 +271,8 @@ export default class LoginScreen extends React.Component
           </View>
           <TextInput
             secureTextEntry={true} 
-            style={{flex:1}}
-            placeholder=" Contraseña"
+            style={styles.userLogin}
+            placeholder="Contraseña"
             placeholderTextColor="rgba(255,255,255,.4)"
             underlineColorAndroid="transparent"
             returnKeyType = "go"
@@ -176,31 +281,35 @@ export default class LoginScreen extends React.Component
             />
         </View>
         <View style={styles.loginButton}>
-          <Button
-            title="Iniciar sesión"
-            color="#51738e"
-            onPress={this.loginPress}
-          />
+          <TouchableOpacity 
+          style={{backgroundColor:'#51738e', alignContent:'center',alignItems:'center',padding:10,borderRadius:5}}
+          onPress={() => this.loginPress() }> 
+            <Text style={{color:'white'}}>Iniciar sesión</Text>
+          </TouchableOpacity>
         </View>
-        <View style={styles.registerButton}>
+        <View style={styles.loginButton}>
           <Button
             title = "Aún no eres miembro? Registrarte aquí"
-            color = "#FFFFFF"
+            color="#51738e"
             onPress = {() => navigate("Register", {})}
             />
         </View>
-        
       </KeyboardAvoidingView>
+      </View>
+      </DismissKeyboard>    
     );
   }
 }
  
 const styles = StyleSheet.create({
  
+  root:{
+    flex: 1
+  }, 
   container: {
     flex: 1,
     justifyContent:  'center',
-    backgroundColor: '#3e4d59',
+    //backgroundColor: '#3e4d59',
   },
   
   SectionStyle: {
@@ -250,4 +359,10 @@ const styles = StyleSheet.create({
       resizeMode: 'stretch',
       alignItems: 'center'
   },
+  userLogin:{
+    flex: 1,
+    color: 'white',
+    paddingLeft: 8,
+    fontSize: 18,
+  }
 });

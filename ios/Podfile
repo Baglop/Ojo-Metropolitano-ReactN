@@ -9,16 +9,21 @@ target 'OjoMetropolitano' do
 
 pod 'GoogleMaps'
 
-  target 'OjoMetropolitano-tvOSTests' do
-    inherit! :search_paths
-    # Pods for testing
-    pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+pod 'Firebase/Core'
+pod 'Firebase/Messaging'
 
-    pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
+  # target 'OjoMetropolitano-tvOSTests' do
+  #   inherit! :search_paths
+  #   # Pods for testing
+  #   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
-    pod 'react-native-image-resizer', :path => '../node_modules/react-native-image-resizer'
+  #   pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
 
-  end
+  #   pod 'react-native-image-resizer', :path => '../node_modules/react-native-image-resizer'
+
+  #   pod 'react-native-randombytes', :path => '../node_modules/react-native-randombytes'
+
+  # end
 
   target 'OjoMetropolitanoTests' do
     inherit! :search_paths

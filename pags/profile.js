@@ -1,151 +1,70 @@
-import React from "react";
-import { View, Text,StyleSheet,Platform, TouchableOpacity, ScrollView, NativeModules, Alert, TextInput, Dimensions, KeyboardAvoidingView} from "react-native";
-import { createDrawerNavigator,createAppContainer} from "react-navigation";
-import MapView,{PROVIDER_GOOGLE} from 'react-native-maps';
-import {Marker} from 'react-native-maps';
+import React, {Component} from "react";
+import { View, Text,StyleSheet, TouchableOpacity, Alert, Dimensions} from "react-native";
+import { createDrawerNavigator,createAppContainer, createStackNavigator} from "react-navigation";
 import Bg from '../images/citybackground.png';
 import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header-scroll-view';
 import Icon from 'react-native-vector-icons/Ionicons';
 import drawerDesign from './drawerDesign'
-import { Card } from 'react-native-elements'
-import { Button, Image } from 'react-native-elements';
+import { Button, Image, Divider } from 'react-native-elements';
 import Modal from "react-native-modal";
 import _ from 'lodash';
-import { Request_API } from '../networking/server';
 import ImagePicker from 'react-native-image-picker';
+import { PouchDB_Get_Document } from '../PouchDB/PouchDBQuerys';
+import UserReports from './reports'
 
 const window = Dimensions.get('window');
-const reportesUsuario = ':3030/API/inicio/ActualizarMisReportes';
-const deleteReporteUsuario = ':3030/API/inicio/EliminarReporte';
-const updateReporte = ':3030/API/inicio/ModificarReporte'
-const imageUri = 'http://okcundinamarca.com/wp-content/uploads/2017/08/robo-a-mano-armada.jpg'
-
-let couchbase_lite_native = NativeModules.couchbase_lite_native;
-const couchbase_liteAndroid = NativeModules.couchbase_lite;
-
 
 class ProfileScreenConent extends React.Component {
 
   static navigationOptions = {
-    header: null
+    headerTransparent: true
+  }
+  
+  componentWillMount(){
+    
   }
   
   constructor(props) {
     super(props);
+    this.getInfo();
     this.state = { 
       openBar: false,
       userData: [],
-      userReports:[],
-      visibleModal: null,
-      reporte: [],
-      ubicacionUsuario: '0.0,-0.0',
-      region:{
-        latitude: 0,
-        longitude: 0,
-        latitudeDelta: 0.0100,
-        longitudeDelta: 0.0025,
-      },
       userInfo:[],
-      nuevoValor: '',
-      atributo: '',
-      image: null
+      image: require('../images/add_photo-512.png'),
     };
-    this.getLocationUser();
     this.selectPhotoTapped = this.selectPhotoTapped.bind(this);
-    
   }
 
-  getInfo(){
-    if(Platform.OS == 'android'){
-      couchbase_liteAndroid.getUserInfoDoc(err => {
-          console.warn(err)
-        }, succ => {
-          this.setState({userInfo: succ[0]})
-          console.warn(succ)
-        }
-     )
-    }
+  async getInfo(){
+    await PouchDB_Get_Document('ActualizarInformacionUsuario')
+      .then(response => {
+      this.setState({
+        userInfo: response
+      })
+    })
+    await PouchDB_Get_Document('BasicValues')
+      .then(response => {
+      this.setState({
+        userData: response
+      })
+    });
   }
 
-  startLocTrack(){
-      if (Platform.OS === 'android'){
-        couchbase_liteAndroid.getUserdataDoc(err => {
-          console.warn("chale me humillo")
-        },succ => {
-          this.setState({userData: succ[0]})
-          const userPetition = {
-            nombreUsuario: succ[0].userName,
-            tokenSiliconBear: succ[0].tokenSiliconBear,
-            ubicacionUsuario: this.state.ubicacionUsuario
-          };
-          Request_API(userPetition, reportesUsuario)
-          .then(response => {
-            console.warn(JSON.stringify(response));
-            if(response.codigoRespuesta === 200){
-              couchbase_liteAndroid.setReportDataDoc(JSON.stringify(response),2);
-              this.setState({userReports:response.reportes});
-              console.warn(this.state.reports.id);
-            }
-          })
-        });
-      }
-      if(Platform.OS === 'ios'){
-        couchbase_lite_native.getUserdataDocTXT(err => {
-          console.warn("chale me humillo")
-        },succ => {
-          this.setState({userData: succ[0]})
-          const userPetition = {
-            nombreUsuario: succ[0].userName,
-            tokenSiliconBear: succ[0].tokenSiliconBear,
-            ubicacionUsuario: this.state.ubicacionUsuario
-          }
-          Request_API(userPetition, reportesUsuario)
-          .then(response => {
-            if(response.codigoRespuesta === 200){
-              //couchbase_liteAndroid.setReportDataDoc(JSON.stringify(response),2);
-              this.setState({userReports: response.reportes});
-            }
-          })
-      });
-    }
-  }
-
-  deleteReport(id){
-    if(Platform.OS === 'android'){
-      const bodyPetition = {
-        idReporte: id,
-        nombreUsuario: this.state.userData.userName,
-        tokenSiliconBear: this.state.userData.tokenSiliconBear,
-        ubicacionUsuario: this.state.ubicacionUsuario,
-      }
-      Request_API(bodyPetition, deleteReporteUsuario)
-        .then(response => {
-        if(response.codigoRespuesta === 200){
-          console.warn('Se elimino con exito')
-          let result = _.pull(this.state.userReports, `${id}`);
-          console.warn(result)
-        }
-      }); 
-    }
-    if(Platform.OS === 'ios'){
-      const bodyPetition = {
-        idReporte: id,
-        nombreUsuario: this.state.userData.userName,
-        tokenSiliconBear: this.state.userData.tokenSiliconBear,
-        ubicacionUsuario: this.state.ubicacionUsuario,
-      }
-      Request_API(bodyPetition, deleteReporteUsuario)
-        .then(response => {
-        if(response.codigoRespuesta === 200){
-          let result = _.pull(this.state.userReports, `${id}`);
-          console.warn(result)
-        }
-      }); 
-    }
-}
-  async componentWillMount(){
-    await this.getInfo();
-    this.startLocTrack();
+  _renderModal(){
+    return(
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={this.state.modalVisible}
+        onShow={() => {this.getUserInfo();StatusBar.setHidden(false);}}
+        onDismiss={() => StatusBar.setHidden(true)}
+        onRequestClose={() => {
+          this.setModalVisible(!this.state.modalVisible);
+          StatusBar.setHidden(true);
+        }}>
+      </Modal>
+    );
   }
 
   showAlert(title, message, _id){
@@ -159,14 +78,6 @@ class ProfileScreenConent extends React.Component {
     );
   }
 
-  renderButton = (text, onPress) => (
-    <TouchableOpacity onPress={onPress}>
-      <View style={styles.buttonModal}>
-        <Text>{text}</Text>
-      </View>
-    </TouchableOpacity>
-  );
-
   getLocationUser(){
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -178,82 +89,7 @@ class ProfileScreenConent extends React.Component {
     );
   }
 
-  getReportType(id){
-    switch(id){
-      case '1':
-        return 'Robo';
-      case '2':
-        return 'Asalto';
-      case '3':
-        return 'Acoso';
-      case '4':
-        return 'Vandalismo';
-      case '5':
-        return 'Pandillerismo';
-      case '6':
-        return 'Violación';
-      case '7':
-        return 'Secuestro o tentativa';
-      case '8':
-        return 'Asesinato';
-    }
-  }
 
-  updateReports(id){
-    if(Platform.OS === 'android'){
-      const bodyPetition = {
-        idReporte: id,
-        nombreUsuario: this.state.userInfo.userName,
-        atributoModificado: this.state.atributo,
-        valorNuevo: this.state.nuevoValor,
-        tokenSiliconBear: this.state.userInfo.tokenSiliconBear,
-        ubicacionUsuario: this.state.ubicacionUsuario,
-      }
-      console.log(bodyPetition)
-      // Request_API(bodyPetition, deleteReporteUsuario)
-      //   .then(response => {
-      //   if(response.codigoRespuesta === 200){
-      //     console.warn('Se elimino con exito')
-      //     let result = _.pull(this.state.userReports, `${id}`);
-      //     console.warn(result)
-      //   }
-      // }); 
-    }
-    if(Platform.OS === 'ios'){
-      const bodyPetition = {
-        idReporte: id,
-        nombreUsuario: this.state.userInfo.userName,
-        atributoModificado: this.state.atributo,
-        valorNuevo: this.state.nuevoValor,
-        tokenSiliconBear: this.state.userInfo.tokenSiliconBear,
-        ubicacionUsuario: this.state.ubicacionUsuario,
-      }
-      console.log(bodyPetition)
-      Request_API(bodyPetition, updateReporte)
-        .then(response => {
-        if(response.codigoRespuesta === 200){
-          Alert.alert(
-            'Correcto',
-            response.mensaje,
-            [,
-              {text: 'OK', onPress: () => this.setState({ visibleModal: null })},
-            ],
-            {cancelable: false},
-          );
-        }
-        else{
-          Alert.alert(
-            'Error ' + response.codigoRespuesta,
-            response.mensaje,
-            [,
-              {text: 'OK'},
-            ],
-            {cancelable: false},
-          );
-        }
-      }); 
-    }
-  }
 
   selectPhotoTapped() {
     const options = {
@@ -264,10 +100,8 @@ class ProfileScreenConent extends React.Component {
         skipBackup: true,
       },
     };
-
     ImagePicker.showImagePicker(options, (response) => {
       console.log('Response = ', response);
-
       if (response.didCancel) {
         console.log('User cancelled photo picker');
       } else if (response.error) {
@@ -287,79 +121,20 @@ class ProfileScreenConent extends React.Component {
     });
   }
   
-  renderModalContent(){
-    return(
-    <KeyboardAvoidingView behavior="padding">
-    <View style={styles.modalContent}>
-      <View style = {{height: 300}}>
-        <ScrollView width = {window.width - 60}>
-        <View>
-          <Text style={styles.titles}> Categoría del reporte:</Text>
-          <Text style={{margin:5}}> { this.getReportType(this.state.reporte.tipoReporte)} </Text>
-          <Text style={styles.titles}> Fecha y hora del Incidente:</Text>
-          <Text style={{margin:5}}> {this.state.reporte.fechaIncidente} </Text>
-          <Text style={styles.titles}> Fecha y hora del Reporte:</Text>
-          <Text style={{margin:5}}> {this.state.reporte.fechaReporte} </Text>
-          <Text style={styles.titles}> Descripción:</Text>
-          <TextInput style={{margin:5}} multiline = {true} onChangeText={(text) => this.setState({nuevoValor: text, atributo: 'descripcion'})}> {this.state.reporte.descripcion} </TextInput>
-          <Text style={styles.titles}> Evidencia:</Text>
-          <TouchableOpacity onPress={this.selectPhotoTapped.bind(this)}>
-          {this.state.image === null ? (
-              <Image style={styles.itemPic} source={{uri: this.state.reporte.evidencia && this.state.reporte.evidencia}}/>
-            ) : (
-              <Image style={styles.itemPic} source={this.state.image && this.state.image} />
-            )}
-          </TouchableOpacity>
-          <Text style={styles.titles}> Ubicación del reporte:</Text>
-          <View height={250}>
-            <MapView style={styles.modalMap}
-            zoomEnabled = {false}
-            pitchEnabled	= {false}
-            rotateEnabled = {false}
-            scrollEnabled = {false}
-              provider={PROVIDER_GOOGLE}
-              initialRegion={{
-                latitude: parseFloat(this.state.reporte.latitud) && parseFloat(this.state.reporte.latitud),
-                longitude: parseFloat(this.state.reporte.longitud) && parseFloat(this.state.reporte.longitud),
-                latitudeDelta: 0.0100,
-                longitudeDelta: 0.0025}}>
-                <Marker
-                  coordinate={{latitude: parseFloat(this.state.reporte.latitud) && parseFloat(this.state.reporte.latitud), 
-                               longitude: parseFloat(this.state.reporte.longitud) && parseFloat(this.state.reporte.longitud)}}
-                />
-            </MapView>
-          </View>
-          </View>
-        </ScrollView>
-      </View>
-      <View style={{flexDirection:"row", width:'200%',justifyContent:"center"}} >
-        <TouchableOpacity
-          onPress={() => this.setState({ visibleModal: null })}>
-          <Icon name="md-checkmark-circle" style={styles.modalButtonIcon}/>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => this.showAlert('Confirmación','¿Seguro que quieres eliminar este reporte?', this.state.reporte._id)}>
-          <Icon name="md-close-circle" style={styles.modalButtonIcon}/>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => this.updateReports(this.state.reporte._id)/*this.setState({ visibleModal: null })*/}>
-          <Icon name="md-arrow-dropup-circle" style={styles.modalButtonIcon}/>
-        </TouchableOpacity>
-      </View>
-    </View>
-   </KeyboardAvoidingView>
-    )
-  };
-
   _renderProfile(){
     return(
     <View>
-      <View style={{alignItems:'center',justifyContent:'center',height:'100%'}} >
-        <TouchableOpacity style={{overflow:'hidden',borderRadius:200,borderWidth:2}}>
-          <Image style={styles.logoStyle} source={{uri: this.state.userInfo.imagenPerfil}}/>
+      <View style={{alignItems:'center',justifyContent:'center',height:'100%', width:'100%'}} >
+        <TouchableOpacity style={{borderRadius:200,borderWidth:2}} onPress={this.selectPhotoTapped.bind(this)}>
+          {/* <Image style={styles.logoStyle} source={{uri: this.state.userInfo.imagenPerfil}}/> */}
+          {this.state.userInfo.imagenPerfil !== null ? (
+              <Image style={styles.logoStyle} source={{uri: this.state.userInfo.imagenPerfil && this.state.userInfo.imagenPerfil}}/>
+            ) : (
+              <Image style={styles.logoStyle} source={this.state.image && this.state.image} />
+            )}
         </TouchableOpacity>
-        <Text style={{color:'white',fontWeight:'bold'}}>{this.state.userInfo.nombreUsuario}</Text>
-      </View>
+        </View>
+        <Text style={{color:'white',fontWeight:'bold'}}>{this.state.userData.nombreUsuario}</Text>
     </View>
     )
   }
@@ -374,6 +149,7 @@ class ProfileScreenConent extends React.Component {
   openSideBar = () => this.setState({ openBar: true })
 
   render() {
+    var { navigate } = this.props.navigation;
     return (
       <View style={{ flex: 1 }}>
         <HeaderImageScrollView
@@ -388,31 +164,27 @@ class ProfileScreenConent extends React.Component {
         )}
         renderForeground={() => this._renderProfile()}
         >
-          <View style={{ height: 1000 }}>
             <TriggeringView onHide={() => console.log('text hidden')} >
-              <Text>Perfil</Text> 
-              <ScrollView horizontal = {true} showsHorizontalScrollIndicator = { false }>
-                {
-                  this.state.userReports && this.state.userReports.map((getData, key) => {
-                    return(
-                      <TouchableOpacity key = {key} onPress={() => this.setState({ visibleModal: 2, reporte: getData })}>
-                      <View style={styles.buttonModal}>
-                        <Text>{this.getReportType(getData.tipoReporte)}</Text>
-                      </View>
-                    </TouchableOpacity>  
-                    )                     
-                })
-                }                
-              </ScrollView>
-                <Modal
-                  isVisible={this.state.visibleModal === 2}
-                  animationIn="slideInRight"
-                  animationOut="slideOutLeft"
-                  onBackdropPress={() => this.setState({ visibleModal: null })}>
-                  {this.renderModalContent()}
-                </Modal>
+              <View style={{ padding:10 }}>
+                <Text style={{fontSize:18,fontWeight:'bold'}}>Nombre de Usuario</Text>
+                <Text style={{fontSize:18}}>{this.state.userInfo.nombreUsuario}</Text>
+                <Text style={{fontSize:18,fontWeight:'bold',marginTop:20}}>Nombre</Text>
+                <Text style={{fontSize:18}}>{this.state.userInfo.nombres + ' ' + this.state.userInfo.apellidoPaterno + ' ' + this.state.userInfo.apellidoMaterno }</Text> 
+                <Text style={{fontSize:18,fontWeight:'bold',marginTop:20}}>Teléfono</Text>
+                <Text style={{fontSize:18}}>{this.state.userInfo.celular}</Text>
+                <Text style={{fontSize:18,fontWeight:'bold',marginTop:20}}>Correo electrónico</Text>
+                <Text style={{fontSize:18}}>{this.state.userInfo.correo}</Text>
+              </View>
+              <Divider style={{ backgroundColor: '#e8e9ed', height:10 }} />
+              <View style={{ padding:10 }}>
+                <Button
+                backgroundColor='#03A9F4'
+                buttonStyle={{borderRadius: 5, marginLeft: 0, marginRight: 0, marginBottom: 0, marginTop:5}}
+                title='Mis Reportes' 
+                onPress = {() => navigate("Reportes", {})}
+                />
+              </View>
             </TriggeringView>
-          </View>
         </HeaderImageScrollView>
       </View>
     );
@@ -425,9 +197,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   logoStyle: {
-    height: 100,
-    width: 100,
-    borderRadius: 50,
+    height: 150,
+    width: 150,
+    borderRadius: 150/2,
     resizeMode : 'stretch',
   },
   button: {
@@ -480,9 +252,24 @@ const styles = StyleSheet.create({
   },
  });
 
- const MyDrawerNavigator = createDrawerNavigator({
+
+ const AppNavigator = createStackNavigator(
+  {
     Home: {
       screen: ProfileScreenConent,
+    },
+    Reportes: {
+      screen: UserReports
+    },
+  },
+  {
+      initialRouteName: "Home",
+  }
+);
+
+ const MyDrawerNavigator = createDrawerNavigator({
+    Home: {
+      screen: AppNavigator,
     }
   },
   {
