@@ -7,6 +7,7 @@ import { Request_API } from '../networking/server';
 import { PouchDB_Get_Document, PouchDB_DeleteDB, PouchDB_UpdateDoc } from '../PouchDB/PouchDBQuerys'
 import LinearGradient from 'react-native-linear-gradient';
 import _ from 'lodash';
+import Communications from 'react-native-communications';
 // import PouchdbFind from 'pouchdb-find';
 // import PouchDB from 'pouchdb-react-native'; 
 // const db = new PouchDB('OjoMetropolitano');
@@ -16,9 +17,7 @@ const deleteAccount = ':3030/API/miCuenta/EliminarCuenta'
 
 export default class drawerDesign extends React.Component {
   
-  loguotPress = () =>{
-    PouchDB_DeleteDB();
-  }
+
 
   async getUserInfo(){
     await PouchDB_Get_Document('ActualizarInformacionUsuario')
@@ -70,6 +69,12 @@ export default class drawerDesign extends React.Component {
       newMSurname:"",
     };
     this.getLocationUser();
+  }
+
+
+  loguotPress = () =>{    
+    //PouchDB_DeleteDB();
+    this.props.navigation.navigate('Main', {});
   }
   
   showAlert(title, message){
@@ -365,14 +370,22 @@ export default class drawerDesign extends React.Component {
             </TouchableOpacity>
         </View>
         <View style={{marginTop:30,marginStart:10}} >
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={() => Communications.web('https://www.siliconbears.com')}>
                 <Icon name="questioncircle" style={styles.buttonIcon} />
                 <Text style={{fontWeight:'bold',fontSize:18}}>Acerca de</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={() => Communications.email(['contacto@siliconbears.com', null],null,null,null,null)}>
                 <Icon name="infocirlce" style={styles.buttonIcon} />
                 <Text style={{fontWeight:'bold',fontSize:18}}>Contacto</Text>
             </TouchableOpacity>
+            {/* <TouchableOpacity style={styles.button} onPress={() => Communications.text('3333987920', 'Pinche putita')}>
+                <Icon name="infocirlce" style={styles.buttonIcon} />
+                <Text style={{fontWeight:'bold',fontSize:18}}>SMS</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={() => Communications.phonecall('3333987920', true)}>
+                <Icon name="infocirlce" style={styles.buttonIcon} />
+                <Text style={{fontWeight:'bold',fontSize:18}}>Llamada</Text>
+            </TouchableOpacity> */}
             {this._renderModal()}
         </View>
         </ScrollView>

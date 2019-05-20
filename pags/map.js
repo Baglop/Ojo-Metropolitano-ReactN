@@ -248,7 +248,6 @@ class MapScreen extends React.Component {
     return(
       <DismissKeyboard>
         <View style={styles.root}>
-          <LinearGradient start={{x: 0, y: 1}} end={{x: 0, y: 0}} colors={['#4095ac','#122e39','#050e13','#050c12']} style={styles.root}>
             <View style={styles.mapView}>
               <MapView 
                 style={styles.modalMap}
@@ -271,10 +270,10 @@ class MapScreen extends React.Component {
                         marginLeft={8}
                         data={data}
                         onChangeText={value => this.onChangeHandler(value)}
-                        textColor='white'
+                        textColor='black'
                         selectedItemColor='black'
                         fontSize={18}
-                        baseColor='white'
+                        baseColor='black'
                         itemColor='black'
                         value='Robo'
                       />
@@ -328,8 +327,7 @@ class MapScreen extends React.Component {
                   </TouchableOpacity>
                 </View>
               </ScrollView>
-            </View>
-          </LinearGradient>
+            </View>>
         </View>
       </DismissKeyboard>
     )
@@ -337,7 +335,6 @@ class MapScreen extends React.Component {
       return(
       <DismissKeyboard>
         <View style={styles.root}>
-          <LinearGradient start={{x: 0, y: 1}} end={{x: 0, y: 0}} colors={['#4095ac','#122e39','#050e13','#050c12']} style={styles.root}>
             <KeyboardAvoidingView style={styles.root} behavior="padding">
               <View style={styles.mapView}>
                 <MapView 
@@ -361,10 +358,10 @@ class MapScreen extends React.Component {
                         marginLeft={8}
                         data={data}
                         onChangeText={value => this.onChangeHandler(value)}
-                        textColor='white'
+                        textColor='black'
                         selectedItemColor='black'
                         fontSize={18}
-                        baseColor='white'
+                        baseColor='black'
                         itemColor='black'
                         value='Robo'
                       />
@@ -420,7 +417,6 @@ class MapScreen extends React.Component {
                 </ScrollView>
               </View>
           </KeyboardAvoidingView>
-        </LinearGradient>
         </View>
       </DismissKeyboard>
       )
@@ -541,7 +537,8 @@ class MapScreen extends React.Component {
 
 const styles = StyleSheet.create({
   root:{
-    flex: 1
+    flex: 1,
+    backgroundColor: 'white'
   },
   communityButton:{
     height: 50,
@@ -602,7 +599,7 @@ titles: {
     fontSize: 22,
     textAlign: 'center',
     marginTop: 20,
-    color: 'white'
+    color: 'black'
 },
 dateAndDrop:{
     flexDirection: 'row',
@@ -631,7 +628,7 @@ textDescription:{
     textAlignVertical: 'top',
     width: window.width - 20,
     height: 100,
-    color: 'white',
+    color: 'black',
     fontSize: 18
 },
 itemPic: {

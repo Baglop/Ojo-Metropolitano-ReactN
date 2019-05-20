@@ -108,7 +108,8 @@ export default class RegisterScreen extends React.Component {
       } 
       if(this.state.celular.length > 10) {
         this.dropdown.alertWithType('error','Error','Ingresa un número telefónico válido')
-      } else {
+      }
+      if(this.state.celular.length === 10){
         if(this.state.nombreUsuario !== '' && this.state.contrasena1 !== '' && this.state.contrasena2 !== '' && this.state.celular !== ''){
           this.setState({disable: false})
         } else {

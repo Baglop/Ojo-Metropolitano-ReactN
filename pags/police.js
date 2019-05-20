@@ -4,7 +4,6 @@ import Icon from 'react-native-vector-icons/AntDesign'
 import { PouchDB_Get_Document} from '../PouchDB/PouchDBQuerys';
 import { Request_API } from '../networking/server';
 const alertURL = ':3030/API/agentePoliciaco/BotonDePanico';
-
 const numbers=[
   {
     key:'1',

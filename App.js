@@ -11,6 +11,7 @@ import MainScreen from './pags/main';
 import RegisterScreen from './pags/register';
 import Register2Screen from './pags/register2';
 import CameraScreen from './pags/camera';
+import DrawerDesign from './pags/drawerDesign'
 import { createStackNavigator, createAppContainer } from "react-navigation";
 import PouchDB from 'pouchdb-react-native'; 
 const db = new PouchDB('OjoMetropolitano');
@@ -23,6 +24,9 @@ const AppNavigatorM = createStackNavigator(
     },
     Main: {
         screen: MainScreen
+    },
+    DrawerDesign: {
+      screen: DrawerDesign
     }
   },
   {
