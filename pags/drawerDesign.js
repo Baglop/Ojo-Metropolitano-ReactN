@@ -73,8 +73,8 @@ export default class drawerDesign extends React.Component {
 
 
   loguotPress = () =>{    
-    //PouchDB_DeleteDB();
-    this.props.navigation.navigate('Main', {});
+    PouchDB_DeleteDB();
+    //this.props.navigation.navigate('Main', {});
   }
   
   showAlert(title, message){

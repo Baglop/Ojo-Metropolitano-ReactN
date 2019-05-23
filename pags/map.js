@@ -60,10 +60,10 @@ class MapScreen extends React.Component {
       visibleModal: null,
       modalReport:false,
       image: require('../images/camera.png'),
-      image64: null,
-      date:null,
-      idReporte: null,
-      reportDescription: null,
+      image64: '',
+      date: '',
+      idReporte: '1',
+      reportDescription: '',
     }
     this.selectPhotoTapped = this.selectPhotoTapped.bind(this);
   }
@@ -248,22 +248,22 @@ class MapScreen extends React.Component {
     return(
       <DismissKeyboard>
         <View style={styles.root}>
-            <View style={styles.mapView}>
-              <MapView 
-                style={styles.modalMap}
-                provider={PROVIDER_GOOGLE}
-                initialRegion={this.state.region}>
+              <View style={styles.mapView}>
+                <MapView 
+                  style={styles.modalMap}
+                  provider={PROVIDER_GOOGLE}
+                  initialRegion={this.state.region}>
                 <Marker
                   draggable
                   coordinate={this.state.markerCoord}
                   description={'Arrastra el marcador para cambiar la ubicación'}
                   onDragEnd={(e) => this.setState({markerCoord: e.nativeEvent.coordinate})}
                 />
-              </MapView>
-            </View>
-            <View style={styles.formik}>
-              <ScrollView>
-                <Text style={styles.titles}>Tipo del reporte y fecha</Text>
+                </MapView>
+              </View>
+              <View style={styles.formik}>
+                <ScrollView>
+                  <Text style={styles.titles}>Tipo del reporte y fecha</Text>
                   <View style={styles.dateAndDrop}>
                     <View style={styles.drop}>
                       <Dropdown
@@ -278,56 +278,56 @@ class MapScreen extends React.Component {
                         value='Robo'
                       />
                     </View>
-                  <View style={styles.date}>
-                    <DatePicker
-                      date={this.state.date}
-                      style={{width:58}}
-                      mode="datetime"
-                      format="YYYY/MM/DD-HH:mm:ss"
-                      minDate="2015-01-01"
-                      maxDate={new Date()}
-                      confirmBtnText="Confirm"
-                      cancelBtnText="Cancel"
-                      customStyles={{
-                        dateIcon: {
-                          width:60,
-                          height:55,
-                          marginLeft: 15
-                        },
-                        dateInput: {
-                          height: 0,
-                          width: 0,
-                        }
-                      }}
-                      onDateChange={(date) => {this.setState({date: date})}}
-                    />
+                    <View style={styles.date}>
+                      <DatePicker
+                        date={this.state.date}
+                        style={{width:58}}
+                        mode="datetime"
+                        format="YYYY/MM/DD-HH:mm:ss"
+                        minDate="2015-01-01"
+                        maxDate={new Date()}
+                        confirmBtnText="Confirm"
+                        cancelBtnText="Cancel"
+                        customStyles={{
+                          dateIcon: {
+                            width:60,
+                            height:55,
+                            marginLeft: 15
+                          },
+                          dateInput: {
+                            height: 0,
+                            width: 0,
+                          }
+                        }}
+                        onDateChange={(date) => {this.setState({date: date})}}
+                      />
+                    </View>
                   </View>
-                </View>
-                <Text style={styles.titles}> Añade una descripción </Text>
-                <TextInput
-                  style={styles.textDescription}
-                  onChangeText = {(text) => {this.setState({reportDescription:text})}}
-                  returnKeyType = 'done'
-                  multiline={true}
-                />
-                <Text style={styles.titles} >Añadir evidencia</Text>
-                <TouchableOpacity onPress={this.selectPhotoTapped.bind(this)}>
-                  <Image style={styles.itemPic} source={this.state.image} />
-                </TouchableOpacity>
-                <View style={{flexDirection: 'row', flex: 1, justifyContent:'center',alignItems:'center'}}>
-                  <TouchableOpacity 
-                    style={{backgroundColor:'#51738e', justifyContent:'center',alignItems:'center', borderRadius:10, height: 45, marginBottom: 15, marginTop: 20, flex: 1, marginRight: 5}}
-                    onPress={() => this.makeReportRequest()}> 
-                    <Text style={{color:'white', fontSize:20}}>Reportar</Text>
+                  <Text style={styles.titles}> Añade una descripción </Text>
+                  <TextInput
+                    style={styles.textDescription}
+                    onChangeText = {(text) => {this.setState({reportDescription:text})}}
+                    returnKeyType = 'done'
+                    multiline={true}
+                  />
+                  <Text style={styles.titles} >Añadir evidencia</Text>
+                  <TouchableOpacity onPress={this.selectPhotoTapped.bind(this)}>
+                    <Image style={styles.itemPic} source={this.state.image} />
                   </TouchableOpacity>
-                  <TouchableOpacity 
-                    style={{backgroundColor:'#51738e', justifyContent:'center',alignItems:'center', borderRadius:10, height: 45, marginBottom: 15, marginTop: 20, flex: 1, marginLeft: 5}}
-                    onPress={() => this.setState({visibleModal: null})}> 
-                    <Text style={{color:'white', fontSize:20}}>Cancelar</Text>
-                  </TouchableOpacity>
-                </View>
-              </ScrollView>
-            </View>>
+                  <View style={{flexDirection: 'row', flex: 1, justifyContent:'center',alignItems:'center'}}>
+                    <TouchableOpacity 
+                      style={{backgroundColor:'#51738e', justifyContent:'center',alignItems:'center', borderRadius:10, height: 45, marginBottom: 15, marginTop: 20, flex: 1, marginRight: 5}}
+                      onPress={() => this.makeReportRequest()}> 
+                      <Text style={{color:'white', fontSize:20}}>Reportar</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity 
+                      style={{backgroundColor:'#51738e', justifyContent:'center',alignItems:'center', borderRadius:10, height: 45, marginBottom: 15, marginTop: 20, flex: 1, marginLeft: 5}}
+                      onPress={() => this.setState({visibleModal: null})}> 
+                      <Text style={{color:'white', fontSize:20}}>Cancelar</Text>
+                    </TouchableOpacity>
+                  </View>
+                </ScrollView>
+              </View>
         </View>
       </DismissKeyboard>
     )
@@ -505,6 +505,32 @@ class MapScreen extends React.Component {
         this.showAlert("Error: " + response.codigoRespuesta, response.mensaje);
       }
     })
+    this.cleanState();
+  }
+
+  cleanState(){
+    this.setState({
+      idReporte: '1',
+      image64: '',
+      reportDescription: '',
+      markerCoord: {
+        latitude: 0,
+        longitude: 0
+      },
+      date: ''
+    })
+  }
+
+  openModalReport(visible){
+    if(visible){
+      this.setState({
+        markerCoord:{
+          latitude: this.state.region.latitude,
+          longitude: this.state.region.longitude,
+        },
+      });
+    }
+    this.setState({ visibleModal: 5})
   }
 
   render() {
@@ -515,7 +541,7 @@ class MapScreen extends React.Component {
           initialRegion={this.state.region}>
           {this.state.globalReports ? this._renderGlobalReports():null}
         </MapView>
-        <ActionButton buttonColor="#1e4e56" onPress={() => this.setState({visibleModal: 5})}/>
+        <ActionButton buttonColor="#1e4e56" onPress={() => this.openModalReport(true)}/>
         <Modal
           isVisible={this.state.visibleModal === 2}
           animationIn="slideInDown"
@@ -527,6 +553,7 @@ class MapScreen extends React.Component {
           isVisible={this.state.visibleModal === 5}
           style={styles.bottomModal}
           onBackdropPress={() => this.setState({ visibleModal: null })}
+          onRequestClose={() =>  this.openModalReport(!this.state.modalReport)}
           >
           {this._renderMakeReport()}
         </Modal>

@@ -185,17 +185,11 @@ _renderAdvice(){
     return (
       <View style={{ flex: 1}}>
         {this.state.advice ? this._renderAdvice():null}
-        <View style={{marginTop:30,alignItems:'center',justifyContent:'center',borderBottomWidth:0.5,borderBottomColor:'rgba(0,0,0,0.1)'}} >
+        <View style={{marginTop:30,alignItems:'center',justifyContent:'center'}} >
           <TouchableOpacity style={styles.button} onPress={() => this.alertaPreventiva()} >
-            <Text>Botón de pánico</Text>
+            <Text style={styles.text}>Botón de pánico</Text>
           </TouchableOpacity>
         </View>
-          <FlatList
-            data={numbers}
-            ItemSeparatorComponent={() => <View style={{width:10}}/>}
-            showsVerticalScrollIndicator = {false}
-            renderItem={({item}) => this._renderItems(item)}
-          />
       </View>
     );
   }
@@ -203,8 +197,6 @@ _renderAdvice(){
 
 const styles = StyleSheet.create({
   button: {
-      borderWidth:1,
-      borderColor:'rgba(0,0,0,0.2)',
       alignItems:'center',
       justifyContent:'center',
       width:250,
@@ -220,4 +212,9 @@ const styles = StyleSheet.create({
     height: 30,
     color: 'black',
   },
+  text:{
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: 'white',
+  }
  });

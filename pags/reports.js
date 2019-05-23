@@ -279,7 +279,11 @@ export default class screens extends Component {
           <Text style={styles.titles}>Fecha y hora del Reporte:</Text>
           <Text style={{margin:5}}>{this.state.reporte.fechaReporte}</Text>
           <Text style={styles.titles}>Descripción:</Text>
-          <TextInput style={{margin:5}} multiline = {true} onChangeText={(text) => this.setState({nuevoValor: text, atributo: 'descripcion'})}>{this.state.reporte.descripcion}</TextInput>
+          <TextInput 
+            style={{margin:5}} 
+            placeholder="Agrega una descripción"
+            multiline = {true} 
+            onChangeText={(text) => this.setState({nuevoValor: text, atributo: 'descripcion'})}>{this.state.reporte.descripcion}</TextInput>
           <Text style={styles.titles}>Evidencia:</Text>
           <TouchableOpacity onPress={this.selectPhotoTapped.bind(this)}>
           {this.state.image === null ? (

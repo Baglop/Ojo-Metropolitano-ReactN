@@ -1,6 +1,7 @@
 import React from "react";
 import MapScreen from "./map"
 import PlaceScreen from "./places"
+import Ripple from './Ripple'
 import PoliceScreen from "./police"
 import ContactScreen from "./contacts"
 import ProfileScreen from "./profile"
@@ -26,7 +27,7 @@ const TabNavigator = createBottomTabNavigator({
   Perfil: ProfileScreen,
   Contactos: ContactScreen,
   Inicio: MapScreen,
-  //Lugares: PlaceScreen,
+  // Lugares: Ripple,
   Policia: PoliceScreen
   },
   {
