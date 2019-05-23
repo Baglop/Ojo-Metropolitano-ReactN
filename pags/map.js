@@ -221,10 +221,10 @@ class MapScreen extends React.Component {
           description={marker.fechaIncidente}
           pinColor = {this.generateRandomColor()}
         >
-          <MapView.Callout  onPress={() => this.makeReportInfoRequest(marker.id)}>
+          <MapView.Callout  onPress={() => marker._id !== undefined ? this.makeReportInfoRequest(marker._id) : this.makeReportInfoRequest(marker.id)}>
             <TouchableOpacity style={styles.communityButton} >
                 <View style={styles.viewCallout}>
-                <Text style={styles.titleMarker}>{this.getReportType(marker.tipo)}</Text>
+                <Text style={styles.titleMarker}>{marker.tipoReporte !== undefined ? this.getReportType(marker.tipoReporte) : this.getReportType(marker.tipo)}</Text>
                 <Text style={styles.descriptionMarker}>{marker.fechaIncidente}</Text>
                 </View>
             </TouchableOpacity>
@@ -327,7 +327,7 @@ class MapScreen extends React.Component {
                   </TouchableOpacity>
                 </View>
               </ScrollView>
-            </View>>
+            </View>
         </View>
       </DismissKeyboard>
     )
