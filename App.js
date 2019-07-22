@@ -80,6 +80,7 @@ const LoginNavigator = createStackNavigator(
   {
     Login: Login,
     Register: Register,
+    Inicio: TabNavigator('Inicio')
   },
   {
     headerMode: "none",
@@ -115,7 +116,7 @@ class LoginComponent extends React.Component {
   }
   render() {
     console.log(this.props)
-    return this.props.user ? (< LoginContainer />) : (<AppContainer />)
+    return this.props.user ? (< AppContainer />) : (< LoginContainer/>)
   }
 }
 
