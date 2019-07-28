@@ -286,3 +286,28 @@ export default class ProfileScreen extends React.Component {
     );
   }
 }
+
+{/* <HeaderImageScrollView
+maxHeight={200}
+minHeight={1}
+fadeOutForeground
+headerImage={require("../assets/citybackground.png")}
+renderForeground={() => (
+    <View style={{ alignItems: 'center', justifyContent: 'center', height: 100, width: 100 }} >
+        <TouchableOpacity style={{borderRadius:50,borderWidth:1, height: 100, width: 100}} onPress={() => this.selectPhotoTapped()}>
+            {this.state.userInfo.imagenPerfil !== null ? (
+                <Image style={styles.logoStyle} source={{ uri: this.state.userInfo.imagenPerfil && this.state.userInfo.imagenPerfil }} />
+            ) : (
+                    <Image style={styles.logoStyle} source={this.state.image && this.state.image} />
+                )}
+        </TouchableOpacity>
+        <Text style={{color:'white',fontWeight:'bold'}}>{this.state.userData.nombreUsuario}</Text>
+    </View>
+)}
+>
+<View style={{ height: 1000 }}>
+    <TriggeringView onHide={() => console.log("text hidden")}>
+        <Text>Scroll Me!</Text>
+    </TriggeringView>
+</View>
+</HeaderImageScrollView> */}

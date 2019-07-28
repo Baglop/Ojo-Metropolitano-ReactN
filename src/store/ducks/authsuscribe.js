@@ -8,15 +8,17 @@ export const { Types, Creators } = createActions({
 })
 
 const ININTIAL_STATE = {
-    user: null
+    user: false
 }
 
 export const getUser = (dispatch) => {
-    let store = getStore();
-    store.dispatch({
-        type: Types.FETCH_USER,
-        user: true
-    });
+    return (dispatch) => {
+        let store = getStore();
+        store.dispatch({
+            type: Types.FETCH_USER,
+            user: true
+        });
+    }
 
     // db.get('BasicValues').then(doc => {
     //     console.log(doc)

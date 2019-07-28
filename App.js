@@ -99,7 +99,7 @@ const MainNavigator = createStackNavigator(
 );
 
 const mapStateToProps = state => ({
-  user: state.user
+  authsuscribe: state.authsuscribe
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -112,11 +112,11 @@ const LoginContainer = createAppContainer(LoginNavigator);
 
 class LoginComponent extends React.Component {
   componentWillMount() {
-
+    this.props.getUser()
   }
   render() {
     console.log(this.props)
-    return this.props.user ? (< AppContainer />) : (< LoginContainer/>)
+    return this.props.authsuscribe.user.user == true ? (< AppContainer />) : (< LoginContainer/>)
   }
 }
 

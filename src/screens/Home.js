@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, StyleSheet, View, StatusBar, Platform} from 'react-native';
+import { Text, StyleSheet, View, StatusBar, Platform } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { SafeAreaView } from "react-navigation";
 import ActionButton from 'react-native-action-button';
@@ -61,17 +61,16 @@ export default class Home extends Component {
                                 showsUserLocation={true}
                                 followUserLocation={true}
                                 region={{
-                                    latitude: 20.666516,
-                                    longitude: -103.385445,
+                                    latitude: Number(this.state.region.latitude),
+                                    longitude: Number(this.state.region.longitude),
                                     latitudeDelta: 0.3,
                                     longitudeDelta: 0.3,
                                 }}
-                                
-                            >
 
+                            >
                             </MapView>
                             <ActionButton
-                                buttonColor="#020b36"
+                                buttonColor="#3dabaf"
                                 onPress={() => {
                                     this.animate();
                                 }}

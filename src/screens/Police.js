@@ -12,7 +12,7 @@ export default class Police extends Component {
                     <StatusBar translucent backgroundColor="transparent" animated barStyle="light-content" />
                     {Platform.OS === 'android' && Platform.Version >= 20 ? <View style={{ height: 24 }} /> : null}
                     <SafeAreaView style={styles.root} forceInset={{ bottom: 'always', top: 'always' }}>
-                    {/* <MainHeader title={'Policía'} navigation={this.props.navigation} /> */}
+                    <MainHeader title={'Policía'} navigation={this.props.navigation} />
                         <View style={styles.body}>
                             <Text> textInComponent </Text>
                         </View>
