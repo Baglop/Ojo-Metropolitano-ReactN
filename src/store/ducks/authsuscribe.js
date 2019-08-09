@@ -16,7 +16,7 @@ export const getUser = (dispatch) => {
         let store = getStore();
         store.dispatch({
             type: Types.FETCH_USER,
-            user: true
+            user: false
         });
     }
 

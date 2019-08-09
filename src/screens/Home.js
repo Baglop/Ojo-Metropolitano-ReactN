@@ -46,7 +46,6 @@ export default class Home extends Component {
     };
 
     render() {
-
         return (
             <View style={styles.root}>
                 <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.root} colors={['#020b36', '#04335d', '#2b8ea8']}>
