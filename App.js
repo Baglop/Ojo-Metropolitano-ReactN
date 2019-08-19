@@ -116,7 +116,7 @@ class LoginComponent extends React.Component {
   }
   render() {
     console.log(this.props)
-    return this.props.authsuscribe.user.user == true ? (< AppContainer />) : (< LoginContainer/>)
+    return this.props.authsuscribe.user == true ? (< AppContainer />) : (< LoginContainer/>)
   }
 }
 

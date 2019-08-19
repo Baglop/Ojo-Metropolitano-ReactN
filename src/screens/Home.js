@@ -49,7 +49,7 @@ export default class Home extends Component {
         return (
             <View style={styles.root}>
                 <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.root} colors={['#020b36', '#04335d', '#2b8ea8']}>
-                    <StatusBar translucent backgroundColor="transparent" animated barStyle="light-content" />
+                    <StatusBar hidden={false} translucent backgroundColor="transparent" animated barStyle="light-content" />
                     {Platform.OS === 'android' && Platform.Version >= 20 ? <View style={{ height: 24 }} /> : null}
                     <SafeAreaView style={styles.root} forceInset={{ bottom: 'always', top: 'always' }} >
                         <View style={styles.body}>

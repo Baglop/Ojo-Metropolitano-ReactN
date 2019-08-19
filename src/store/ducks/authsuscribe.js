@@ -2,6 +2,7 @@ import { createActions, createReducer } from "reduxsauce";
 import { getStore } from "../store";
 import PouchDB from 'pouchdb-react-native';
 const db = new PouchDB('OjoMetropolitano');
+import { AsyncStorage } from 'react-native';
 
 export const { Types, Creators } = createActions({
     fetchUser: ['user']
@@ -11,26 +12,25 @@ const ININTIAL_STATE = {
     user: false
 }
 
-export const getUser = (dispatch) => {
+export const getUser = () => {
     return (dispatch) => {
-        let store = getStore();
-        store.dispatch({
-            type: Types.FETCH_USER,
-            user: false
+        db.allDocs({
+            include_docs: true,
+            attachments: true
+        }).then(function (result) {
+            console.log(result.rows);
+            dispatch({
+                type: Types.FETCH_USER,
+                user: true
+            });
+        }).catch(function (err) {
+            console.log(err);
         });
     }
-
-    // db.get('BasicValues').then(doc => {
-    //     console.log(doc)
-    //     store.dispatch({
-    //         type: Types.FETCH_USER,
-    //         user: true
-    //     });
-    // });
 }
 
 const fetchUser = (state = ININTIAL_STATE, action) => {
-    let user = action;
+    let { user } = action;
     return { ...state, user }
 }
 
