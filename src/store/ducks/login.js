@@ -1,11 +1,12 @@
 import { createActions, createReducer } from "reduxsauce";
 import { getStore } from "../store";
+import { Alert } from "react-native";
 import PouchDB from 'pouchdb-react-native';
 const db = new PouchDB('OjoMetropolitano');
 import endpoint from '../Server/endpoint.json';
 import { updateUser } from './update_user';
 import { getUserReports } from './user_reports';
-import {getUserFriends} from './user_friends'
+import { getUserFriends } from './user_friends';
 
 export const { Types, Creators } = createActions({
     fetchLogin: ['user']
@@ -47,7 +48,14 @@ export const signin = (body, token) => {
                             console.log(responseJSON)
 
                         } else {
-                            console.log('no se pudo we login')
+                            console.log(responseJSON)
+                            Alert.alert(
+                                'Error',
+                                responseJSON.mensaje,
+                                [,
+                                    { text: 'Aceptar' }
+                                ],
+                            );
                         }
                     })
             })

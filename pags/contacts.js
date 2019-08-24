@@ -58,7 +58,6 @@ class ContactScreen extends React.Component {
       nombreUsuario:nombreUsuario
     }
     await Request_API(params,searchURL).then(response =>{
-       console.warn(response);
        this.setState({searchResult:response.usuarios})
       }
     )

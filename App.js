@@ -13,6 +13,7 @@ import Login from './src/screens/Login';
 import Police from './src/screens/Police';
 import Profile from './src/screens/Profile';
 import Register from './src/screens/Register';
+import Loading from './src/screens/Loading';
 
 const TabNavigator = (route) => createBottomTabNavigator({
   Inicio: {
@@ -115,8 +116,13 @@ class LoginComponent extends React.Component {
     this.props.getUser()
   }
   render() {
-    console.log(this.props)
-    return this.props.authsuscribe.user == true ? (< AppContainer />) : (< LoginContainer/>)
+    if(this.props.authsuscribe.user == 'loading')
+     return (<Loading/>)
+     else if(this.props.authsuscribe.user == 'ready')
+      return (<AppContainer />)
+      else if(this.props.authsuscribe.user == 'logout')
+      return (<LoginContainer />) 
+
   }
 }
 

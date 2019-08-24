@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { Text, StyleSheet, View, StatusBar, Platform } from 'react-native';
+import { Text, StyleSheet, View, StatusBar, Platform, Image} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { SafeAreaView } from "react-navigation";
 import MainHeader from '../symbols/MainHeader';
 import NavigationHeader from '../symbols/NavigationHeader';
+import FastImage from 'react-native-fast-image';
 
 export default class Register extends Component {
     render() {
@@ -14,8 +15,11 @@ export default class Register extends Component {
                     {Platform.OS === 'android' && Platform.Version >= 20 ? <View style={{ height: 24 }} /> : null}
                     <SafeAreaView style={styles.root} forceInset={{ bottom: 'always', top: 'always' }}>
                         <NavigationHeader title={'Login'} navigation={this.props.navigation} />
+                        {/* <FastImage source={require('../assets/images/backgound.jpg')} style={{ width: '100%', height: '100%' }}>
+
+                        </FastImage> */}
                         <View style={styles.body}>
-                            <Text> textInComponent </Text>
+                            <Image source={require('../assets/images/backgound.jpg')}/>
                         </View>
                     </SafeAreaView>
                 </LinearGradient>

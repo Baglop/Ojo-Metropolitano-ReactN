@@ -6,7 +6,7 @@ import Video from 'react-native-video';
 import backView from '../assets/background.mp4';
 
 import { connect } from "react-redux";
-import { Creators as EventActions, signin } from '../store/ducks/login';
+import { Creators as EventActions, signin } from '../store/ducks/authsuscribe';
 import { Creators as TokenActions, getToken } from '../store/ducks/tokenFirebase';
 import { Creators as LocationActions, getLocation } from '../store/ducks/location';
 import { bindActionCreators } from "redux";
@@ -39,7 +39,6 @@ class Login extends Component {
     }
 
     register() {
-        PouchDB_DeleteDB();
         this.props.navigation.navigate('Register', {});
     }
 
