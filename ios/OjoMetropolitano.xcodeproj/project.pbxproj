@@ -15,6 +15,7 @@
 		00E356F31AD99517003FC87E /* OjoMetropolitanoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* OjoMetropolitanoTests.m */; };
 		047F23D7227E782A0034DA22 /* libBVLinearGradient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 047F23A9227E77E30034DA22 /* libBVLinearGradient.a */; };
 		0489A3F822643FEF00D18A15 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0489A3F722643FEE00D18A15 /* GoogleService-Info.plist */; };
+		049A72F723131A6A00A40173 /* libFastImage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 049A72CB23131A5600A40173 /* libFastImage.a */; };
 		04B05AA322768D990043BC02 /* libRCTVideo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 04B05A8922768D640043BC02 /* libRCTVideo.a */; };
 		04C744FD2262FD1300AEC1B1 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04C744FC2262FD1200AEC1B1 /* JavaScriptCore.framework */; };
 		04FB218C2276A49C005784A4 /* libAirMaps.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 522CDCA921EC27D400252303 /* libAirMaps.a */; };
@@ -137,6 +138,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = 64AA15081EF7F30100718508;
 			remoteInfo = "BVLinearGradient-tvOS";
+		};
+		049A72CA23131A5600A40173 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 049A72C223131A5500A40173 /* FastImage.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A287971D1DE0C0A60081BDFA;
+			remoteInfo = FastImage;
 		};
 		04B05A8822768D640043BC02 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -440,6 +448,7 @@
 		047F23A2227E77E30034DA22 /* BVLinearGradient.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BVLinearGradient.xcodeproj; path = "../node_modules/react-native-linear-gradient/BVLinearGradient.xcodeproj"; sourceTree = "<group>"; };
 		0489A3F622643F2D00D18A15 /* OjoMetropolitano.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = OjoMetropolitano.entitlements; path = OjoMetropolitano/OjoMetropolitano.entitlements; sourceTree = "<group>"; };
 		0489A3F722643FEE00D18A15 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		049A72C223131A5500A40173 /* FastImage.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FastImage.xcodeproj; path = "../node_modules/react-native-fast-image/ios/FastImage.xcodeproj"; sourceTree = "<group>"; };
 		04B05A7022768D630043BC02 /* RCTVideo.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTVideo.xcodeproj; path = "../../../../Desktop/Backups/28 abril/Ojo-Metropolitano-ReactN/node_modules/react-native-video/ios/RCTVideo.xcodeproj"; sourceTree = "<group>"; };
 		04C744FC2262FD1200AEC1B1 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		04FB21CC2276A975005784A4 /* AIRDummyView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIRDummyView.m; sourceTree = "<group>"; };
@@ -556,6 +565,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				049A72F723131A6A00A40173 /* libFastImage.a in Frameworks */,
 				047F23D7227E782A0034DA22 /* libBVLinearGradient.a in Frameworks */,
 				04FB218C2276A49C005784A4 /* libAirMaps.a in Frameworks */,
 				04B05AA322768D990043BC02 /* libRCTVideo.a in Frameworks */,
@@ -647,6 +657,14 @@
 			children = (
 				047F23A9227E77E30034DA22 /* libBVLinearGradient.a */,
 				047F23AB227E77E30034DA22 /* libBVLinearGradient.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		049A72C323131A5500A40173 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				049A72CB23131A5600A40173 /* libFastImage.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -874,6 +892,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				049A72C223131A5500A40173 /* FastImage.xcodeproj */,
 				047F23A2227E77E30034DA22 /* BVLinearGradient.xcodeproj */,
 				04B05A7022768D630043BC02 /* RCTVideo.xcodeproj */,
 				665F2BEC224C2EE300338948 /* RCTImageResizer.xcodeproj */,
@@ -1058,6 +1077,10 @@
 					ProjectRef = 047F23A2227E77E30034DA22 /* BVLinearGradient.xcodeproj */;
 				},
 				{
+					ProductGroup = 049A72C323131A5500A40173 /* Products */;
+					ProjectRef = 049A72C223131A5500A40173 /* FastImage.xcodeproj */;
+				},
+				{
 					ProductGroup = 00C302A81ABCB8CE00DB3ED1 /* Products */;
 					ProjectRef = 00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */;
 				},
@@ -1182,6 +1205,13 @@
 			fileType = archive.ar;
 			path = libBVLinearGradient.a;
 			remoteRef = 047F23AA227E77E30034DA22 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		049A72CB23131A5600A40173 /* libFastImage.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libFastImage.a;
+			remoteRef = 049A72CA23131A5600A40173 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		04B05A8922768D640043BC02 /* libRCTVideo.a */ = {

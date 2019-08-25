@@ -15,12 +15,12 @@ export default class Register extends Component {
                     {Platform.OS === 'android' && Platform.Version >= 20 ? <View style={{ height: 24 }} /> : null}
                     <SafeAreaView style={styles.root} forceInset={{ bottom: 'always', top: 'always' }}>
                         <NavigationHeader title={'Login'} navigation={this.props.navigation} />
-                        {/* <FastImage source={require('../assets/images/backgound.jpg')} style={{ width: '100%', height: '100%' }}>
+                        <FastImage source={require('../assets/images/backgound.jpg')} style={{ width: '100%', height: '100%' }}>
 
-                        </FastImage> */}
-                        <View style={styles.body}>
+                        </FastImage>
+                        {/* <View style={styles.body}>
                             <Image source={require('../assets/images/backgound.jpg')}/>
-                        </View>
+                        </View> */}
                     </SafeAreaView>
                 </LinearGradient>
             </View>
