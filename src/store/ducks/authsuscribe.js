@@ -15,7 +15,8 @@ export const { Types, Creators } = createActions({
 })
 
 const ININTIAL_STATE = {
-    user: 'loading'
+    user: 'loading',
+    userInfo: null
 }
 
 export const getUser = () => {
@@ -33,9 +34,10 @@ export const getUser = () => {
         db.get('Body').then(doc => {
             dispatch({
                 type: Types.FETCH_USER,
-                user: 'ready'
+                user: 'ready',
+                userInfo: doc
             });
-        }).catch(function (err) {
+        }).catch(err => {
             console.log(err);
             dispatch({
                 type: Types.FETCH_USER,
@@ -93,7 +95,6 @@ export const signin = (body, token) => {
     }
 }
 
-
 export const logout = (dispatch) => {
     PouchDB_DeleteDB();
     let store = getStore();
@@ -109,8 +110,8 @@ const fetchLogout = (state = ININTIAL_STATE, action) => {
 }
 
 const fetchUser = (state = ININTIAL_STATE, action) => {
-    let { user } = action;
-    return { ...state, user }
+    let { user, userInfo } = action;
+    return { ...state, user, userInfo }
 }
 
 export default createReducer(ININTIAL_STATE, {

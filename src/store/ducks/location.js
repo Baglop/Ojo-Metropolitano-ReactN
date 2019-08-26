@@ -8,25 +8,29 @@ export const { Types, Creators } = createActions({
 })
 
 const ININTIAL_STATE = {
-    location: false
+    location: null
 }
 
 export const getLocation = () => {
-    return (dispatch) => {
-        navigator.geolocation.watchPosition(
+    console.log('si entra')
+    return (dispatch, getState) => {
+        console.log('inside return')
+        navigator.geolocation.getCurrentPosition(
             (position) => {
+                console.log(position)
                 dispatch({
                     type: Types.FETCH_LOCATION,
                     location: position.coords
                 });
             },
-            {enableHighAccuracy: true, timeout: 1000, maximumAge: 0, distanceFilter: 1, }
+            // {enableHighAccuracy: true, timeout: 1000, maximumAge: 0, distanceFilter: 1, }
         )
     }
 }
 
 const fetchLocation = (state = ININTIAL_STATE, action) => {
     let {location} = action;
+    console.log(location)
     return { ...state, location }
 }
 

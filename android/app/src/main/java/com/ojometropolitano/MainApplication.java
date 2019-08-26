@@ -3,6 +3,8 @@ package com.ojometropolitano;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.krazylabs.OpenAppSettingsPackage;
+import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.dylanvann.fastimage.FastImageViewPackage;
 import com.bitgo.randombytes.RandomBytesPackage;
 import io.invertase.firebase.RNFirebasePackage;
@@ -35,6 +37,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
             new MainReactPackage(),
+            new OpenAppSettingsPackage(),
+            new AsyncStoragePackage(),
             new FastImageViewPackage(),
             new ReactVideoPackage(),
             new LinearGradientPackage(),

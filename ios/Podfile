@@ -12,6 +12,8 @@ pod 'GoogleMaps'
 pod 'Firebase/Core'
 pod 'Firebase/Messaging'
 
+  pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
+
   target 'OjoMetropolitanoTests' do
     inherit! :search_paths
     # Pods for testing

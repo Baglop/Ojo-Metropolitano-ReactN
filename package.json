@@ -7,6 +7,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@react-native-community/async-storage": "^1.6.1",
     "lodash": "^4.17.11",
     "lottie-react-native": "^2.5.11",
     "pouchdb-find": "^7.0.0",
@@ -14,6 +15,7 @@
     "react": "16.6.3",
     "react-native": "^0.58.4",
     "react-native-action-button": "^2.8.5",
+    "react-native-app-settings": "^2.0.1",
     "react-native-communications": "^2.2.1",
     "react-native-crypto": "^2.1.2",
     "react-native-datepicker": "^1.7.2",
@@ -33,6 +35,7 @@
     "react-native-material-dropdown": "^0.11.1",
     "react-native-material-textfield": "^0.12.0",
     "react-native-modal": "^9.0.0",
+    "react-native-permissions": "^1.2.0",
     "react-native-popup-menu": "^0.15.5",
     "react-native-randombytes": "^3.5.2",
     "react-native-vector-icons": "^6.1.0",

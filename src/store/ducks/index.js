@@ -6,6 +6,8 @@ import location from './location';
 import update_user from './update_user';
 import user_reports from './user_reports';
 import user_friends from './user_friends';
+import permissions from './permissions';
+import home from './home'
 
 export default combineReducers({
     authsuscribe,
@@ -14,5 +16,7 @@ export default combineReducers({
     location,
     update_user,
     user_reports,
-    user_friends
+    user_friends,
+    permissions,
+    home
 })

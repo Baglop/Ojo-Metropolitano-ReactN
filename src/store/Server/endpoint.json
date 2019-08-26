@@ -3,5 +3,6 @@
     "login": ":3030/API/inicio/IniciarSesion",
     "updateUser": ":3030/API/miCuenta/ModificarInformacionUsuario",
     "userReports": ":3030/API/inicio/ActualizarMisReportes",
-    "userFriends": ":3030/API/contactos/ActualizarAmigosYGrupos"
+    "userFriends": ":3030/API/contactos/ActualizarAmigosYGrupos",
+    "globalReports": ":3030/API/inicio/ActualizarReportesGlobales"
 }
