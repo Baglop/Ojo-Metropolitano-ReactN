@@ -12,7 +12,7 @@
     "pouchdb-find": "^7.0.0",
     "pouchdb-react-native": "^6.4.1",
     "react": "16.6.3",
-    "react-native": "0.59.3",
+    "react-native": "0.62.3",
     "react-native-action-button": "^2.8.5",
     "react-native-communications": "^2.2.1",
     "react-native-crypto": "^2.1.2",
